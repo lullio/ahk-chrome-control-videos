@@ -4,19 +4,57 @@
 if not A_IsAdmin
    Run *RunAs "%A_ScriptFullPath%"
 
-ListNotes =
+ListMainCourses =
 (
-DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT|DATA STUDIO 1||DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2
+None|DOM1|DOM2|ASYNC JS|FUNC JS|ARRAYS JS|AJAX|GOOGLE APPS SCRIPT
 )
-
-ListNotes := RTrim(ListNotes, "|")
-ListNotes := StrReplace(ListNotes, "|", "||",, 1) ; without default item
+ListMainCourses := RTrim(ListMainCourses, "|")
+ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default item
+ListAllCourses =
+(
+None|DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT|DATA STUDIO 1|DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2
+)
+ListAllCourses := RTrim(ListAllCourses, "|")
+ListAllCourses := StrReplace(ListAllCourses, "|", "||",, 1) ; without default item
+ListWebCourses =
+(
+None|DOM1|DOM2
+)
+ListWebCourses := RTrim(ListWebCourses, "|")
+ListWebCourses := StrReplace(ListWebCourses, "|", "||",, 1) ; without default item
+ListMktCourses =
+(
+None|DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2
+)
+ListMktCourses := RTrim(ListMktCourses, "|")
+ListMktCourses := StrReplace(ListMktCourses, "|", "||",, 1) ; without default item
 Gui, Destroy
 gui, font, S11 ;Change font size to 12
-Gui, Add, ComboBox, w250 vCurso gNOTES hwndNotesID , %ListNotes%
-gui, Add, Button, w90 gAbrirCurso Default, &Abrir Curso
+
+; COLUNA 1
+Gui Add, Text, section, Principais Cursos
+; gui, font, S10 ;Change font size to 12
+Gui, Add, ComboBox, vCurso gCursos hwndCursosID , %ListMainCourses%
+; gui, font, S7 ;Change font size to 12
+; 2º dropdown js courses
+Gui Add, Text, ,Web Dev Courses
+Gui, Add, ComboBox, vCursoWebDev gCursos hwndCursosID , %ListWebCourses%
+
+; COLUNA 2
+Gui Add, Text, ys, Todos os Cursos
+Gui, Add, ComboBox, vCursoAll gCursos w110, %ListAllCourses%
+; gui, font, S7 ;Change font size to 12
+; 2º dropdown js courses
+Gui Add, Text, , Mkt Courses
+Gui, Add, ComboBox, w110 vCursoMkt gCursos hwndCursosID , %ListMktCourses%
+
+; Botões
+gui, font, S11
+gui, Add, Button, x78 w100 gAbrirCurso Default, &Abrir Curso
 gui, Add, Button, w75 x+8 gCancel Cancel, &Cancelar
-GuiControl,Focus,notes
+
+; EXIBIR E ATIVAR GUI
+GuiControl,Focus,Curso
 Gui, Show
 ; Ignorar o erro que o ahk dá e continuar executando o script
 ComObjError(false)
@@ -27,7 +65,6 @@ website := "udemy.com"
    {
      ; não fazer nada
    }else{
-      msgbox ok
          Sleep, 500
          ; aqui está o fix pra esperar a página carregar
          PageInst := Chrome.GetPageByURL(website, "contains")
@@ -91,10 +128,10 @@ website := "udemy.com"
       Return
    }
 
-NOTES:
+Cursos:
    {
-      ControlGetText, Eingabe,, ahk_id %NotesID%
-      ControlGet, Liste, List, , , ahk_id %NotesID%
+      ControlGetText, Eingabe,, ahk_id %CursosID%
+      ControlGet, Liste, List, , , ahk_id %CursosID%
       ; msgbox %Liste%
       ; msgbox %Eingabe%
       ; If ( !GetKeyState("Delete") && !GetKeyState("BackSpace") && RegExMatch(Liste, "`nmi)^(www\.)?(\Q" . Eingabe . "\E.*)$", Match)) {
@@ -102,10 +139,10 @@ NOTES:
          ; msgbox %match%
          ; msgbox %match1% ; armazena o www.
          ; msgbox %match2% ; armazena o restante sem o www.
-         ControlSetText, , %Match%, ahk_id %NotesID% ; insere o texto no combobox
+         ControlSetText, , %Match%, ahk_id %CursosID% ; insere o texto no combobox
          Selection := StrLen(Eingabe) | 0xFFFF0000 ; tamanho do texto do match
          ; msgbox %Selection%
-         SendMessage, CB_SETEDITSEL := 0x142, , Selection, , ahk_id %NotesID% ; colocar o cursor do mouse selecionando o texto do match
+         SendMessage, CB_SETEDITSEL := 0x142, , Selection, , ahk_id %CursosID% ; colocar o cursor do mouse selecionando o texto do match
       } Else {
          CheckDelKey = 0
          CheckBackspaceKey = 0
@@ -130,9 +167,9 @@ AbrirCurso:
    IfNotExist %profileName%
       profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
 
-   if(Curso = "DOM1")
+   if(Curso = "DOM1" || CursoAll = "DOM1")
    {
-      website := "https://www.udemy.com/course/build-interactive-websites-1/"
+      website := "https://www.udemy.com/course/build-interactive-websites-1/learn"
    }
    else if(Curso = "DOM2")
    {
@@ -201,8 +238,11 @@ AbrirCurso:
    else if(Curso = "NGINX2")
    {
       website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
+   }else{
+      website := "none"
    }
 
+if !(website == "none"){
    ; se não encontrar aba chrome com remote debug
    if !(PageInst := Chrome.GetPageByURL(website, "contains"))
    {
@@ -259,3 +299,4 @@ FileRead, javascriptSpeedMinus, speed-decrease.js
 ; Alt & Right::
 ;    PageInst.Evaluate(javascriptMoveUp)
 ; Return
+}
