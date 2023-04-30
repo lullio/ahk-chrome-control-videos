@@ -4,6 +4,9 @@
 if not A_IsAdmin
    Run *RunAs "%A_ScriptFullPath%"
 
+Menu, Tray, Icon, C:\Windows\system32\shell32.dll,116 ;Set custom Script icon
+
+
 DLLPath=C:\Users\%A_UserName%\Documents\Github\AHK\secondary-scripts\ahk-styles\styles\USkin.dll ;Location to the USkin.dll file
 StylesPath=C:\Users\%A_UserName%\Documents\Github\AHK\secondary-scripts\ahk-styles\styles ;location where you saved the .msstyles files
 
@@ -65,7 +68,7 @@ ListOutrosCourses := RTrim(ListOutrosCourses, "|")
 ListOutrosCourses := StrReplace(ListOutrosCourses, "|", "||",, 1) ; without default item
 
 Gui, Destroy
-Gui,+AlwaysOnTop
+Gui,+AlwaysOnTop +Owner
 gui, font, S11 ;Change font size to 12
 
 /*
