@@ -6,7 +6,7 @@ if not A_IsAdmin
 
 ListNotes =
 (
-DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT|DATA STUDIO 1||DATA STUDIO 2|BIG QUERY|POWER BI 1
+DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT|DATA STUDIO 1||DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2
 )
 
 ListNotes := RTrim(ListNotes, "|")
@@ -20,6 +20,56 @@ GuiControl,Focus,notes
 Gui, Show
 ; Ignorar o erro que o ahk dá e continuar executando o script
 ComObjError(false)
+
+website := "udemy.com"
+ ; se não encontrar aba chrome com remote debug
+ if !(PageInst := Chrome.GetPageByURL(website, "contains"))
+   {
+     ; não fazer nada
+   }else{
+      msgbox ok
+         Sleep, 500
+         ; aqui está o fix pra esperar a página carregar
+         PageInst := Chrome.GetPageByURL(website, "contains")
+         Sleep, 500
+         /*
+         SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+         */
+         ; PageInst.Call("Page.bringToFront")
+
+         ; PAUSAR E PLAY VIDEO
+      FileRead, javascriptPlay, pause-play-video.js
+
+      ; FAST-FORWARD VIDEO
+      FileRead, javascriptMoveUp, video-fast-forward.js
+      ; REWIND VIDEO
+      FileRead, javascriptMoveDown, video-rewind.js
+
+      ; AUMENTAR VELOCIDADE
+      FileRead, javascriptSpeedPlus, speed-increase.js
+      ; DIMINUIR VELOCIDADE
+      FileRead, javascriptSpeedMinus, speed-decrease.js
+
+      alt & l::
+         PageInst.Evaluate(javascriptPlay)
+      Return
+
+      Alt & =::
+         PageInst.Evaluate(javascriptSpeedPlus)
+      Return
+
+      Alt & -::
+         PageInst.Evaluate(javascriptSpeedMinus)
+      Return
+
+      Alt & Left::
+         PageInst.Evaluate(javascriptMoveDown)
+      Return
+
+      Alt & Right::
+         PageInst.Evaluate(javascriptMoveUp)
+      Return
+   }
 
 NOTES:
    {
@@ -43,8 +93,9 @@ NOTES:
       return
    }
 
+
 AbrirCurso:
-   Gui Submit
+   Gui, Submit, NoHide
    ComObjError(false)
 
    ; Variables
@@ -61,39 +112,39 @@ AbrirCurso:
 
    if(Curso = "DOM1")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=2696476"
+      website := "https://www.udemy.com/course/build-interactive-websites-1/"
    }
    else if(Curso = "DOM2")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=2733254"
+      website := "https://www.udemy.com/course/build-dynamic-websites-dom-2/learn"
    }
    else if(Curso = "ASYNC JS")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=2641732"
+      website := "https://www.udemy.com/course/asynchronous-javascript-deep-dive/learn"
    }
    else if(Curso = "FUNC JS")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=2319848"
+      website := "https://www.udemy.com/course/functional-programming-in-javascript-a-practical-guide/learn"
    }
    else if(Curso = "ARRAYS JS")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=2497482"
+      website := "https://www.udemy.com/course/mastering-javascript-arrays/learn/"
    }
    else if(Curso = "WEB ANALYTISC")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=3871000"
+      website := "https://www.udemy.com/course/webanalytics-completo-muito-alem-do-google-analytics/learn"
    }
    else if(Curso = "COMPLETE JS")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=851712"
+      website := "https://www.udemy.com/course/the-complete-javascript-course/learn/lecture"
    }
    else if(Curso = "JS FULL STACK")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=1436332"
+      website := "https://www.udemy.com/course/learn-javascript-full-stack-from-scratch/learn"
    }
    else if(Curso = "AJAX")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=4454702"
+      website := "https://www.udemy.com/course/ajax-fundamentals/learn/lecture/"
    }
    else if(Curso = "GOOGLE APPS SCRIPT")
    {
@@ -101,27 +152,35 @@ AbrirCurso:
    }
    else if(Curso = "GOOGLE APPS SCRIPT")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=3646911"
+      website := "https://www.udemy.com/course/course-apps-script/learn/"
    }
    else if(Curso = "DATA STUDIO 1")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=3772918"
+      website := "https://www.udemy.com/course/domine-google-data-studio/learn"
    }
    else if(Curso = "DATA STUDIO 2")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=1213560"
+      website := "https://www.udemy.com/course/data-analysis-and-dashboards-with-google-data-studio/learn"
    }
    else if(Curso = "BIG QUERY")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=3666718"
+      website := "https://www.udemy.com/course/applied-sql-for-data-analytics-data-science-with-bigquery/learn"
    }
    else if(Curso = "POWER BI 1")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=1995622"
+      website := "https://www.udemy.com/course/power-bi-completo-do-basico-ao-avancado/learn"
    }
    else if(Curso = "REGEX")
    {
-      website := "https://www.udemy.com/course-dashboard-redirect/?course_id=1963420"
+      website := "https://www.udemy.com/course/mastering-regular-expressions-in-javascript/learn"
+   }
+   else if(Curso = "NGINX1")
+   {
+      website := "https://www.udemy.com/course/nginx-fundamentals/learn"
+   }
+   else if(Curso = "NGINX2")
+   {
+      website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
    }
 
    ; se não encontrar aba chrome com remote debug
@@ -143,18 +202,35 @@ AbrirCurso:
    */
    PageInst.Call("Page.bringToFront")
 
-alt & l::
-   FileRead, javascriptFile, play-pause.js
-   Sleep, 1000
-   PageInst.Evaluate(javascriptFile)
-Return
+   ; PAUSAR E PLAY VIDEO
+FileRead, javascriptPlay, pause-play-video.js
 
-ctrl & -::
-   FileRead, javascriptFile, play-pause.js
-   Sleep, 1000
-   PageInst.Evaluate(javascriptFile)
-Return
+; FAST-FORWARD VIDEO
+FileRead, javascriptMoveUp, video-fast-forward.js
+; REWIND VIDEO
+FileRead, javascriptMoveDown, video-rewind.js
 
-Alt & Left::
+; AUMENTAR VELOCIDADE
+FileRead, javascriptSpeedPlus, speed-increase.js
+; DIMINUIR VELOCIDADE
+FileRead, javascriptSpeedMinus, speed-decrease.js
 
-Return
+; alt & l::
+;    PageInst.Evaluate(javascriptPlay)
+; Return
+
+; Alt & =::
+;    PageInst.Evaluate(javascriptSpeedPlus)
+; Return
+
+; Alt & -::
+;    PageInst.Evaluate(javascriptSpeedMinus)
+; Return
+
+; Alt & Left::
+;    PageInst.Evaluate(javascriptMoveDown)
+; Return
+
+; Alt & Right::
+;    PageInst.Evaluate(javascriptMoveUp)
+; Return
