@@ -29,6 +29,7 @@ None|DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2
 ListMktCourses := RTrim(ListMktCourses, "|")
 ListMktCourses := StrReplace(ListMktCourses, "|", "||",, 1) ; without default item
 Gui, Destroy
+Gui,+AlwaysOnTop
 gui, font, S11 ;Change font size to 12
 
 /*
@@ -169,11 +170,25 @@ DropDownComplete(cursoID)
    }
 }
 Cursos:
-      DropDownComplete(CursosIDMain)
-      DropDownComplete(CursosIDDev)
-      DropDownComplete(CursosIDAll)
-      DropDownComplete(CursosIDMkt)
-      DropDownComplete(CursosIDOutros)
+      ; Capturar qual o control que está ativo, com foco
+      GuiControlGet, focused_control, Focus
+      ; msgbox %focused_control%
+      Switch focused_control
+      {
+      Case "Edit1":
+         DropDownComplete(CursosIDMain)
+      Case "Edit2":
+         DropDownComplete(CursosIDDev)
+      Case "Edit3":
+         DropDownComplete(CursosIDAll)
+      Case "Edit4":
+         DropDownComplete(CursosIDMkt)
+      Case "Edit5":
+         DropDownComplete(CursosIDOutros)
+      Default:
+         MsgBox, nenhum control esta com foco
+      }
+      
 Return
 
 /* LABEL DO TRATAMENTO DO CURSO, QUAL O CURSO SELECIONADO
