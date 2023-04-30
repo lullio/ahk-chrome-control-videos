@@ -4,30 +4,46 @@
 if not A_IsAdmin
    Run *RunAs "%A_ScriptFullPath%"
 
+; !PRINCIPAIS CURSOS
 ListMainCourses =
 (
-None|NGINX1||NGINX2|DOM1|DOM2|ASYNC JS|FUNC JS|ARRAYS JS|AJAX|GOOGLE APPS SCRIPT
+None|NGINX1||NGINX2|DOM1|DOM2|ARRAYS JS|ASYNC JS|FUNC JS|AJAX|GOOGLE APPS SCRIPT
 )
 ListMainCourses := RTrim(ListMainCourses, "|")
 ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default item
+
+; ! TODOS OS CURSOS
 ListAllCourses =
 (
 None|DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT|DATA STUDIO 1|DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2
 )
 ListAllCourses := RTrim(ListAllCourses, "|")
 ListAllCourses := StrReplace(ListAllCourses, "|", "||",, 1) ; without default item
+
+; ! WEB DEV COURSES - JAVASCRIPT
 ListWebCourses =
 (
-None|DOM1|DOM2
+None|DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT
 )
 ListWebCourses := RTrim(ListWebCourses, "|")
 ListWebCourses := StrReplace(ListWebCourses, "|", "||",, 1) ; without default item
+
+; ! MARKETING COURSES - TAGUEAMENTO
 ListMktCourses =
 (
-None|DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2
+None|BIG QUERY|DATA STUDIO 1|DATA STUDIO 2|POWER BI 1|NGINX1|NGINX2|WEB ANALYTICS
 )
 ListMktCourses := RTrim(ListMktCourses, "|")
 ListMktCourses := StrReplace(ListMktCourses, "|", "||",, 1) ; without default item
+
+; ! OUTROS CURSOS - WEB SERVER / LINUX
+ListOutrosCourses =
+(
+None|NGINX1|NGINX2
+)
+ListOutrosCourses := RTrim(ListOutrosCourses, "|")
+ListOutrosCourses := StrReplace(ListOutrosCourses, "|", "||",, 1) ; without default item
+
 Gui, Destroy
 Gui,+AlwaysOnTop
 gui, font, S11 ;Change font size to 12
@@ -57,7 +73,7 @@ Gui Add, Text, ys, Mkt Courses
 Gui, Add, ComboBox, w150 vCursoMkt gCursos hwndCursosIDMkt , %ListMktCourses%
 ; dropdown 5 - outros cursos
 Gui Add, Text,, Outros
-Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w150, %ListWebCourses%
+Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w150, %ListOutrosCourses%
 
 ; gui, font, S7 ;Change font size to 12
 ; 2º dropdown js courses
