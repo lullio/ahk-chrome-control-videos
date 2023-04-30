@@ -4,8 +4,9 @@
 if not A_IsAdmin
    Run *RunAs "%A_ScriptFullPath%"
 
+/* ESTILO E ICONE DO SCRIPT
+*/
 Menu, Tray, Icon, C:\Windows\system32\shell32.dll,116 ;Set custom Script icon
-
 
 DLLPath=C:\Users\%A_UserName%\Documents\Github\AHK\secondary-scripts\ahk-styles\styles\USkin.dll ;Location to the USkin.dll file
 StylesPath=C:\Users\%A_UserName%\Documents\Github\AHK\secondary-scripts\ahk-styles\styles ;location where you saved the .msstyles files
@@ -27,6 +28,8 @@ SkinForm(DLLPath,Param1 = "Apply", SkinName = ""){
 	}
 }
 
+/* SCRIPT COMEÇA AQUI
+*/
 ; !PRINCIPAIS CURSOS
 ListMainCourses =
 (
@@ -110,7 +113,7 @@ gui, Add, Button, w75 x+10 gCancel Cancel, &Cancelar
 
 ; EXIBIR E ATIVAR GUI
 GuiControl,Focus,Curso
-Gui, Show
+Gui, Show,, Abrir Curso e Control Video - Felipe Lulio
 
 ; Ignorar o erro que o ahk dá e continuar executando o script
 ComObjError(false)
