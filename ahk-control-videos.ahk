@@ -50,24 +50,44 @@ website := "udemy.com"
       ; DIMINUIR VELOCIDADE
       FileRead, javascriptSpeedMinus, speed-decrease.js
 
+      ; PRÓXIMO VÍDEO
+      FileRead, javascriptPreviousVideo, go-previous-video.js
+      ; VIDEO ANTERIOR
+      FileRead, javascriptNextVideo, go-next-video.js      
+
       alt & l::
          PageInst.Evaluate(javascriptPlay)
+         PageInst.Call("Page.bringToFront")
       Return
 
       Alt & =::
          PageInst.Evaluate(javascriptSpeedPlus)
+         PageInst.Call("Page.bringToFront")
       Return
 
       Alt & -::
          PageInst.Evaluate(javascriptSpeedMinus)
+         PageInst.Call("Page.bringToFront")
       Return
 
       Alt & Left::
          PageInst.Evaluate(javascriptMoveDown)
+         PageInst.Call("Page.bringToFront")
       Return
 
       Alt & Right::
          PageInst.Evaluate(javascriptMoveUp)
+         PageInst.Call("Page.bringToFront")
+      Return
+
+      Alt & End::
+         PageInst.Evaluate(javascriptNextVideo)
+         PageInst.Call("Page.bringToFront")
+      Return
+
+      Alt & Home::
+         PageInst.Evaluate(javascriptPreviousVideo)
+         PageInst.Call("Page.bringToFront")
       Return
    }
 
@@ -214,6 +234,11 @@ FileRead, javascriptMoveDown, video-rewind.js
 FileRead, javascriptSpeedPlus, speed-increase.js
 ; DIMINUIR VELOCIDADE
 FileRead, javascriptSpeedMinus, speed-decrease.js
+
+ ; PRÓXIMO VÍDEO
+ FileRead, javascriptPreviousVideo, go-previous-video.js
+ ; VIDEO ANTERIOR
+ FileRead, javascriptNextVideo, go-next-video.js    
 
 ; alt & l::
 ;    PageInst.Evaluate(javascriptPlay)
