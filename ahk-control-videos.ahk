@@ -4,6 +4,26 @@
 if not A_IsAdmin
    Run *RunAs "%A_ScriptFullPath%"
 
+DLLPath=C:\Users\%A_UserName%\Documents\Github\AHK\secondary-scripts\ahk-styles\styles\USkin.dll ;Location to the USkin.dll file
+StylesPath=C:\Users\%A_UserName%\Documents\Github\AHK\secondary-scripts\ahk-styles\styles ;location where you saved the .msstyles files
+
+; melhores dark: cosmo, lakrits
+; melhores light: MacLion3, Milikymac, Panther, Milk, Luminous, fanta, invoice
+SkinForm(DLLPath,Apply, StylesPath "\Panther.msstyles") ; cosmo. msstyles
+
+
+	; Gosub, Gui
+; SkinForm(DLLPath,"0", StylesPath . CurrentStyle)	
+
+SkinForm(DLLPath,Param1 = "Apply", SkinName = ""){
+	if(Param1 = Apply){
+		DllCall("LoadLibrary", str, DLLPath)
+		DllCall(DLLPath . "\USkinInit", Int,0, Int,0, AStr, SkinName)
+	}else if(Param1 = 0){
+		DllCall(DLLPath . "\USkinExit")
+	}
+}
+
 ; !PRINCIPAIS CURSOS
 ListMainCourses =
 (
