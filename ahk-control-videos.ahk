@@ -33,7 +33,7 @@ SkinForm(DLLPath,Param1 = "Apply", SkinName = ""){
 ; !PRINCIPAIS CURSOS
 ListMainCourses =
 (
-None|NGINX1||NGINX2|DOM1|DOM2|ARRAYS JS|ASYNC JS|FUNC JS|AJAX|GOOGLE APPS SCRIPT
+None|NGINX1||NGINX2|DOM1|DOM2|ARRAYS JS|ASYNC JS|FUNC JS|AJAX|GOOGLE APPS SCRIPT|GTM1|GTM2|GA4
 )
 ListMainCourses := RTrim(ListMainCourses, "|")
 ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default item
@@ -41,7 +41,7 @@ ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default 
 ; ! TODOS OS CURSOS
 ListAllCourses =
 (
-None|DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT|DATA STUDIO 1|DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2
+None|DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT|DATA STUDIO 1|DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2|GTM1|GTM2|GA4
 )
 ListAllCourses := RTrim(ListAllCourses, "|")
 ListAllCourses := StrReplace(ListAllCourses, "|", "||",, 1) ; without default item
@@ -57,7 +57,7 @@ ListWebCourses := StrReplace(ListWebCourses, "|", "||",, 1) ; without default it
 ; ! MARKETING COURSES - TAGUEAMENTO
 ListMktCourses =
 (
-None|BIG QUERY|DATA STUDIO 1|DATA STUDIO 2|POWER BI 1|NGINX1|NGINX2|WEB ANALYTICS
+None|BIG QUERY|DATA STUDIO 1|DATA STUDIO 2|POWER BI 1|NGINX1|NGINX2|WEB ANALYTICS|GTM1|GTM2|GA4
 )
 ListMktCourses := RTrim(ListMktCourses, "|")
 ListMktCourses := StrReplace(ListMktCourses, "|", "||",, 1) ; without default item
@@ -78,7 +78,7 @@ gui, font, S11 ;Change font size to 12
 LINHA 1 - SEPARADO - PRINCIPAIS CURSOS
 */
 ; dropdown 1 - principais cursos
-Gui Add, Text,section y+10 x+100, Principais Cursos
+Gui Add, Text,section y+10 x+100, Main Courses
 Gui, Add, ComboBox, x10 y+10 w312 vCurso gCursos hwndCursosIDMain, %ListMainCourses%
 
 /*
@@ -88,7 +88,7 @@ COLUNA 1
 Gui Add, Text, section x10,Web Dev Courses
 Gui, Add, ComboBox, vCursoWebDev gCursos hwndCursosIDDev w150, %ListWebCourses%
 ; dropdown 3 - todos os cursos
-Gui Add, Text,, Todos os Cursos
+Gui Add, Text,, All Courses
 Gui, Add, ComboBox, vCursoAll gCursos w150 hwndCursosIDAll, %ListAllCourses%
 
 /*
@@ -98,7 +98,7 @@ COLUNA 2
 Gui Add, Text, ys, Mkt Courses
 Gui, Add, ComboBox, w150 vCursoMkt gCursos hwndCursosIDMkt , %ListMktCourses%
 ; dropdown 5 - outros cursos
-Gui Add, Text,, Outros
+Gui Add, Text,, Other Courses
 Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w150, %ListOutrosCourses%
 
 ; gui, font, S7 ;Change font size to 12
@@ -108,7 +108,7 @@ Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w150, %ListOutrosCou
 ; Botões
 gui, font, S11
 gui, Add, Button, xs w100 gAbrirCurso Default, &Abrir Curso
-gui, Add, Button, w100 x+10 gAbrirPasta, &Abrir Pasta
+gui, Add, Button, w100 x+10 gAbrirNotion, &Abrir Notion
 gui, Add, Button, w75 x+10 gCancel Cancel, &Cancelar
 
 ; EXIBIR E ATIVAR GUI
@@ -123,18 +123,18 @@ website := "udemy.com"
  ; se não encontrar aba chrome com remote debug
  if !(PageInst := Chrome.GetPageByURL(website, "contains"))
    {
-     ; não fazer nada
+     
    }else{
-         Sleep, 500
-         ; aqui está o fix pra esperar a página carregar
-         PageInst := Chrome.GetPageByURL(website, "contains")
-         Sleep, 500
-         /*
-         SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
-         */
-         ; PageInst.Call("Page.bringToFront")
+      Sleep, 500
+      ; aqui está o fix pra esperar a página carregar
+      PageInst := Chrome.GetPageByURL(website, "contains")
+      Sleep, 500
+      /*
+      SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+      */
+      ; PageInst.Call("Page.bringToFront")
 
-         ; PAUSAR E PLAY VIDEO
+      ; PAUSAR E PLAY VIDEO
       FileRead, javascriptPlay, pause-play-video.js
 
       ; FAST-FORWARD VIDEO
@@ -150,41 +150,144 @@ website := "udemy.com"
       ; PRÓXIMO VÍDEO
       FileRead, javascriptPreviousVideo, go-previous-video.js
       ; VIDEO ANTERIOR
-      FileRead, javascriptNextVideo, go-next-video.js      
+      FileRead, javascriptNextVideo, go-next-video.js
 
       alt & l::
-         PageInst.Evaluate(javascriptPlay)
-         PageInst.Call("Page.bringToFront")
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de pausar vai ser usado no Chrome somente.",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO DE PAUSAR NO CHROME
+            PageInst.Evaluate(javascriptPlay)
+            PageInst.Call("Page.bringToFront")
+            WinActivate, Chrome
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de pausar vai ser usado somente no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO DE PAUSAR NO VLC
+            WinActivate, AHK_PID %pid%
+            ControlSend,Qt5QWindowIcon7,{space},ahk_exe vlc.exe
+            SetTitleMatchMode, 2
+            IfWinActive, Reprodutor de Mídias VLC
+            Send, {Space}
+         }
+      return      
       Return
 
       Alt & =::
-         PageInst.Evaluate(javascriptSpeedPlus)
-         PageInst.Call("Page.bringToFront")
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de aumentar velocidade vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO AUMENTAR VELOCIDADE
+            PageInst.Evaluate(javascriptSpeedPlus)
+            PageInst.Call("Page.bringToFront")
+            WinActivate, Chrome
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de aumentar velocidade vai ser usado somente no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO AUMENTAR VELOCIDADE NO VLC
+            WinActivate, AHK_PID %pid%
+            ControlSend,Qt5QWindowIcon7,{=},ahk_exe vlc.exe ;Send =
+            SetTitleMatchMode, 2
+            IfWinActive, Reprodutor de Mídias VLC
+            Send, {=}
+         }
       Return
 
       Alt & -::
-         PageInst.Evaluate(javascriptSpeedMinus)
-         PageInst.Call("Page.bringToFront")
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de diminuir velocidade vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO DIMNIUIR VELOCIDADE
+            PageInst.Evaluate(javascriptSpeedMinus)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de diminuir velocidade vai ser usado somente no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO DIMNIUIR VELOCIDADE NO VLC
+            WinActivate, AHK_PID %pid%
+            ControlSend,Qt5QWindowIcon7,{-},ahk_exe vlc.exe ;Send -
+            SetTitleMatchMode, 2
+            IfWinActive, Reprodutor de Mídias VLC
+            Send, {-}
+         }
       Return
 
       Alt & Left::
-         PageInst.Evaluate(javascriptMoveDown)
-         PageInst.Call("Page.bringToFront")
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de retroceder video vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; RETROCEDER O VIDEO
+            PageInst.Evaluate(javascriptMoveDown)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de retroceder video vai ser usado somente no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; RETROCEDER O VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,+{left},ahk_exe vlc.exe 
+         }
       Return
 
       Alt & Right::
-         PageInst.Evaluate(javascriptMoveUp)
-         PageInst.Call("Page.bringToFront")
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de avançar video vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; AVANÇAR O VIDEO
+            PageInst.Evaluate(javascriptMoveUp)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de avançar video vai ser usado somente no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; AVANÇAR O VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,+{Right},ahk_exe vlc.exe 
+         }
       Return
 
       Alt & End::
-         PageInst.Evaluate(javascriptNextVideo)
-         PageInst.Call("Page.bringToFront")
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de pular video vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PULAR O VIDEO
+            PageInst.Evaluate(javascriptNextVideo)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de pular video vai ser usado somente no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PULAR O VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,{n},ahk_exe vlc.exe 
+         }
       Return
 
       Alt & Home::
-         PageInst.Evaluate(javascriptPreviousVideo)
-         PageInst.Call("Page.bringToFront")
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de previous video vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:15, Size:15, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PREVIOUS VIDEO
+            PageInst.Evaluate(javascriptPreviousVideo)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de previous video vai ser usado somente no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:15, Size:15, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PREVIOUS VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,{p},ahk_exe vlc.exe 
+         }
       Return
    }
 
@@ -210,6 +313,7 @@ DropDownComplete(cursoID)
       CheckDelKey = 0
       CheckBackspaceKey = 0
    }
+   ; GuiControl,Focus,Curso
 }
 Cursos:
       ; Capturar qual o control que está ativo, com foco
@@ -239,7 +343,7 @@ Return
 
 /* ABRIR AS ANOTAÇÕES DO NOTION E A PASTA DO PROJETO SE EXISTIR
 */
-AbrirPasta:
+AbrirNotion:
    Gui, Submit, NoHide
    needle := "None"
    regexp := RegExMatch(Curso, needle)
@@ -253,6 +357,7 @@ AbrirPasta:
       ; Run, C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe 
       Run %ComSpec% /c C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe "%notion%", , Hide
       RunAs
+      WinActivate, Notion
    }
 Return
 
@@ -275,7 +380,7 @@ AbrirCurso:
 ; CHAMAR O LABEL courseSelected
 Gosub, courseSelected
 ; msgbox %website%
-if !(website == "none"){
+if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
    ; se não encontrar aba chrome com remote debug
    if !(PageInst := Chrome.GetPageByURL(website, "contains"))
    {
@@ -292,6 +397,15 @@ if !(website == "none"){
    SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
    */
    PageInst.Call("Page.bringToFront")
+}else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
+   Run %gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf
+   Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+}else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
+   Run %gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf
+   Run %gtm2Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+}else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
+   Run %GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf
+   Run %GA4Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
 }else{
    Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR") 
 }
@@ -308,72 +422,133 @@ Gui, Submit, NoHide
       else if(Curso = "DOM2" || CursoWebDev = "DOM2" || CursoAll = "DOM2" | CursoOutros = "DOM2" || CursoMkt = "DOM2")
       {
          website := "https://www.udemy.com/course/build-dynamic-websites-dom-2/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/JS-DOM-d4415aaf9eeb41769636c6ee16e18c7a?pvs=4#bc76b9d3415e4bb5909c12701a8b11e2"
       }
       else if(Curso = "ASYNC JS" || CursoWebDev = "ASYNC JS" || CursoAll = "ASYNC JS" | CursoOutros = "ASYNC JS" || CursoMkt = "ASYNC JS")
       {
          website := "https://www.udemy.com/course/asynchronous-javascript-deep-dive/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/JS-Async-b1e1ff048ba446b9a750c99a0561b964?pvs=4#04605a3148744379a89e4ecd3cd8a957"
       }
       else if(Curso = "FUNC JS" || CursoWebDev = "FUNC JS" || CursoAll = "FUNC JS" | CursoOutros = "FUNC JS" || CursoMkt = "FUNC JS")
       {
          website := "https://www.udemy.com/course/functional-programming-in-javascript-a-practical-guide/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/JS-Functions-502abc488dc9492fab8585100472ba30?pvs=4#6c347b0b00794ba583bc10ce86a6c517"
       }
       else if(Curso = "ARRAYS JS" || CursoWebDev = "ARRAYS JS" || CursoAll = "ARRAYS JS" | CursoOutros = "ARRAYS JS" || CursoMkt = "ARRAYS JS")
       {
          website := "https://www.udemy.com/course/mastering-javascript-arrays/learn/"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/JS-Arrays-d00d5b61063c4e009c3f763cd5061cff?pvs=4#c61684276e91400f95dcc194c2aefca1"
       }
       else if(Curso = "WEB ANALYTISC" || CursoWebDev = "WEB ANALYTISC" || CursoAll = "WEB ANALYTISC" | CursoOutros = "WEB ANALYTISC" || CursoMkt = "WEB ANALYTISC")
       {
          website := "https://www.udemy.com/course/webanalytics-completo-muito-alem-do-google-analytics/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/GA3-Udemy-2b20d3b404c646a8b68376f7f8ea179e?pvs=4#694be6e93d9b4b918017fdf37094b57d"
       }
       else if(Curso = "COMPLETE JS" || CursoWebDev = "COMPLETE JS" || CursoAll = "COMPLETE JS" | CursoOutros = "COMPLETE JS" || CursoMkt = "COMPLETE JS")
       {
          website := "https://www.udemy.com/course/the-complete-javascript-course/learn/lecture"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Complete-JS-C-c245dd6c4f9a43f8832dc64885b1e825?pvs=4#80de55c25c834079953f41663a137ced"
       }
       else if(Curso = "JS FULL STACK" || CursoWebDev = "JS FULL STACK" || CursoAll = "JS FULL STACK" | CursoOutros = "JS FULL STACK" || CursoMkt = "JS FULL STACK")
       {
          website := "https://www.udemy.com/course/learn-javascript-full-stack-from-scratch/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Node-JS-ac151bb66604406fb76348d6fac43776?pvs=4#d8995e38ced9466f88778e8328c022ef"
       }
       else if(Curso = "AJAX" || CursoWebDev = "AJAX" || CursoAll = "AJAX" | CursoOutros = "AJAX" || CursoMkt = "AJAX")
       {
          website := "https://www.udemy.com/course/ajax-fundamentals/learn/lecture/"
-      }
-      else if(Curso = "GOOGLE APPS SCRIPT" || CursoWebDev = "GOOGLE APPS SCRIPT" || CursoAll = "GOOGLE APPS SCRIPT" | CursoOutros = "GOOGLE APPS SCRIPT" || CursoMkt = "GOOGLE APPS SCRIPT")
-      {
-         website := "https://www.udemy.com/course-dashboard-redirect/?course_id=3646911"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Ajax-a44cb3846172447fb20fbe658abec493?pvs=4#03cb8b5860ab4bfb8b51c3167c143077"
       }
       else if(Curso = "GOOGLE APPS SCRIPT" || CursoWebDev = "GOOGLE APPS SCRIPT" || CursoAll = "GOOGLE APPS SCRIPT" | CursoOutros = "GOOGLE APPS SCRIPT" || CursoMkt = "GOOGLE APPS SCRIPT")
       {
          website := "https://www.udemy.com/course/course-apps-script/learn/"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Google-Apps-Script-d7d4ecbc058c40108576de160a0f8942?pvs=4#88e8a5c8c6764fd085698c93c58be04d"
       }
       else if(Curso = "DATA STUDIO 1" || CursoWebDev = "DATA STUDIO 1" || CursoAll = "DATA STUDIO 1" | CursoOutros = "DATA STUDIO 1" || CursoMkt = "DATA STUDIO 1")
       {
          website := "https://www.udemy.com/course/domine-google-data-studio/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
       }
       else if(Curso = "DATA STUDIO 2" || CursoWebDev = "DATA STUDIO 2" || CursoAll = "DATA STUDIO 2" | CursoOutros = "DATA STUDIO 2" || CursoMkt = "DATA STUDIO 2")
       {
          website := "https://www.udemy.com/course/data-analysis-and-dashboards-with-google-data-studio/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
       }
       else if(Curso = "BIG QUERY" || CursoWebDev = "BIG QUERY" || CursoAll = "BIG QUERY" | CursoOutros = "BIG QUERY" || CursoMkt = "BIG QUERY")
       {
          website := "https://www.udemy.com/course/applied-sql-for-data-analytics-data-science-with-bigquery/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Big-Query-020d06067e154efa81ab7081f4f0b56c?pvs=4#b256df39ab3e4b40abd422eed10e71fe"
       }
       else if(Curso = "POWER BI 1" || CursoWebDev = "POWER BI 1" || CursoAll = "POWER BI 1" | CursoOutros = "POWER BI 1" || CursoMkt = "POWER BI 1")
       {
          website := "https://www.udemy.com/course/power-bi-completo-do-basico-ao-avancado/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Power-BI-2f9229501549428f95e8ae5a410c51ca?pvs=4#2e615e5e0bfe4b0ba73bf35f1522cd654"
       }
       else if(Curso = "REGEX" || CursoWebDev = "REGEX" || CursoAll = "REGEX" | CursoOutros = "REGEX" || CursoMkt = "REGEX")
       {
          website := "https://www.udemy.com/course/mastering-regular-expressions-in-javascript/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/RegExp-JS-d9b4e89ab9584f2daef737e3156fe4b1?pvs=4"
       }
       else if(Curso = "NGINX1" || CursoWebDev = "NGINX1" || CursoAll = "NGINX1" | CursoOutros = "NGINX1" || CursoMkt = "NGINX1")
       {
          website := "https://www.udemy.com/course/nginx-fundamentals/learn"
-         notion := "notion://www.notion.so/lullio/NGINX-8d3e67e6771742eaa474ca72253d93d1?pvs=4#b84456c982f74fb6b1ff5e23064a579b"
+         notion := "notion://www.notion.so/lullio/NGINX-8d3e67e6771742eaa474ca72253d93d1?pvs=4#fcd59bbd427843fbb40099b6957e9be8"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
       }
       else if(Curso = "NGINX2" || CursoWebDev = "NGINX2" || CursoAll = "NGINX2" | CursoOutros = "NGINX2" || CursoMkt = "NGINX2")
       {
          website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
-      }else{
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/NGINX-7ba5972d67354b4fa8885adfcb6a7ccf?pvs=4#01dc417ce3364b2395bbe81693d2336a"
+      }
+      else if(Curso = "GTM1" || CursoWebDev = "GTM1" || CursoAll = "GTM1" | CursoOutros = "GTM1" || CursoMkt = "GTM1")
+      {
+         gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+         if !FileExist(gtm1Folder)
+         {
+            gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+         }
+         website = Run %gtm1Folder%
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Google-Tag-Manager-5cb91cdde3e943f9b2b05a43e38237c1?pvs=4#37281bf8a5b54405885e2d16aac97806"
+      }
+      else if(Curso = "GTM2" || CursoWebDev = "GTM2" || CursoAll = "GTM2" | CursoOutros = "GTM2" || CursoMkt = "GTM2")
+      {
+         gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+         if !FileExist(gtm2Folder)
+         {
+            gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+         }
+         website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Google-Tag-Manager-5cb91cdde3e943f9b2b05a43e38237c1?pvs=4#fa0f4c0ad533433eb3b2f6e439623d76"
+      }
+      else if(Curso = "GA4" || CursoWebDev = "GA4" || CursoAll = "GA4" | CursoOutros = "GA4" || CursoMkt = "GA4")
+      {
+         GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
+         if !FileExist(gtm1Folder)
+         {
+           GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
+         }
+         website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/GA4-AM-2c2c777ac2a04c388a5ef9bbaea2259d?pvs=4#c962d7277c754ce88b987e179122b521"
+      }
+      else{
          website := "none"
       }
 Return
