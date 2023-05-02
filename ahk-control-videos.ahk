@@ -71,7 +71,7 @@ ListOutrosCourses := RTrim(ListOutrosCourses, "|")
 ListOutrosCourses := StrReplace(ListOutrosCourses, "|", "||",, 1) ; without default item
 
 Gui, Destroy
-Gui,+AlwaysOnTop +Owner
+Gui,+AlwaysOnTop ; +Owner
 gui, font, S11 ;Change font size to 12
 
 /*
@@ -133,41 +133,25 @@ website := "udemy.com"
       SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
       */
       ; PageInst.Call("Page.bringToFront")
-
-      ; PAUSAR E PLAY VIDEO
-      FileRead, javascriptPlay, pause-play-video.js
-
-      ; FAST-FORWARD VIDEO
-      FileRead, javascriptMoveUp, video-fast-forward.js
-      ; REWIND VIDEO
-      FileRead, javascriptMoveDown, video-rewind.js
-
-      ; AUMENTAR VELOCIDADE
-      FileRead, javascriptSpeedPlus, speed-increase.js
-      ; DIMINUIR VELOCIDADE
-      FileRead, javascriptSpeedMinus, speed-decrease.js
-
-      ; PRÓXIMO VÍDEO
-      FileRead, javascriptPreviousVideo, go-previous-video.js
-      ; VIDEO ANTERIOR
-      FileRead, javascriptNextVideo, go-next-video.js
-
       alt & l::
       Process, Exist, vlc.exe
       if !pid := ErrorLevel
          {
             Notify().AddWindow("O método de pausar vai ser usado no Chrome somente.",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; MÉTODO DE PAUSAR NO CHROME
+            ; PAUSAR E PLAY VIDEO
+            FileRead, javascriptPlay, pause-play-video.js
             PageInst.Evaluate(javascriptPlay)
             PageInst.Call("Page.bringToFront")
-            WinActivate, Chrome
+            ; WinActivate, Chrome
          }
       else if !WinActive("AHK_PID " pid)
          {
             Notify().AddWindow("O método de pausar vai ser usado somente no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; MÉTODO DE PAUSAR NO VLC
-            WinActivate, AHK_PID %pid%
+            
             ControlSend,Qt5QWindowIcon7,{space},ahk_exe vlc.exe
+            ; MÉTODO DE PAUSAR NO VLC
+            ; WinActivate, AHK_PID %pid%
             SetTitleMatchMode, 2
             IfWinActive, Reprodutor de Mídias VLC
             Send, {Space}
@@ -181,6 +165,8 @@ website := "udemy.com"
          {
             Notify().AddWindow("O método de aumentar velocidade vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; MÉTODO AUMENTAR VELOCIDADE
+            ; AUMENTAR VELOCIDADE
+            FileRead, javascriptSpeedPlus, speed-increase.js
             PageInst.Evaluate(javascriptSpeedPlus)
             PageInst.Call("Page.bringToFront")
             WinActivate, Chrome
@@ -203,6 +189,8 @@ website := "udemy.com"
          {
             Notify().AddWindow("O método de diminuir velocidade vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; MÉTODO DIMNIUIR VELOCIDADE
+            ; DIMINUIR VELOCIDADE
+            FileRead, javascriptSpeedMinus, speed-decrease.js
             PageInst.Evaluate(javascriptSpeedMinus)
             PageInst.Call("Page.bringToFront")
          }
@@ -224,6 +212,8 @@ website := "udemy.com"
          {
             Notify().AddWindow("O método de retroceder video vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; RETROCEDER O VIDEO
+            ; REWIND VIDEO
+            FileRead, javascriptMoveDown, video-rewind.js
             PageInst.Evaluate(javascriptMoveDown)
             PageInst.Call("Page.bringToFront")
          }
@@ -242,6 +232,8 @@ website := "udemy.com"
          {
             Notify().AddWindow("O método de avançar video vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; AVANÇAR O VIDEO
+            ; FAST-FORWARD VIDEO
+            FileRead, javascriptMoveUp, video-fast-forward.js
             PageInst.Evaluate(javascriptMoveUp)
             PageInst.Call("Page.bringToFront")
          }
@@ -260,6 +252,8 @@ website := "udemy.com"
          {
             Notify().AddWindow("O método de pular video vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PULAR O VIDEO
+            ; PRÓXIMO VÍDEO
+            FileRead, javascriptNextVideo, go-next-video.js
             PageInst.Evaluate(javascriptNextVideo)
             PageInst.Call("Page.bringToFront")
          }
@@ -278,6 +272,8 @@ website := "udemy.com"
          {
             Notify().AddWindow("O método de previous video vai ser usado no Chrome somente.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:15, Size:15, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PREVIOUS VIDEO
+            ; VIDEO ANTERIOR
+            FileRead, javascriptPreviousVideo, go-previous-video.js
             PageInst.Evaluate(javascriptPreviousVideo)
             PageInst.Call("Page.bringToFront")
          }
@@ -398,14 +394,14 @@ if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curs
    */
    PageInst.Call("Page.bringToFront")
 }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
-   Run %gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf
+   Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
    Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
 }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
-   Run %gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf
-   Run %gtm2Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+   Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+   Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
 }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
-   Run %GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf
-   Run %GA4Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+   Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+   Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
 }else{
    Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR") 
 }
@@ -540,7 +536,7 @@ Gui, Submit, NoHide
       else if(Curso = "GA4" || CursoWebDev = "GA4" || CursoAll = "GA4" | CursoOutros = "GA4" || CursoMkt = "GA4")
       {
          GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
-         if !FileExist(gtm1Folder)
+         if !FileExist(GA4Folder)
          {
            GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
          }
