@@ -123,7 +123,7 @@ website := "udemy.com"
  ; se não encontrar aba chrome com remote debug
  if !(PageInst := Chrome.GetPageByURL(website, "contains"))
    {
-      
+      GoSub, controlVideos
    }else{
       Sleep, 500
       ; aqui está o fix pra esperar a página carregar
@@ -133,177 +133,7 @@ website := "udemy.com"
       SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
       */
       ; PageInst.Call("Page.bringToFront")
-      alt & l:: ; pausar e play
-      Process, Exist, vlc.exe
-      if !pid := ErrorLevel
-         {
-            Notify().AddWindow("O método de pausar foi usado no CHROME.",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; MÉTODO DE PAUSAR NO CHROME
-            ; PAUSAR E PLAY VIDEO
-            FileRead, javascriptPlay, pause-play-video.js
-            PageInst.Evaluate(javascriptPlay)
-            PageInst.Call("Page.bringToFront")
-            ; WinActivate, Chrome
-         }
-      else if !WinActive("AHK_PID " pid)
-         {
-            Notify().AddWindow("O método de pausar foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            
-            ControlSend,Qt5QWindowIcon7,{space},ahk_exe vlc.exe
-            ; MÉTODO DE PAUSAR NO VLC
-            ; WinActivate, AHK_PID %pid%
-            SetTitleMatchMode, 2
-            IfWinActive, Reprodutor de Mídias VLC
-            Send, {Space}
-         }      
-      Return
-
-      Alt & =:: ; aumentar velocidade
-      Process, Exist, vlc.exe
-      if !pid := ErrorLevel
-         {
-            Notify().AddWindow("O método de aumentar velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; MÉTODO AUMENTAR VELOCIDADE
-            ; AUMENTAR VELOCIDADE
-            FileRead, javascriptSpeedPlus, speed-increase.js
-            PageInst.Evaluate(javascriptSpeedPlus)
-            PageInst.Call("Page.bringToFront")
-            WinActivate, Chrome
-         }
-      else if !WinActive("AHK_PID " pid)
-         {
-            Notify().AddWindow("O método de aumentar velocidade foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; MÉTODO AUMENTAR VELOCIDADE NO VLC
-            WinActivate, AHK_PID %pid%
-            ControlSend,Qt5QWindowIcon7,{=},ahk_exe vlc.exe ;Send =
-            SetTitleMatchMode, 2
-            IfWinActive, Reprodutor de Mídias VLC
-            Send, {=}
-         }
-      Return
-
-      Alt & -:: ; diminuir velocidade
-      Process, Exist, vlc.exe
-      if !pid := ErrorLevel
-         {
-            Notify().AddWindow("O método de diminuir velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; MÉTODO DIMNIUIR VELOCIDADE
-            ; DIMINUIR VELOCIDADE
-            FileRead, javascriptSpeedMinus, speed-decrease.js
-            PageInst.Evaluate(javascriptSpeedMinus)
-            PageInst.Call("Page.bringToFront")
-         }
-      else if !WinActive("AHK_PID " pid)
-         {
-            Notify().AddWindow("O método de diminuir velocidade foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; MÉTODO DIMNIUIR VELOCIDADE NO VLC
-            WinActivate, AHK_PID %pid%
-            ControlSend,Qt5QWindowIcon7,{-},ahk_exe vlc.exe ;Send -
-            SetTitleMatchMode, 2
-            IfWinActive, Reprodutor de Mídias VLC
-            Send, {-}
-         }
-      Return
-
-      Alt & Left:: ; voltar 3 segundos
-      Process, Exist, vlc.exe
-      if !pid := ErrorLevel
-         {
-            Notify().AddWindow("O método de retroceder video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; RETROCEDER O VIDEO
-            ; REWIND VIDEO
-            FileRead, javascriptMoveDown, video-rewind.js
-            PageInst.Evaluate(javascriptMoveDown)
-            PageInst.Call("Page.bringToFront")
-         }
-      else if !WinActive("AHK_PID " pid)
-         {
-            Notify().AddWindow("O método de retroceder video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; RETROCEDER O VIDEO NO VLC
-            SetKeyDelay, 0, 50
-            ControlSend,Qt5QWindowIcon7,+{left},ahk_exe vlc.exe 
-         }
-      Return
-
-      Alt & Right:: ; avancar 3 segundos
-      Process, Exist, vlc.exe
-      if !pid := ErrorLevel
-         {
-            Notify().AddWindow("O método de avançar video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; AVANÇAR O VIDEO
-            ; FAST-FORWARD VIDEO
-            FileRead, javascriptMoveUp, video-fast-forward.js
-            PageInst.Evaluate(javascriptMoveUp)
-            PageInst.Call("Page.bringToFront")
-         }
-      else if !WinActive("AHK_PID " pid)
-         {
-            Notify().AddWindow("O método de avançar video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; AVANÇAR O VIDEO NO VLC
-            SetKeyDelay, 0, 50
-            ControlSend,Qt5QWindowIcon7,+{Right},ahk_exe vlc.exe 
-         }
-      Return
-
-      Alt & End:: ; proximo video
-      Process, Exist, vlc.exe
-      if !pid := ErrorLevel
-         {
-            Notify().AddWindow("O método de pular video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; PULAR O VIDEO
-            ; PRÓXIMO VÍDEO
-            FileRead, javascriptNextVideo, go-next-video.js
-            PageInst.Evaluate(javascriptNextVideo)
-            PageInst.Call("Page.bringToFront")
-         }
-      else if !WinActive("AHK_PID " pid)
-         {
-            Notify().AddWindow("O método de pular video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; PULAR O VIDEO NO VLC
-            SetKeyDelay, 0, 50
-            ControlSend,Qt5QWindowIcon7,{n},ahk_exe vlc.exe 
-         }
-      Return
-
-      Alt & Home:: ; video anterior
-      Process, Exist, vlc.exe
-      if !pid := ErrorLevel
-         {
-            Notify().AddWindow("O método de previous video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; PREVIOUS VIDEO
-            ; VIDEO ANTERIOR
-            FileRead, javascriptPreviousVideo, go-previous-video.js
-            PageInst.Evaluate(javascriptPreviousVideo)
-            PageInst.Call("Page.bringToFront")
-         }
-      else if !WinActive("AHK_PID " pid)
-         {
-            Notify().AddWindow("O método de previous video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; PREVIOUS VIDEO NO VLC
-            SetKeyDelay, 0, 50
-            ControlSend,Qt5QWindowIcon7,{p},ahk_exe vlc.exe 
-         }
-      Return
-
-      Alt & k:: ; habilitar desabilitar legenda
-      Process, Exist, vlc.exe
-      if !pid := ErrorLevel
-         {
-            Notify().AddWindow("O método de legenda video foi usado no CHROME",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; PREVIOUS VIDEO
-            ; VIDEO ANTERIOR
-            FileRead, javascriptLegendaVideo, legenda-video.js
-            PageInst.Evaluate(javascriptLegendaVideo)
-            PageInst.Call("Page.bringToFront")
-         }
-      else if !WinActive("AHK_PID " pid)
-         {
-            Notify().AddWindow("O método de legenda video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            ; PREVIOUS VIDEO NO VLC
-            SetKeyDelay, 0, 50
-            ControlSend,Qt5QWindowIcon7,{v},ahk_exe vlc.exe 
-         }
-      Return
+      GoSub, controlVideos
    }
 
 /* TRATAMENTO DOS DROPDOWN, PARA QUANDO VC ESCREVER O NOME DO CURSO JÁ PREENCHER O CURSO AUTOMATICAMENTE NO DROPDOWN
@@ -566,4 +396,179 @@ Gui, Submit, NoHide
       else{
          website := "none"
       }
+Return
+
+; CONTROL VIDEOS
+controlVideos:
+alt & l:: ; pausar e play
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de pausar foi usado no CHROME.",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO DE PAUSAR NO CHROME
+            ; PAUSAR E PLAY VIDEO
+            FileRead, javascriptPlay, pause-play-video.js
+            PageInst.Evaluate(javascriptPlay)
+            PageInst.Call("Page.bringToFront")
+            ; WinActivate, Chrome
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de pausar foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            
+            ControlSend,Qt5QWindowIcon7,{space},ahk_exe vlc.exe
+            ; MÉTODO DE PAUSAR NO VLC
+            ; WinActivate, AHK_PID %pid%
+            SetTitleMatchMode, 2
+            IfWinActive, Reprodutor de Mídias VLC
+            Send, {Space}
+         }      
+      Return
+
+      Alt & =:: ; aumentar velocidade
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de aumentar velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO AUMENTAR VELOCIDADE
+            ; AUMENTAR VELOCIDADE
+            FileRead, javascriptSpeedPlus, speed-increase.js
+            PageInst.Evaluate(javascriptSpeedPlus)
+            PageInst.Call("Page.bringToFront")
+            ; WinActivate, Chrome
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de aumentar velocidade foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO AUMENTAR VELOCIDADE NO VLC
+            WinActivate, AHK_PID %pid%
+            ControlSend,Qt5QWindowIcon7,{=},ahk_exe vlc.exe ;Send =
+            SetTitleMatchMode, 2
+            IfWinActive, Reprodutor de Mídias VLC
+            Send, {=}
+         }
+      Return
+
+      Alt & -:: ; diminuir velocidade
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            ; MÉTODO DIMNIUIR VELOCIDADE
+            ; DIMINUIR VELOCIDADE
+            FileRead, javascriptSpeedMinus, speed-decrease.js
+            videoSpeed := PageInst.Evaluate(javascriptSpeedMinus)
+            Notify().AddWindow("O método de diminuir velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto ",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de diminuir velocidade foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; MÉTODO DIMNIUIR VELOCIDADE NO VLC
+            WinActivate, AHK_PID %pid%
+            ControlSend,Qt5QWindowIcon7,{-},ahk_exe vlc.exe ;Send -
+            SetTitleMatchMode, 2
+            IfWinActive, Reprodutor de Mídias VLC
+            Send, {-}
+         }
+      Return
+
+      Alt & Left:: ; voltar 3 segundos
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de retroceder video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; RETROCEDER O VIDEO
+            ; REWIND VIDEO
+            FileRead, javascriptMoveDown, video-rewind.js
+            PageInst.Evaluate(javascriptMoveDown)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de retroceder video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; RETROCEDER O VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,+{left},ahk_exe vlc.exe 
+         }
+      Return
+
+      Alt & Right:: ; avancar 3 segundos
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de avançar video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; AVANÇAR O VIDEO
+            ; FAST-FORWARD VIDEO
+            FileRead, javascriptMoveUp, video-fast-forward.js
+            PageInst.Evaluate(javascriptMoveUp)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de avançar video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; AVANÇAR O VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,+{Right},ahk_exe vlc.exe 
+         }
+      Return
+
+      Alt & End:: ; proximo video
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de pular video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PULAR O VIDEO
+            ; PRÓXIMO VÍDEO
+            FileRead, javascriptNextVideo, go-next-video.js
+            PageInst.Evaluate(javascriptNextVideo)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de pular video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PULAR O VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,{n},ahk_exe vlc.exe 
+         }
+      Return
+
+      Alt & Home:: ; video anterior
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de previous video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PREVIOUS VIDEO
+            ; VIDEO ANTERIOR
+            FileRead, javascriptPreviousVideo, go-previous-video.js
+            PageInst.Evaluate(javascriptPreviousVideo)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de previous video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PREVIOUS VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,{p},ahk_exe vlc.exe 
+         }
+      Return
+
+      Alt & k:: ; habilitar desabilitar legenda
+      Process, Exist, vlc.exe
+      if !pid := ErrorLevel
+         {
+            Notify().AddWindow("O método de legenda video foi usado no CHROME",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PREVIOUS VIDEO
+            ; VIDEO ANTERIOR
+            FileRead, javascriptLegendaVideo, legenda-video.js
+            PageInst.Evaluate(javascriptLegendaVideo)
+            PageInst.Call("Page.bringToFront")
+         }
+      else if !WinActive("AHK_PID " pid)
+         {
+            Notify().AddWindow("O método de legenda video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; PREVIOUS VIDEO NO VLC
+            SetKeyDelay, 0, 50
+            ControlSend,Qt5QWindowIcon7,{v},ahk_exe vlc.exe 
+         }
+      Return
 Return
