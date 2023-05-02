@@ -1,6 +1,6 @@
 // capturar o video
 {
-let video = document.getElementsByTagName('video')[0];
+var video = document.getElementsByTagName('video')[0];
 
 // avançar video, parametro com valor padrao de 3 segundos, caso nao passe um argumento na funcao
 function skip(value = 3) {

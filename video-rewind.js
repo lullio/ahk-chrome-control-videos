@@ -1,6 +1,6 @@
 // capturar o video
 {
-let video = document.getElementsByTagName('video')[0];
+var video = document.getElementsByTagName('video')[0];
 
 // voltar 3 segundos de video
 function rewind(value = 3) {
