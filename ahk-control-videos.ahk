@@ -177,7 +177,7 @@ Cursos:
       Case "Edit5":
          DropDownComplete(CursosIDOutros)
       Default:
-         MsgBox, nenhum control esta com foco
+         Notify().AddWindow("Nenhum control da gui esta com foco",{Time:3000,Icon:238, Background:"0xFFFB03",Title:"ALERTA",TitleSize:15, Size:15, Color: "0x524D4D", TitleColor: "0x3E3E3E"},,"setPosBR")
       }
       
 Return
@@ -400,7 +400,7 @@ Return
 
 ; CONTROL VIDEOS
 controlVideos:
-alt & l:: ; pausar e play
+      alt & l:: ; pausar e play
       Process, Exist, vlc.exe
       if !pid := ErrorLevel
          {
@@ -409,7 +409,7 @@ alt & l:: ; pausar e play
             ; PAUSAR E PLAY VIDEO
             FileRead, javascriptPlay, pause-play-video.js
             PageInst.Evaluate(javascriptPlay)
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
             ; WinActivate, Chrome
          }
       else if !WinActive("AHK_PID " pid)
@@ -434,7 +434,7 @@ alt & l:: ; pausar e play
             ; AUMENTAR VELOCIDADE
             FileRead, javascriptSpeedPlus, speed-increase.js
             PageInst.Evaluate(javascriptSpeedPlus)
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
             ; WinActivate, Chrome
          }
       else if !WinActive("AHK_PID " pid)
@@ -458,7 +458,7 @@ alt & l:: ; pausar e play
             FileRead, javascriptSpeedMinus, speed-decrease.js
             videoSpeed := PageInst.Evaluate(javascriptSpeedMinus)
             Notify().AddWindow("O método de diminuir velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto ",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
          }
       else if !WinActive("AHK_PID " pid)
          {
@@ -481,7 +481,7 @@ alt & l:: ; pausar e play
             ; REWIND VIDEO
             FileRead, javascriptMoveDown, video-rewind.js
             PageInst.Evaluate(javascriptMoveDown)
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
          }
       else if !WinActive("AHK_PID " pid)
          {
@@ -501,7 +501,7 @@ alt & l:: ; pausar e play
             ; FAST-FORWARD VIDEO
             FileRead, javascriptMoveUp, video-fast-forward.js
             PageInst.Evaluate(javascriptMoveUp)
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
          }
       else if !WinActive("AHK_PID " pid)
          {
@@ -521,7 +521,7 @@ alt & l:: ; pausar e play
             ; PRÓXIMO VÍDEO
             FileRead, javascriptNextVideo, go-next-video.js
             PageInst.Evaluate(javascriptNextVideo)
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
          }
       else if !WinActive("AHK_PID " pid)
          {
@@ -541,7 +541,7 @@ alt & l:: ; pausar e play
             ; VIDEO ANTERIOR
             FileRead, javascriptPreviousVideo, go-previous-video.js
             PageInst.Evaluate(javascriptPreviousVideo)
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
          }
       else if !WinActive("AHK_PID " pid)
          {
@@ -561,7 +561,7 @@ alt & l:: ; pausar e play
             ; VIDEO ANTERIOR
             FileRead, javascriptLegendaVideo, legenda-video.js
             PageInst.Evaluate(javascriptLegendaVideo)
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
          }
       else if !WinActive("AHK_PID " pid)
          {
