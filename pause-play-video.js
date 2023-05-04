@@ -4,10 +4,10 @@ var video = document.querySelectorAll('video')[0];
 /*
 FIX TOP QUE ARRUMEI PARA NÃO RESETAR O playbackRate ao dar play no video
 */
-video.onplay = (e) => {
-	e.target.playbackRate = localStorage.getItem('videoSpeed');
-	console.log("playbackRate ajustado para: ", e.target.playbackRate)
-}
+	video.onplay = (e) => {
+		e.target.playbackRate = localStorage.getItem('videoSpeed');
+		console.log("playbackRate ajustado para: ", e.target.playbackRate)
+	}
 	
 // TOGGLE PAUSAR / PLAY
 if(video.paused){ // se tiver pausado, paused é um método js
