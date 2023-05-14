@@ -29,6 +29,7 @@ SkinForm(DLLPath,Param1 = "Apply", SkinName = ""){
 	}
 }
 
+
 /* SCRIPT COMEÇA AQUI
 */
 ; !PRINCIPAIS CURSOS
@@ -74,7 +75,25 @@ ListOutrosCourses := StrReplace(ListOutrosCourses, "|", "||",, 1) ; without defa
 Gui, Destroy
 Gui,+AlwaysOnTop ; +Owner
 gui, font, S11 ;Change font size to 12
+/*
+MENU BAR
+*/
+Menu, FileMenu, Add, &Novo Curso`tCtrl+N, MenuFileOpen 
+Menu, FileMenu, Add, &Sair, MenuHandler
 
+Menu, EditMenu, Add, Copy`tCtrl+C, MenuHandler
+Menu, EditMenu, Add, Past`tCtrl+V, MenuHandler
+Menu, EditMenu, Add ; with no more options, this is a seperator
+Menu, EditMenu, Add, Delete`tDel, MenuHandler
+
+Menu, HelpMenu, Add, &Sobre o programa, MenuHandler
+Menu, HelpMenu, Add, &Desenvolvedor, MenuHandler
+
+; Attach the sub-menus that were created above.
+Menu, MyMenuBar, Add, &Arquivo, :FileMenu
+Menu, MyMenuBar, Add, &Editar, :EditMenu
+Menu, MyMenuBar, Add, &Ajuda, :HelpMenu
+Gui, Menu, MyMenuBar ; Attach MyMenuBar to the GUI
 /*
 LINHA 1 - SEPARADO - PRINCIPAIS CURSOS
 */
@@ -114,7 +133,7 @@ gui, Add, Button, w75 x+10 gCancel Cancel, &Cancelar
 
 ; EXIBIR E ATIVAR GUI
 GuiControl,Focus,Curso
-Gui, Show,, Abrir Curso e Control Video - Felipe Lulio
+Gui, Show,, Abrir Curso e Controlar Video - Felipe Lulio
 
 ; Ignorar o erro que o ahk dá e continuar executando o script
 ComObjError(false)
@@ -136,6 +155,32 @@ website := "udemy.com"
       ; PageInst.Call("Page.bringToFront")
       GoSub, controlVideos
    }
+
+/*
+TRATAMENTO DO MENU BAR
+*/
+MenuHandler:
+; MsgBox, %A_ThisMenuItem%
+return
+MenuFileOpen:
+; MsgBox, Open Menu was clicked
+Gui, NovoCurso:New, +AlwaysOnTop -Resize -MinimizeBox -MaximizeBox, Cadastrar Novo Curso - Felipe Lullio
+
+Gui, NovoCurso:Add, Text,center h20 +0x200 section, Link do Curso:
+Gui, NovoCurso:Add, Edit, x+12 w368 vLinkNovoCurso
+
+Gui, NovoCurso:Add, Text,xs center h20 +0x200 section, Nome do Curso:
+Gui, NovoCurso:Add, Edit, vNomeNovoCurso w100 x+5
+
+Gui, NovoCurso:Add, Text, ys x+5 center h20 +0x200 section, Categoria:
+Gui, NovoCurso:Add, ComboBox, vCategoriaNovoCurso gCursos w100 hwndCursosIDAll ys x+5, Developer|Marketing
+Gui, NovoCurso:Add, Checkbox,Checked1 x+15 center h20 +0x200, Curso Principal?
+
+gui, font, S13 ;Change font size to 12
+gui, NovoCurso:Add, Button, center y+15 x120 w200 h25 gCadastrarCurso Default, &Cadastrar Curso
+Gui, NovoCurso:Show, xCenter yCenter
+ControlFocus, Edit1, Cadastrar Novo Curso - Felipe Lullio
+return
 
 /* TRATAMENTO DOS DROPDOWN, PARA QUANDO VC ESCREVER O NOME DO CURSO JÁ PREENCHER O CURSO AUTOMATICAMENTE NO DROPDOWN
 */
@@ -208,6 +253,19 @@ AbrirNotion:
    }
 return
 
+CadastrarCurso:
+   Gui, Submit, NoHide
+   msgbox %ListAllCourses%
+   msgbox %NomeNovoCurso%
+   ListAllCourses .= "|"NomeNovoCurso
+   msgbox %ListAllCourses%
+   ; atualizar combobox, refill
+   ; vCursoAll gCursos w150 hwndCursosIDAll, %ListAllCourses%
+
+   ; SOLUÇÃO PARA EDITAR A PRIMEIRA GUI, QUE NÃO TEM NOME :1'2'1\
+   GuiControl,1:, CursoAll , %ListAllCourses%
+   ; GuiControl,,hwndCursosIDAll,"|"%ListAllCourses%
+Return
 AbrirCurso:
    Gui, Submit, NoHide
    ComObjError(false)
