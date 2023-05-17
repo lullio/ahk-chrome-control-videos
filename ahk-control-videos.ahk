@@ -478,7 +478,8 @@ controlVideos:
       else if !WinActive("AHK_PID " pid)
          {
             ; Sleep, 400
-            ControlSend,Qt5QWindowIcon7,{space},ahk_exe vlc.exe
+            ; ControlSend,Qt5QWindowIcon7,{space},ahk_exe vlc.exe
+            ControlSend,,{space},ahk_exe vlc.exe
             Notify().AddWindow("O método de pausar foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; MÉTODO DE PAUSAR NO VLC
             ; WinActivate, AHK_PID %pid%
