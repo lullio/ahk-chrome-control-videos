@@ -14,7 +14,7 @@ StylesPath=C:\Users\%A_UserName%\Documents\Github\AHK\secondary-scripts\ahk-styl
 
 ; melhores dark: cosmo, lakrits
 ; melhores light: MacLion3, Milikymac, Panther, Milk, Luminous, fanta, invoice
-SkinForm(DLLPath,Apply, StylesPath "\Panther.msstyles") ; cosmo. msstyles
+SkinForm(DLLPath,Apply, StylesPath "\Milk.msstyles") ; cosmo. msstyles
 
 
 	; Gosub, Gui
@@ -35,7 +35,7 @@ SkinForm(DLLPath,Param1 = "Apply", SkinName = ""){
 ; !PRINCIPAIS CURSOS
 ListMainCourses =
 (
-None|NGINX1||NGINX2|DOM1|DOM2|ARRAYS JS|ASYNC JS|FUNC JS|AJAX|GOOGLE APPS SCRIPT|GTM1|GTM2|GA4
+Nenhum|Java|Web Analytics|Git|Android
 )
 ListMainCourses := RTrim(ListMainCourses, "|")
 ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default item
@@ -43,7 +43,7 @@ ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default 
 ; ! TODOS OS CURSOS
 ListAllCourses =
 (
-None|DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT|DATA STUDIO 1|DATA STUDIO 2|BIG QUERY|POWER BI 1|NGINX1|NGINX2|GTM1|GTM2|GA4
+   Nenhum|Java|Web Analytics|Git|Android|Excel|Power BI|Designer Gráfico
 )
 ListAllCourses := RTrim(ListAllCourses, "|")
 ListAllCourses := StrReplace(ListAllCourses, "|", "||",, 1) ; without default item
@@ -51,7 +51,7 @@ ListAllCourses := StrReplace(ListAllCourses, "|", "||",, 1) ; without default it
 ; ! WEB DEV COURSES - JAVASCRIPT
 ListWebCourses =
 (
-None|DOM1|DOM2|REGEX|ASYNC JS|FUNC JS|ARRAYS JS|COMPLETE JS|JS FULL STACK|AJAX|GOOGLE APPS SCRIPT
+   Nenhum|Java|Git|Android
 )
 ListWebCourses := RTrim(ListWebCourses, "|")
 ListWebCourses := StrReplace(ListWebCourses, "|", "||",, 1) ; without default item
@@ -59,7 +59,7 @@ ListWebCourses := StrReplace(ListWebCourses, "|", "||",, 1) ; without default it
 ; ! MARKETING COURSES - TAGUEAMENTO
 ListMktCourses =
 (
-None|BIG QUERY|DATA STUDIO 1|DATA STUDIO 2|POWER BI 1|NGINX1|NGINX2|WEB ANALYTICS|GTM1|GTM2|GA4
+   Nenhum|Web Analytics|Excel|Power BI|Designer Gráfico
 )
 ListMktCourses := RTrim(ListMktCourses, "|")
 ListMktCourses := StrReplace(ListMktCourses, "|", "||",, 1) ; without default item
@@ -67,7 +67,7 @@ ListMktCourses := StrReplace(ListMktCourses, "|", "||",, 1) ; without default it
 ; ! OUTROS CURSOS - WEB SERVER / LINUX
 ListOutrosCourses =
 (
-None|NGINX1|NGINX2
+   Nenhum|Excel|Power BI|Designer Gráfico|SCRUM
 )
 ListOutrosCourses := RTrim(ListOutrosCourses, "|")
 ListOutrosCourses := StrReplace(ListOutrosCourses, "|", "||",, 1) ; without default item
@@ -98,27 +98,27 @@ Gui, Menu, MyMenuBar ; Attach MyMenuBar to the GUI
 LINHA 1 - SEPARADO - PRINCIPAIS CURSOS
 */
 ; dropdown 1 - principais cursos
-Gui Add, Text,section y+10 x+100, Main Courses
+Gui Add, Text,section y+10 x+100, Principais Cursos
 Gui, Add, ComboBox, x10 y+10 w312 vCurso gCursos hwndCursosIDMain, %ListMainCourses%
 
 /*
 COLUNA 1
 */
 ; dropdown 2 - web dev cursos
-Gui Add, Text, section x10,Web Dev Courses
+Gui Add, Text, section x10, Cursos Web Dev
 Gui, Add, ComboBox, vCursoWebDev gCursos hwndCursosIDDev w150, %ListWebCourses%
 ; dropdown 3 - todos os cursos
-Gui Add, Text,, All Courses
+Gui Add, Text,, Todos Cursos
 Gui, Add, ComboBox, vCursoAll gCursos w150 hwndCursosIDAll, %ListAllCourses%
 
 /*
 COLUNA 2
 */
 ; dropdown 4 - mkt cursos
-Gui Add, Text, ys, Mkt Courses
+Gui Add, Text, ys, Cursos de Marketing
 Gui, Add, ComboBox, w150 vCursoMkt gCursos hwndCursosIDMkt , %ListMktCourses%
 ; dropdown 5 - outros cursos
-Gui Add, Text,, Other Courses
+Gui Add, Text,, Outros Cursos
 Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w150, %ListOutrosCourses%
 
 ; gui, font, S7 ;Change font size to 12
@@ -127,8 +127,8 @@ Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w150, %ListOutrosCou
 
 ; Botões
 gui, font, S11
-gui, Add, Button, xs w100 gAbrirCurso Default, &Abrir Curso
-gui, Add, Button, w100 x+10 gAbrirNotion, &Abrir Notion
+gui, Add, Button, xs w120 gAbrirCurso Default, &Abrir Curso
+gui, Add, Button, w120 x+10 gAbrirNotion, &Abrir Anotações
 gui, Add, Button, w75 x+10 gCancel Cancel, &Cancelar
 
 ; EXIBIR E ATIVAR GUI
@@ -236,7 +236,7 @@ return
 */
 AbrirNotion:
    Gui, Submit, NoHide
-   needle := "None"
+   needle := "Nenhum"
    regexp := RegExMatch(Curso, needle)
 
    if(RegExMatch(curso, needle))
@@ -285,7 +285,7 @@ AbrirCurso:
 ; CHAMAR O LABEL courseSelected
 Gosub, courseSelected
 ; msgbox %website%
-if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
+if !(website == "Nenhum") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
    ; se não encontrar aba chrome com remote debug
    if !(PageInst := Chrome.GetPageByURL(website, "contains"))
    {
@@ -303,9 +303,9 @@ if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curs
    SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
    */
    PageInst.Call("Page.bringToFront")
-}else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
-   Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-   Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+}else if(Curso == "SCRUM" || CursoWebDev == "SCRUM" || CursoAll == "SCRUM" || CursoOutros == "SCRUM" || CursoMkt == "SCRUM"){
+   Run vlc.exe "Y:\Season\Certificação Scrum Master Curso Preparatório COMPLETO\playlist.xspf"
+   ; Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
 }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
    Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
    Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
@@ -319,45 +319,46 @@ Return
 
 courseSelected:
 Gui, Submit, NoHide
-   if(Curso == "DOM1" || CursoWebDev == "DOM1" || CursoAll == "DOM1" | CursoOutros == "DOM1" || CursoMkt == "DOM1")
+;   Nenhum|Java||Web Analytics|Git|Android|Excel|Power BI|Designer Gráfico
+   if(Curso == "Java" || CursoWebDev == "Java" || CursoAll == "Java" | CursoOutros == "Java" || CursoMkt == "Java")
       {
-         website := "https://www.udemy.com/course/build-interactive-websites-1/learn"
+         website := "https://www.udemy.com/course/fundamentos-de-programacao-com-java/learn/"
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
          notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
       }
-      else if(Curso = "DOM2" || CursoWebDev = "DOM2" || CursoAll = "DOM2" | CursoOutros = "DOM2" || CursoMkt = "DOM2")
+      else if(Curso = "Power BI" || CursoWebDev = "Power BI" || CursoAll = "Power BI" | CursoOutros = "Power BI" || CursoMkt = "Power BI")
       {
-         website := "https://www.udemy.com/course/build-dynamic-websites-dom-2/learn"
+         website := "https://www.udemy.com/course/draft/3603742/learn/"
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
          notion := "notion://www.notion.so/lullio/JS-DOM-d4415aaf9eeb41769636c6ee16e18c7a?pvs=4#bc76b9d3415e4bb5909c12701a8b11e2"
       }
-      else if(Curso = "ASYNC JS" || CursoWebDev = "ASYNC JS" || CursoAll = "ASYNC JS" | CursoOutros = "ASYNC JS" || CursoMkt = "ASYNC JS")
-      {
-         website := "https://www.udemy.com/course/asynchronous-javascript-deep-dive/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/JS-Async-b1e1ff048ba446b9a750c99a0561b964?pvs=4#04605a3148744379a89e4ecd3cd8a957"
-      }
-      else if(Curso = "FUNC JS" || CursoWebDev = "FUNC JS" || CursoAll = "FUNC JS" | CursoOutros = "FUNC JS" || CursoMkt = "FUNC JS")
-      {
-         website := "https://www.udemy.com/course/functional-programming-in-javascript-a-practical-guide/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/JS-Functions-502abc488dc9492fab8585100472ba30?pvs=4#6c347b0b00794ba583bc10ce86a6c517"
-      }
-      else if(Curso = "ARRAYS JS" || CursoWebDev = "ARRAYS JS" || CursoAll = "ARRAYS JS" | CursoOutros = "ARRAYS JS" || CursoMkt = "ARRAYS JS")
-      {
-         website := "https://www.udemy.com/course/mastering-javascript-arrays/learn/"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/JS-Arrays-d00d5b61063c4e009c3f763cd5061cff?pvs=4#c61684276e91400f95dcc194c2aefca1"
-      }
-      else if(Curso = "WEB ANALYTISC" || CursoWebDev = "WEB ANALYTISC" || CursoAll = "WEB ANALYTISC" | CursoOutros = "WEB ANALYTISC" || CursoMkt = "WEB ANALYTISC")
+      else if(Curso = "Web Analytics" || CursoWebDev = "Web Analytics" || CursoAll = "Web Analytics" | CursoOutros = "Web Analytics" || CursoMkt = "Web Analytics")
       {
          website := "https://www.udemy.com/course/webanalytics-completo-muito-alem-do-google-analytics/learn"
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/GA3-167b037a7f2448d995ac060b26c614fc?pvs=4#7ec89ed688d1440dbb0d3861b36619c5"
+      }
+      else if(Curso = "Git" || CursoWebDev = "Git" || CursoAll = "Git" | CursoOutros = "Git" || CursoMkt = "Git")
+      {
+         website := "https://www.udemy.com/course/git-basico-ao-avancado-2021/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/Git-Completo-cfeaee855a8e44dcafea51c7f692600b?pvs=4#f15ed3037db04e33b23371487c5dc856"
+      }
+      else if(Curso = "Android" || CursoWebDev = "Android" || CursoAll = "Android" | CursoOutros = "Android" || CursoMkt = "Android")
+      {
+         website := "https://www.udemy.com/course/curso-completo-do-desenvolvedor-android/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/JS-Arrays-d00d5b61063c4e009c3f763cd5061cff?pvs=4#c61684276e91400f95dcc194c2aefca1"
+      }
+      else if(Curso = "Designer Gráfico" || CursoWebDev = "Designer Gráfico" || CursoAll = "Designer Gráfico" | CursoOutros = "Designer Gráfico" || CursoMkt = "Designer Gráfico")
+      {
+         website := "https://www.udemy.com/course/curso-fundamentos-do-design-grafico/learn"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
          notion := "notion://www.notion.so/lullio/GA3-Udemy-2b20d3b404c646a8b68376f7f8ea179e?pvs=4#694be6e93d9b4b918017fdf37094b57d"
       }
-      else if(Curso = "COMPLETE JS" || CursoWebDev = "COMPLETE JS" || CursoAll = "COMPLETE JS" | CursoOutros = "COMPLETE JS" || CursoMkt = "COMPLETE JS")
+      else if(Curso = "Excel" || CursoWebDev = "Excel" || CursoAll = "Excel" | CursoOutros = "Excel" || CursoMkt = "Excel")
       {
-         website := "https://www.udemy.com/course/the-complete-javascript-course/learn/lecture"
+         website := "https://www.udemy.com/course/excel-curso-completo/learn"
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
          notion := "notion://www.notion.so/lullio/Complete-JS-C-c245dd6c4f9a43f8832dc64885b1e825?pvs=4#80de55c25c834079953f41663a137ced"
       }
@@ -421,12 +422,12 @@ Gui, Submit, NoHide
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
          notion := "notion://www.notion.so/lullio/NGINX-7ba5972d67354b4fa8885adfcb6a7ccf?pvs=4#01dc417ce3364b2395bbe81693d2336a"
       }
-      else if(Curso = "GTM1" || CursoWebDev = "GTM1" || CursoAll = "GTM1" | CursoOutros = "GTM1" || CursoMkt = "GTM1")
+      else if(Curso = "SCRUM" || CursoWebDev = "SCRUM" || CursoAll = "SCRUM" | CursoOutros = "SCRUM" || CursoMkt = "SCRUM")
       {
-         gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+         gtm1Folder := "Y:\Season\Certificação Scrum Master Curso Preparatório COMPLETO\playlist.xspf"
          if !FileExist(gtm1Folder)
          {
-            gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+            gtm1Folder := "C:\Users\" A_UserName "Y:\Season\Certificação Scrum Master Curso Preparatório COMPLETO\playlist.xspf"
          }
          website = Run %gtm1Folder%
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
@@ -455,7 +456,7 @@ Gui, Submit, NoHide
          notion := "notion://www.notion.so/lullio/GA4-AM-2c2c777ac2a04c388a5ef9bbaea2259d?pvs=4#c962d7277c754ce88b987e179122b521"
       }
       else{
-         website := "none"
+         website := "Nenhum"
       }
 return
 
@@ -482,9 +483,9 @@ controlVideos:
             ; SetTitleMatchMode, 2
             ; #IfWinActive, VLC media player
             ;    Send, {Space} Return
-            ControlSend,,{space},ahk_exe vlc.exe
             Sleep, 400
-            Notify().AddWindow("O método de pausar foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+               ControlSend,,{space},ahk_exe vlc.exe
+            ; Notify().AddWindow("O método de pausar foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; MÉTODO DE PAUSAR NO VLC
             ; WinActivate, AHK_PID %pid%
             ; SetTitleMatchMode, 2
@@ -512,7 +513,7 @@ controlVideos:
             SetTitleMatchMode, 2
             IfWinActive, Reprodutor de Mídias VLC
             Send, {=}
-            Notify().AddWindow("O método de aumentar velocidade foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; Notify().AddWindow("O método de aumentar velocidade foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
          }
       Return
 
@@ -524,7 +525,7 @@ controlVideos:
             ; DIMINUIR VELOCIDADE
             FileRead, javascriptSpeedMinus, speed-decrease.js
             videoSpeed := PageInst.Evaluate(javascriptSpeedMinus)
-            Notify().AddWindow("O método de diminuir velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto ",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; Notify().AddWindow("O método de diminuir velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto ",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
          }
       else if !WinActive("AHK_PID " pid)
@@ -535,7 +536,7 @@ controlVideos:
             SetTitleMatchMode, 2
             IfWinActive, Reprodutor de Mídias VLC
             Send, {-}
-            Notify().AddWindow("O método de diminuir velocidade foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; Notify().AddWindow("O método de diminuir velocidade foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
          }
       Return
 
@@ -555,7 +556,7 @@ controlVideos:
             ; RETROCEDER O VIDEO NO VLC
             ; SetKeyDelay, 0, 50
             ControlSend,,+{left},ahk_exe vlc.exe 
-            Notify().AddWindow("O método de retroceder video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; Notify().AddWindow("O método de retroceder video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
          }
       Return
 
@@ -575,7 +576,7 @@ controlVideos:
             ; AVANÇAR O VIDEO NO VLC
             ; SetKeyDelay, 0, 50
             ControlSend,,+{Right},ahk_exe vlc.exe 
-            Notify().AddWindow("O método de avançar video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; Notify().AddWindow("O método de avançar video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
          }
       Return
 
@@ -595,7 +596,7 @@ controlVideos:
             ; PULAR O VIDEO NO VLC
             ; SetKeyDelay, 0, 50
             ControlSend,,{n},ahk_exe vlc.exe 
-            Notify().AddWindow("O método de pular video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; Notify().AddWindow("O método de pular video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
          }
       Return
 
@@ -615,7 +616,7 @@ controlVideos:
             ; PREVIOUS VIDEO NO VLC
             ; SetKeyDelay, 0, 50
             ControlSend,,{p},ahk_exe vlc.exe 
-            Notify().AddWindow("O método de previous video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; Notify().AddWindow("O método de previous video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
          }
       Return
 
@@ -635,7 +636,7 @@ controlVideos:
             ; PREVIOUS VIDEO NO VLC
             ; SetKeyDelay, 0, 50
             ControlSend,,{v},ahk_exe vlc.exe 
-            Notify().AddWindow("O método de legenda video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+            ; Notify().AddWindow("O método de legenda video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
          }
       Return
 ; Return
