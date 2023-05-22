@@ -469,7 +469,7 @@ controlVideos:
          {
             ; MÉTODO DE PAUSAR NO CHROME
             ; PAUSAR E PLAY VIDEO
-            FileRead, javascriptPlay, pause-play-video.js
+            FileRead, javascriptPlay, control-video\pause-play-video.js
             PageInst.Evaluate(javascriptPlay)
             Notify().AddWindow("O método de pausar foi usado no CHROME.",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
@@ -498,7 +498,7 @@ controlVideos:
          {
             ; MÉTODO AUMENTAR VELOCIDADE
             ; AUMENTAR VELOCIDADE
-            FileRead, javascriptSpeedPlus, speed-increase.js
+            FileRead, javascriptSpeedPlus, control-video\speed-increase.js
             PageInst.Evaluate(javascriptSpeedPlus)
             Notify().AddWindow("O método de aumentar velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
@@ -522,7 +522,7 @@ controlVideos:
          {
             ; MÉTODO DIMNIUIR VELOCIDADE
             ; DIMINUIR VELOCIDADE
-            FileRead, javascriptSpeedMinus, speed-decrease.js
+            FileRead, javascriptSpeedMinus, control-video\speed-decrease.js
             videoSpeed := PageInst.Evaluate(javascriptSpeedMinus)
             Notify().AddWindow("O método de diminuir velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto ",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
@@ -545,7 +545,7 @@ controlVideos:
          {
             ; RETROCEDER O VIDEO
             ; REWIND VIDEO
-            FileRead, javascriptMoveDown, video-rewind.js
+            FileRead, javascriptMoveDown, control-video\video-rewind.js
             PageInst.Evaluate(javascriptMoveDown)
             Notify().AddWindow("O método de retroceder video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
@@ -565,7 +565,7 @@ controlVideos:
          {
             ; AVANÇAR O VIDEO
             ; FAST-FORWARD VIDEO
-            FileRead, javascriptMoveUp, video-fast-forward.js
+            FileRead, javascriptMoveUp, control-video\video-fast-forward.js
             PageInst.Evaluate(javascriptMoveUp)
             Notify().AddWindow("O método de avançar video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
@@ -585,7 +585,7 @@ controlVideos:
          {
             ; PULAR O VIDEO
             ; PRÓXIMO VÍDEO
-            FileRead, javascriptNextVideo, go-next-video.js
+            FileRead, javascriptNextVideo, control-video\go-next-video.js
             PageInst.Evaluate(javascriptNextVideo)
             Notify().AddWindow("O método de pular video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
@@ -605,7 +605,7 @@ controlVideos:
          {
             ; PREVIOUS VIDEO
             ; VIDEO ANTERIOR
-            FileRead, javascriptPreviousVideo, go-previous-video.js
+            FileRead, javascriptPreviousVideo, control-video\go-previous-video.js
             PageInst.Evaluate(javascriptPreviousVideo)
             Notify().AddWindow("O método de previous video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
@@ -625,7 +625,7 @@ controlVideos:
          {
             ; PREVIOUS VIDEO
             ; VIDEO ANTERIOR
-            FileRead, javascriptLegendaVideo, legenda-video.js
+            FileRead, javascriptLegendaVideo, control-video\legenda-video.js
             PageInst.Evaluate(javascriptLegendaVideo)
             Notify().AddWindow("O método de legenda video foi usado no CHROME",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
