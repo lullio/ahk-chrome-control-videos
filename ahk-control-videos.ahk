@@ -140,6 +140,11 @@ ComObjError(false)
 
 ; EXECUTAR LOGO AO ABRIR A GUI, PARA EU PODER USAR OS COMANDOS DE VÍDEO MESMO SEM SELECIONAR UM CURSO.
 website := "udemy.com"
+if(Chrome.GetPageByURL(website, "contains")){
+   website := "udemy.com"
+}else{
+   website := "youtube.com"
+}
  ; se não encontrar aba chrome com remote debug
  if !(PageInst := Chrome.GetPageByURL(website, "contains"))
    {
