@@ -18,6 +18,10 @@ function waitForElm(selector) {
    });
  }
 
+window.addEventListener('popstate', function (event) {
+	alert('url mudou')
+});
+
 waitForElm('video').then((elm) => {
    console.log('Element is ready');
    var video = document.querySelectorAll('video')[0];

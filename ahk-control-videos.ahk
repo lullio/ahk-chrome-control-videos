@@ -148,8 +148,6 @@ if(Chrome.GetPageByURL(website, "contains")){
  ; se não encontrar aba chrome com remote debug
  if !(PageInst := Chrome.GetPageByURL(website, "contains"))
    {
-      ; GoSub, controlVideos
-   }else{
       ; Sleep, 500
       ; aqui está o fix pra esperar a página carregar
       PageInst := Chrome.GetPageByURL(website, "contains")
@@ -159,7 +157,10 @@ if(Chrome.GetPageByURL(website, "contains")){
       */
       ; PageInst.Call("Page.bringToFront")
       GoSub, controlVideos
+   }else{
+      ; PageInst.Evaluate("alert(window.location.pathname)")
    }
+   ; msgbox % Chrome.GetPageByURL(website, "contains")[1]
 
 /*
 TRATAMENTO DO MENU BAR
