@@ -251,7 +251,17 @@ AbrirNotion:
    }else{
       ; CHAMAR O LABEL courseSelected
       Gosub, courseSelected
-      RunAs, felipe.lullio@hotmail.com, XrLO1000@1010
+      if(A_UserName == "Felipe" || A_UserName == "estudos" || A_UserName == "Estudos")
+         {
+           user := A_UserName
+           pass := "xrlo1010"
+         }
+       Else
+         {
+           user := "felipe.lullio@hotmail.com"
+           pass := "XrLO1000@1010"
+         }
+       RunAs, %user%, %pass%
       ; Run, C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe 
       Run %ComSpec% /c C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe "%notion%", , Hide
       RunAs
