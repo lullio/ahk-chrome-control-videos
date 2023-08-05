@@ -12,12 +12,12 @@ if(video){
 }
 	
 // TOGGLE PAUSAR / PLAY
-if(video.paused){ // se tiver pausado, paused é um método js
+if(video?.paused){ // se tiver pausado, paused é um método js
 	video.play();
 	console.log("play no video");
 }else{
 	// video.playbackRate = localStorage.getItem('videoSpeed');
-	video.pause();
+	video?.pause();
 	// video.defaultPlaybackRate = localStorage.getItem('videoSpeed');
 	console.log("pause no video");
 }

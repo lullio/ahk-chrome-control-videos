@@ -35,7 +35,7 @@ SkinForm(DLLPath,Param1 = "Apply", SkinName = ""){
 ; !PRINCIPAIS CURSOS
 ListMainCourses =
 (
-None|NGINX1||NGINX2|DOM1|DOM2|ARRAYS JS|ASYNC JS|FUNC JS|AJAX|GOOGLE APPS SCRIPT|GTM1|GTM2|GA4
+None|NGINX1||NGINX2|DOM1|DOM2|ARRAYS JS|ASYNC JS|FUNC JS|AJAX|GOOGLE APPS SCRIPT|GTM1|GTM2|GA4|YT AHK API
 )
 ListMainCourses := RTrim(ListMainCourses, "|")
 ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default item
@@ -135,9 +135,13 @@ gui, Add, Button, w75 x+10 gCancel Cancel, &Cancelar
 GuiControl,Focus,Curso
 Gui, Show,, Abrir Curso e Controlar Video - Felipe Lulio
 
+Gosub, firstStep
+Return
 ; Ignorar o erro que o ahk dá e continuar executando o script
 ComObjError(false)
 
+
+firstStep:
 ; EXECUTAR LOGO AO ABRIR A GUI, PARA EU PODER USAR OS COMANDOS DE VÍDEO MESMO SEM SELECIONAR UM CURSO.
 website := "udemy.com"
 if(Chrome.GetPageByURL(website, "contains")){
@@ -161,7 +165,7 @@ if(Chrome.GetPageByURL(website, "contains")){
       ; PageInst.Evaluate("alert(window.location.pathname)")
    }
    ; msgbox % Chrome.GetPageByURL(website, "contains")[1]
-
+Return
 /*
 TRATAMENTO DO MENU BAR
 */
@@ -331,6 +335,7 @@ if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curs
 }else{
    Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR") 
 }
+GoSub, firstStep
 Return
 
 courseSelected:
@@ -436,6 +441,12 @@ Gui, Submit, NoHide
          website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
          notion := "notion://www.notion.so/lullio/NGINX-7ba5972d67354b4fa8885adfcb6a7ccf?pvs=4#01dc417ce3364b2395bbe81693d2336a"
+      }
+      else if(Curso = "YT AHK API" || CursoWebDev = "YT AHK API" || CursoAll = "YT AHK API" | CursoOutros = "YT AHK API" || CursoMkt = "YT AHK API")
+      {
+         website := "https://www.youtube.com/watch?v=86S-bWS_smM&list=PL3JprvrxlW242fgxzzavJM7lRkCB90y4R&index=1"
+         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+         notion := "notion://www.notion.so/lullio/AHK-API-3112a6db91cc4ebb8823200980c10ef7?pvs=4"
       }
       else if(Curso = "GTM1" || CursoWebDev = "GTM1" || CursoAll = "GTM1" | CursoOutros = "GTM1" || CursoMkt = "GTM1")
       {
