@@ -1,6 +1,6 @@
 {
 		// clicar no legenda
-	document.querySelectorAll('[aria-label="Legendas"]')[0].parentElement.parentElement.click();
+	document.querySelectorAll('[aria-label="Legendas"]')[0]?.parentElement?.parentElement?.click();
 	console.log("click legend icon")
 	var optionDesligado;
     var optionIngles;
@@ -8,16 +8,16 @@
 	var selectionsAtive = document.querySelectorAll('[aria-checked="true"]');
     var allOptions = document.querySelectorAll('ul[aria-label="Legendas"] li');
     allOptions.forEach(val => {
-        if(val.textContent.includes('Ingl')){
+        if(val?.textContent?.includes('Ingl')){
             optionIngles = val;
         }else if(val.textContent.includes('Deslig')){
             optionDesligado = val;
         }
     })
-    if(optionDesligado.firstChild.getAttribute('aria-checked') == 'true'){
-        optionIngles.firstChild.firstChild.click();
+    if(optionDesligado?.firstChild?.getAttribute('aria-checked') == 'true'){
+        optionIngles?.firstChild?.firstChild?.click();
     }else{
-        optionDesligado.firstChild.firstChild.click();
+        optionDesligado?.firstChild?.firstChild?.click();
     }
 
 

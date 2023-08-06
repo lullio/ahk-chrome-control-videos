@@ -127,19 +127,14 @@ Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w250, %ListOutrosCou
 
 ; Botões
 gui, font, S11
-gui, Add, Button, xs w100 gAbrirCurso Default, &Abrir Curso
-gui, Add, Button, w100 x+10 gAbrirNotion, &Abrir Notion
-gui, Add, Button, w75 x+10 gCancel Cancel, &Cancelar
+gui, Add, Button, y+10 xs w250 h35 gAbrirCurso Default, &Abrir Curso
+gui, Add, Button, w150 h35 x+10 gAbrirNotion, &Abrir Notion
+gui, Add, Button, w95 h35 x+10 gCancel Cancel, &Cancelar
 
 ; EXIBIR E ATIVAR GUI
 GuiControl,Focus,Curso
 Gui, Show,, Abrir Curso e Controlar Video - Felipe Lulio
-
-; Gosub, firstStep
-; msgbox % Chrome.GetPageByURL(website, "contains")[1]
-
-; EXECUTAR LOGO AO ABRIR A GUI, PARA EU PODER USAR OS COMANDOS DE VÍDEO MESMO SEM SELECIONAR UM CURSO.
-
+ComObjError(false)
 website := "udemy.com"
 if(Chrome.GetPageByURL(website, "contains")){
    website := "udemy.com"
@@ -163,6 +158,13 @@ if(Chrome.GetPageByURL(website, "contains")){
       ; Gosub, controlVideos
       Return
    }
+Return
+
+; Gosub, firstStep
+; msgbox % Chrome.GetPageByURL(website, "contains")[1]
+
+; EXECUTAR LOGO AO ABRIR A GUI, PARA EU PODER USAR OS COMANDOS DE VÍDEO MESMO SEM SELECIONAR UM CURSO.
+
 ; Ignorar o erro que o ahk dá e continuar executando o script
 /*
 TRATAMENTO DO MENU BAR
@@ -336,7 +338,7 @@ if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curs
    PageInst.Disconnect()
 }
 ; GoSub, firstStep
-PageInst.Disconnect()
+; PageInst.Disconnect()
 Return
 
 courseSelected:
@@ -510,7 +512,7 @@ controlVideos:
             ; MÉTODO DE PAUSAR NO CHROME
             ; PAUSAR E PLAY VIDEO
             FileRead, javascriptPlay, control-video\pause-play-video.js
-            PageInst.Call("Page.bringToFront")
+            ; PageInst.Call("Page.bringToFront")
             PageInst.Evaluate(javascriptPlay)
             Notify().AddWindow("O método de pausar foi usado no CHROME.",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
             ; PageInst.Call("Page.bringToFront")
