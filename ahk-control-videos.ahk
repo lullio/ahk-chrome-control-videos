@@ -29,7 +29,6 @@ SkinForm(DLLPath,Param1 = "Apply", SkinName = ""){
 	}
 }
 
-
 /* SCRIPT COMEÇA AQUI
 */
 ; !PRINCIPAIS CURSOS
@@ -40,10 +39,23 @@ None|NGINX-1||NGINX-2|DOM-1|DOM-2|JS - ARRAY|JS - ASYNC|JS - FUNC|JS - AJAX|JS -
 ListMainCourses := RTrim(ListMainCourses, "|")
 ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default item
 
-; ! TODOS OS CURSOS
-ListAllCourses =
+; ; ! TODOS OS CURSOS
+; FileRead, cursos, C:\Users\Felipe\Desktop\courses.txt
+; /*
+;    magica para não precisar colocar o template aqui como variável, esse transform deref permite ler o código do arquivo ahkTemplate-init-tagueamento.ahk como expressão, substitui as variáveis que estão no arquivo.
+; */
+; Transform, cursos, deref, % cursos
+
+; Loop, % arr.Length()
+;    {
+;        msgbox % arr["courseName"]
+;    }
+;    MsgBox, The end of the file has been reached or there was a problem.
+;    return
+
+ListAllCourses := 
 (
-None|DOM-1|DOM-2|REGEX|JS - ASYNC|JS - FUNC|JS - ARRAY|WEB ANALYTICS|COMPLETE JS|JS FULL STACK|JS - AJAX|JS - GOOGLE APPS SCRIPT|ANALYTICS LS - DATA STUDIO pt-br|ANALYTICS LS - DATA STUDIO en-us|ANALYTICS BQ - APPLIED SQL WITH BQ|POWER BI 1|NGINX-1|NGINX-2|GTM1|GTM2|GA4
+None|DOM-1|DOM-2|REGEX|JS - ASYNC|JS - FUNC|JS - ARRAY|WEB ANALYTICS|JS - COMPLETE JS COURSE JONAS|JS FULL STACK|JS - AJAX|JS - GOOGLE APPS SCRIPT|ANALYTICS LS - DATA STUDIO pt-br|ANALYTICS LS - DATA STUDIO en-us|ANALYTICS BQ - APPLIED SQL WITH BQ|POWER BI 1|NGINX-1|NGINX-2|GTM1|GTM2|GA4
 )
 ListAllCourses := RTrim(ListAllCourses, "|")
 ListAllCourses := StrReplace(ListAllCourses, "|", "||",, 1) ; without default item
@@ -51,7 +63,7 @@ ListAllCourses := StrReplace(ListAllCourses, "|", "||",, 1) ; without default it
 ; ! WEB DEV COURSES - JAVASCRIPT
 ListWebCourses =
 (
-None|DOM-1|DOM-2|REGEX|JS - ASYNC|JS - FUNC|JS - ARRAY|COMPLETE JS|JS FULL STACK|JS - AJAX|JS - GOOGLE APPS SCRIPT
+None|DOM-1|DOM-2|REGEX|JS - ASYNC|JS - FUNC|JS - ARRAY|JS - COMPLETE JS COURSE JONAS|JS FULL STACK|JS - AJAX|JS - GOOGLE APPS SCRIPT
 )
 ListWebCourses := RTrim(ListWebCourses, "|")
 ListWebCourses := StrReplace(ListWebCourses, "|", "||",, 1) ; without default item
@@ -67,7 +79,7 @@ ListMktCourses := StrReplace(ListMktCourses, "|", "||",, 1) ; without default it
 ; ! OUTROS CURSOS - WEB SERVER / LINUX
 ListOutrosCourses =
 (
-None|NGINX-1|NGINX-2
+None|NGINX-1|NGINX-2|LINUX - SAMBA SERVER 1|LINUX - SAMBA SERVER 2
 )
 ListOutrosCourses := RTrim(ListOutrosCourses, "|")
 ListOutrosCourses := StrReplace(ListOutrosCourses, "|", "||",, 1) ; without default item
@@ -123,7 +135,21 @@ Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w250, %ListOutrosCou
 
 ; gui, font, S7 ;Change font size to 12
 ; 2º dropdown js courses
+Gui, Add, GroupBox, xs cBlack r21 w560, Executar Ações (Cuidado)
+Gui Add, Text, yp+25 xp+11 center, Selecione um Template ou Cole uma URL Google Sheets:
+Gui Font, S10
+Gui Add, ComboBox, xs+10 yp+20 w372 center vTemplateDimensoes hwndDimensoesID ,Versão 1 - Parâmetros de Elemento (pt-br-new)||Versão 2 - Parâmetros de Blog (en-us-old)|Versão 3 - Parâmetros Antigos Flow Step (pt-br-old)|Template Vazio
+Gui Add, Button, x+20  w135 h24, Atualizar Tabela
+Gui Font,
+Gui Add, ListView, vListaDimensions w530 r12 xs+10 y+10 -readonly grid sort , Curso|URL|Categories|Nota
+; LV_Modify()
+Gui Font, S6.5
+Gui Add, Link, w120 y+3 xp+200 vTotalDimensoes center,
 
+Gui Font, S11
+gui Add, Button, w300  xs+120 yp+25, &Criar Todas Dimensões
+gui Add, Button, cGreen w150 xp y+5  , &Excluir tudo
+gui Add, Button, w150 x+5 , &Excluir algumas
 
 ; Botões
 gui, font, S11
@@ -135,6 +161,7 @@ gui, Add, Button, w95 h35 x+10 gCancel Cancel, &Cancelar
 GuiControl,Focus,Curso
 Gui, Show,, Abrir Curso e Controlar Video - Felipe Lulio
 ComObjError(false)
+GoSub, getData
 website := "udemy.com"
 if(Chrome.GetPageByURL(website, "contains")){
    website := "udemy.com"
@@ -379,7 +406,7 @@ Gui, Submit, NoHide
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
          notion := "notion://www.notion.so/lullio/GA3-Udemy-2b20d3b404c646a8b68376f7f8ea179e?pvs=4#694be6e93d9b4b918017fdf37094b57d"
       }
-      else if(Curso = "COMPLETE JS" || CursoWebDev = "COMPLETE JS" || CursoAll = "COMPLETE JS" | CursoOutros = "COMPLETE JS" || CursoMkt = "COMPLETE JS")
+      else if(Curso = "JS - COMPLETE JS COURSE JONAS" || CursoWebDev = "JS - COMPLETE JS COURSE JONAS" || CursoAll = "JS - COMPLETE JS COURSE JONAS" | CursoOutros = "JS - COMPLETE JS COURSE JONAS" || CursoMkt = "JS - COMPLETE JS COURSE JONAS")
       {
          website := "https://www.udemy.com/course/the-complete-javascript-course/learn/lecture"
          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
@@ -525,6 +552,7 @@ controlVideos:
             ; SetTitleMatchMode, 2
             ; #IfWinActive, VLC media player
             ;    Send, {Space} Return
+            Sleep, 200
             ControlSend,,{space},ahk_exe vlc.exe
             Sleep, 400
             Notify().AddWindow("O método de pausar foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -681,4 +709,112 @@ controlVideos:
             Notify().AddWindow("O método de legenda video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
          }
       Return
+Return
+
+getDataFromGoogleSheet(urlData){
+   aspa =
+   (
+   "
+   )
+   ; https://stackoverflow.com/questions/33713084/download-link-for-google-spreadsheets-csv-export-with-multiple-sheets
+   ; https://www.autohotkey.com/docs/v1/lib/URLDownloadToFile.htm
+   whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+   whr.Open("GET",urlData, true)
+   whr.Send()
+   ; Using 'true' above and the call below allows the script to remain responsive.
+   whr.WaitForResponse()
+   googleSheetData := whr.ResponseText
+   SemAspa := RegExReplace(googleSheetData, aspa , "")
+   ;  msgbox %googleSheetData%
+   Return SubStr(googleSheetData, 2,-1) ; remove o primeiro e último catactere (as aspas)
+}
+
+getData:
+aspa =
+(
+"
+)
+/*
+   IMPORTANTE:
+   A COLUNA E DA PLANILHA PRECISA TER UMA FÓRMULA PARA GERAR O ARRAY DOS DADOS
+*/
+   Gui Submit, NoHide
+
+         urlData := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=A2:G63&sheet=Cursos"
+         urlCourseName := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=A2:A68&sheet=Cursos"
+         urlCourseURL := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=B2:B68&sheet=Cursos"
+         urlCourseCategories := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=C2:C68&sheet=Cursos"
+         urlCourseProvider := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=D2:D68&sheet=Cursos"
+         urlCourseNotion := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=E2:E68&sheet=Cursos"
+         urlCourseLength := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=F2:F68&sheet=Cursos"
+         urlCourseRating := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=G2:G68&sheet=Cursos"
+      ; ; TRATAR PELA URL DA PLANILHA
+      ; Else{
+      ;     if(RegExMatch(templateDimensoes, "i).*docs.google.com/.+\/d\/.+\/")){
+      ;       RegExMatch(templateDimensoes, "i).*\/d\/.+\/", UrlCode) 
+      ;       ; msgbox % UrlCode
+
+      ;       ; msgbox % UrlCode "gviz/tq?tqx=out:csv"
+      ;       urlData = %UrlCode%gviz/tq?tqx=out:csv&range=A2:C150
+      ;       ; urlData =  %UrlCode%gviz/tq?tqx=out:csv&range=A3:Z3
+      ;       ; msgbox %urlData%
+      ;       ; pegar as 3 linhas cm tds arrays js do google sheet
+      ;       urlAllArr = %UrlCode%gviz/tq?tqx=out:csv&range=E1:E3
+      ;       ; msgbox %urlAllArr%
+      ;       urlArrDimension = %UrlCode%gviz/tq?tqx=out:csv&range=E1
+      ;       urlArrDesc = %UrlCode%gviz/tq?tqx=out:csv&range=E2
+      ;       urlArrScope = %UrlCode%gviz/tq?tqx=out:csv&range=E3
+      ;     }else{
+      ;       MsgBox, 4112 , Erro na URL do Site!, URL Inválida`n- Copie e Cole uma URL do Google Sheets válida!
+      ;     }
+          
+      ; }
+      ; msgbox % urlArrDimension
+      ; msgbox % urlArrDesc
+
+   ; todos os dados
+   dataAllRows := getDataFromGoogleSheet(urlData)
+   ; msgbox % dataAllRows
+   ; remover aspas inicial e final
+   javascriptArrays := RegExReplace(getDataFromGoogleSheet(urlAllArr), "mi)" aspa, "")
+   ; msgbox js: %javascriptArrays%
+
+   Loop, parse, dataAllRows, `n, `r ; linha
+      {
+          LineNumber := A_Index
+         ;  msgbox, % Coluna1 := StrSplit(A_LoopField,",")[1] ; 1 coluna Nome da dimensão
+         SemAspa := RegExReplace(A_LoopField, aspa , "")
+         Coluna1 := StrSplit(A_LoopField,",")[1] ; 1 coluna courseName
+         Coluna2 := StrSplit(A_LoopField,",")[2] ; 2 coluna courseURL
+         Coluna3 := StrSplit(A_LoopField,",")[3] ; 3 coluna courseCategories
+         Coluna4 := StrSplit(A_LoopField,",")[4] ; 4 coluna courseProvider
+         Coluna5 := StrSplit(A_LoopField,",")[5] ; 5 coluna courseLength
+         Coluna6 := StrSplit(A_LoopField,",")[6] ; 6 coluna courseRating
+         ;  msgbox % coluna1
+         ;  Coluna1SemAspas := StrReplace(Coluna1, aspa, "")
+         ;  Coluna2SemAspas := StrReplace(Coluna2, aspa, "")
+         ;  Coluna3SemAspas := StrReplace(Coluna3, aspa, "")
+          LV_Add("" , SubStr(Coluna1, 2,-1), SubStr(Coluna2, 2,-1), SubStr(Coluna3, 2,-1), SubStr(Coluna4, 2,-1), SubStr(Coluna5, 2,-1))
+         ;  Loop, parse, data, CSV ; coluna
+         ;  {
+         ;      MsgBox, 4, , %Postition% Field %LineNumber%-%A_Index% is:`n%A_LoopField%`n`nContinue?
+         ;      IfMsgBox, No
+         ;          return
+         ;  }
+         If InStr(Coluna2, "sql")
+         ListVar2 .= StrSplit(A_LoopField,",")[1] "|"
+         
+      } 
+      GuiControl,1:, CursoWebDev, %ListVar2%
+      ; ajustar largura
+      LV_ModifyCol(3,0)
+      LV_ModifyCol(1)
+      LV_ModifyCol(2)
+      ; ordenar
+      ; LV_ModifyCol(1, sort, "integer")
+      ; LV_ModifyCol(1, "text")
+
+      ; exibir total de linhas
+      totalLines := LV_GetCount()
+      GuiControl, , TotalDimensoes, Total de Dimensões: %totalLines%
 Return
