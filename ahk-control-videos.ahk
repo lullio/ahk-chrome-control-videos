@@ -1,9 +1,36 @@
 ﻿#Include, <Default_Settings>
 ; #SingleInstance, force
-#Include, C:\Users\%A_UserName%\Downloads\Chrome.ahk
+; #Include, C:\Users\%A_UserName%\Downloads\Chrome.ahk
+#Include, C:\Program Files\AutoHotkey\Lib\Chrome.ahk
 
-if not A_IsAdmin
-   Run *RunAs "%A_ScriptFullPath%"
+; if not A_IsAdmin
+;    Run *RunAs "%A_ScriptFullPath%"
+
+full_command_line := DllCall("GetCommandLine", "str")
+
+if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
+{
+    try
+    {
+        if A_IsCompiled
+            Run *RunAs "%A_ScriptFullPath%" /restart
+        else
+            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+    }
+    ExitApp
+}
+
+   ; Variables
+   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+   IfNotExist, %chPath%
+      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
 
 /* ESTILO E ICONE DO SCRIPT
 */
@@ -31,58 +58,6 @@ SkinForm(DLLPath,Param1 = "Apply", SkinName = ""){
 
 /* SCRIPT COMEÇA AQUI
 */
-; !PRINCIPAIS CURSOS
-ListMainCourses =
-(
-None|NGINX-1||NGINX-2|DOM-1|DOM-2|JS - ARRAY|JS - ASYNC|JS - FUNC|JS - AJAX|JS - GOOGLE APPS SCRIPT|ANALYTICS BQ - ANALISAR DADOS NO BQ|ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ|ANALYTICS BQ - APPLIED SQL WITH BQ|GTM1|GTM2|GA4|YT AHK API|ANALYTICS LS - DATA STUDIO pt-br|ANALYTICS LS - DATA STUDIO en-us
-)
-ListMainCourses := RTrim(ListMainCourses, "|")
-ListMainCourses := StrReplace(ListMainCourses, "|", "||",, 1) ; without default item
-
-; ; ! TODOS OS CURSOS
-; FileRead, cursos, C:\Users\Felipe\Desktop\courses.txt
-; /*
-;    magica para não precisar colocar o template aqui como variável, esse transform deref permite ler o código do arquivo ahkTemplate-init-tagueamento.ahk como expressão, substitui as variáveis que estão no arquivo.
-; */
-; Transform, cursos, deref, % cursos
-
-; Loop, % arr.Length()
-;    {
-;        msgbox % arr["courseName"]
-;    }
-;    MsgBox, The end of the file has been reached or there was a problem.
-;    return
-
-ListAllCourses := 
-(
-None|DOM-1|DOM-2|REGEX|JS - ASYNC|JS - FUNC|JS - ARRAY|WEB ANALYTICS|JS - COMPLETE JS COURSE JONAS|JS FULL STACK|JS - AJAX|JS - GOOGLE APPS SCRIPT|ANALYTICS LS - DATA STUDIO pt-br|ANALYTICS LS - DATA STUDIO en-us|ANALYTICS BQ - APPLIED SQL WITH BQ|POWER BI 1|NGINX-1|NGINX-2|GTM1|GTM2|GA4
-)
-ListAllCourses := RTrim(ListAllCourses, "|")
-ListAllCourses := StrReplace(ListAllCourses, "|", "||",, 1) ; without default item
-
-; ! WEB DEV COURSES - JAVASCRIPT
-ListWebCourses =
-(
-None|DOM-1|DOM-2|REGEX|JS - ASYNC|JS - FUNC|JS - ARRAY|JS - COMPLETE JS COURSE JONAS|JS FULL STACK|JS - AJAX|JS - GOOGLE APPS SCRIPT
-)
-ListWebCourses := RTrim(ListWebCourses, "|")
-ListWebCourses := StrReplace(ListWebCourses, "|", "||",, 1) ; without default item
-
-; ! MARKETING COURSES - TAGUEAMENTO
-ListMktCourses =
-(
-None|ANALYTICS BQ - APPLIED SQL WITH BQ|ANALYTICS LS - DATA STUDIO pt-br|ANALYTICS LS - DATA STUDIO en-us|POWER BI 1|NGINX-1|NGINX-2|WEB ANALYTICS|GTM1|GTM2|GA4
-)
-ListMktCourses := RTrim(ListMktCourses, "|")
-ListMktCourses := StrReplace(ListMktCourses, "|", "||",, 1) ; without default item
-
-; ! OUTROS CURSOS - WEB SERVER / LINUX
-ListOutrosCourses =
-(
-None|NGINX-1|NGINX-2|LINUX - SAMBA SERVER 1|LINUX - SAMBA SERVER 2
-)
-ListOutrosCourses := RTrim(ListOutrosCourses, "|")
-ListOutrosCourses := StrReplace(ListOutrosCourses, "|", "||",, 1) ; without default item
 
 Gui, Destroy
 Gui,+AlwaysOnTop ; +Owner
@@ -148,13 +123,18 @@ Gui, Add, ComboBox, vCursoWebServer gCursos hwndCursosIDOutros w250,
 Gui, Add, GroupBox, xs cBlack r13 w560, TODOS OS CURSOS
 Gui Add, Text, yp+25 xp+11 center, Cursos em Andamento
 Gui Font, S10
+
 Gui Add, ComboBox, xs+10 yp+20 w372 center vTemplateDimensoes hwndDimensoesID ,Versão 1 - Parâmetros de Elemento (pt-br-new)||Versão 2 - Parâmetros de Blog (en-us-old)|Versão 3 - Parâmetros Antigos Flow Step (pt-br-old)|Template Vazio
 Gui Add, Button, x+20  w135 h24, Atualizar Tabela
 Gui Font,
+
 Gui Add, ListView, vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort, Curso|URL|Categories|Provider|Notion|Length|Rating
 ; LV_Modify()
 Gui Font, S6.5
 Gui Add, Link, w120 y+3 xp+200 vTotalCursos center,
+
+; CARREGAR OS DADOS DOS CURSOS DA PLANILHA ANTES DE EXIBIR A GUI, NÃO VAI TER DELAY
+GoSub, getData
 
 ; Botões
 gui, font, S11
@@ -165,64 +145,30 @@ gui, Add, Button, w95 h35 x+10 gCancel Cancel, &Cancelar
 ; EXIBIR E ATIVAR GUI
 GuiControl,Focus,Curso
 Gui, Show,, Abrir Curso e Controlar Video - Felipe Lulio
+
+; GoSub, controlVideos
+; Ignorar o erro que o ahk dá e continuar executando o script
 ComObjError(false)
-GoSub, getData
+
+; EXECUTAR LOGO AO ABRIR A GUI, PARA EU PODER USAR OS COMANDOS DE VÍDEO MESMO SEM SELECIONAR UM CURSO.
 website := "udemy.com"
 if(Chrome.GetPageByURL(website, "contains")){
    website := "udemy.com"
+   msgbox hi
 }else{
    website := "youtube.com"
+   msgbox no
 }
  ; se não encontrar aba chrome com remote debug
- if !(PageInst := Chrome.GetPageByURL(website, "contains"))
-   {
-      ; Sleep, 500
-      ; aqui está o fix pra esperar a página carregar
-      ; PageInst := Chrome.GetPageByURL(website, "contains")
-      ; Sleep, 500
-      /*
-      SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
-      */
-      ; PageInst.Call("Page.bringToFront")
-      ; GoSub, controlVideos
-      Return
-   }else{
-      ; Gosub, controlVideos
-      Return
-   }
+;  if !(PageInst := Chrome.GetPageByURL(website, "contains"))
+;    {
+;       Return
+;    }else{
+;       Return
+;    }
 Return
 
-; Gosub, firstStep
-; msgbox % Chrome.GetPageByURL(website, "contains")[1]
 
-; EXECUTAR LOGO AO ABRIR A GUI, PARA EU PODER USAR OS COMANDOS DE VÍDEO MESMO SEM SELECIONAR UM CURSO.
-
-; Ignorar o erro que o ahk dá e continuar executando o script
-/*
-TRATAMENTO DO MENU BAR
-*/
-MenuHandler:
-; MsgBox, %A_ThisMenuItem%
-return
-MenuFileOpen:
-; MsgBox, Open Menu was clicked
-Gui, NovoCurso:New, +AlwaysOnTop -Resize -MinimizeBox -MaximizeBox, Cadastrar Novo Curso - Felipe Lullio
-
-Gui, NovoCurso:Add, Text,center h20 +0x200 section, Link do Curso:
-Gui, NovoCurso:Add, Edit, x+12 w368 vLinkNovoCurso
-
-Gui, NovoCurso:Add, Text,xs center h20 +0x200 section, Nome do Curso:
-Gui, NovoCurso:Add, Edit, vNomeNovoCurso w100 x+5
-
-Gui, NovoCurso:Add, Text, ys x+5 center h20 +0x200 section, Categoria:
-Gui, NovoCurso:Add, ComboBox, vCategoriaNovoCurso gCursos w100 hwndCursosIDAll ys x+5, Developer|Marketing
-Gui, NovoCurso:Add, Checkbox,Checked1 x+15 center h20 +0x200, Curso Principal?
-
-gui, font, S13 ;Change font size to 12
-gui, NovoCurso:Add, Button, center y+15 x120 w250 h25 gCadastrarCurso Default, &Cadastrar Curso
-Gui, NovoCurso:Show, xCenter yCenter
-ControlFocus, Edit1, Cadastrar Novo Curso - Felipe Lullio
-return
 
 /* TRATAMENTO DOS DROPDOWN, PARA QUANDO VC ESCREVER O NOME DO CURSO JÁ PREENCHER O CURSO AUTOMATICAMENTE NO DROPDOWN
 */
@@ -270,9 +216,6 @@ Cursos:
       }
 return
 
-/* LABEL DO TRATAMENTO DO CURSO, QUAL O CURSO SELECIONADO
-*/
-
 
 /* ABRIR AS ANOTAÇÕES DO NOTION E A PASTA DO PROJETO SE EXISTIR
 */
@@ -305,20 +248,6 @@ AbrirNotion:
    }
 return
 
-CadastrarCurso:
-   Gui, Submit, NoHide
-   msgbox %ListAllCourses%
-   msgbox %NomeNovoCurso%
-   ListAllCourses .= "|"NomeNovoCurso
-   msgbox %ListAllCourses%
-   ; atualizar combobox, refill
-   ; vCursoAll gCursos w150 hwndCursosIDAll, %ListAllCourses%
-
-   ; SOLUÇÃO PARA EDITAR A PRIMEIRA GUI, QUE NÃO TEM NOME :1'2'1\
-   GuiControl,1:, CursoAll , %ListAllCourses%
-   ; GuiControl,,hwndCursosIDAll,"|"%ListAllCourses%
-Return
-
 AbrirCurso:
    Gui, Submit, NoHide
    ComObjError(false)
@@ -337,7 +266,7 @@ AbrirCurso:
 
 ; CHAMAR O LABEL courseSelected
 ; Gosub, courseSelected
-; msgbox %website%
+msgbox %website%
 if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
    ; se não encontrar aba chrome com remote debug
    if !(PageInst := Chrome.GetPageByURL(website, "contains"))
@@ -373,170 +302,9 @@ if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curs
 ; PageInst.Disconnect()
 Return
 
-; courseSelected:
-; Gui, Submit, NoHide
-;    if(Curso == "DOM-1" || CursoWebDev == "DOM-1" || CursoAll == "DOM-1" | CursoOutros == "DOM-1" || CursoMkt == "DOM-1")
-;       {
-;          website := "https://www.udemy.com/course/build-interactive-websites-1/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
-;       }
-;       else if(Curso = "DOM-2" || CursoWebDev = "DOM-2" || CursoAll = "DOM-2" | CursoOutros = "DOM-2" || CursoMkt = "DOM-2")
-;       {
-;          website := "https://www.udemy.com/course/build-dynamic-websites-dom-2/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/JS-DOM-d4415aaf9eeb41769636c6ee16e18c7a?pvs=4#bc76b9d3415e4bb5909c12701a8b11e2"
-;       }
-;       else if(Curso = "JS - ASYNC" || CursoWebDev = "JS - ASYNC" || CursoAll = "JS - ASYNC" | CursoOutros = "JS - ASYNC" || CursoMkt = "JS - ASYNC")
-;       {
-;          website := "https://www.udemy.com/course/asynchronous-javascript-deep-dive/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/JS-Async-b1e1ff048ba446b9a750c99a0561b964?pvs=4#04605a3148744379a89e4ecd3cd8a957"
-;       }
-;       else if(Curso = "JS - FUNC" || CursoWebDev = "JS - FUNC" || CursoAll = "JS - FUNC" | CursoOutros = "JS - FUNC" || CursoMkt = "JS - FUNC")
-;       {
-;          website := "https://www.udemy.com/course/functional-programming-in-javascript-a-practical-guide/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/JS-Functions-502abc488dc9492fab8585100472ba30?pvs=4#6c347b0b00794ba583bc10ce86a6c517"
-;       }
-;       else if(Curso = "JS - ARRAY" || CursoWebDev = "JS - ARRAY" || CursoAll = "JS - ARRAY" | CursoOutros = "JS - ARRAY" || CursoMkt = "JS - ARRAY")
-;       {
-;          website := "https://www.udemy.com/course/mastering-javascript-arrays/learn/"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/JS-Arrays-d00d5b61063c4e009c3f763cd5061cff?pvs=4#c61684276e91400f95dcc194c2aefca1"
-;       }
-;       else if(Curso = "WEB ANALYTISC" || CursoWebDev = "WEB ANALYTISC" || CursoAll = "WEB ANALYTISC" | CursoOutros = "WEB ANALYTISC" || CursoMkt = "WEB ANALYTISC")
-;       {
-;          website := "https://www.udemy.com/course/webanalytics-completo-muito-alem-do-google-analytics/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/GA3-Udemy-2b20d3b404c646a8b68376f7f8ea179e?pvs=4#694be6e93d9b4b918017fdf37094b57d"
-;       }
-;       else if(Curso = "JS - COMPLETE JS COURSE JONAS" || CursoWebDev = "JS - COMPLETE JS COURSE JONAS" || CursoAll = "JS - COMPLETE JS COURSE JONAS" | CursoOutros = "JS - COMPLETE JS COURSE JONAS" || CursoMkt = "JS - COMPLETE JS COURSE JONAS")
-;       {
-;          website := "https://www.udemy.com/course/the-complete-javascript-course/learn/lecture"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/Complete-JS-C-c245dd6c4f9a43f8832dc64885b1e825?pvs=4#80de55c25c834079953f41663a137ced"
-;       }
-;       else if(Curso = "JS FULL STACK" || CursoWebDev = "JS FULL STACK" || CursoAll = "JS FULL STACK" | CursoOutros = "JS FULL STACK" || CursoMkt = "JS FULL STACK")
-;       {
-;          website := "https://www.udemy.com/course/learn-javascript-full-stack-from-scratch/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/Node-JS-ac151bb66604406fb76348d6fac43776?pvs=4#d8995e38ced9466f88778e8328c022ef"
-;       }
-;       else if(Curso = "JS - AJAX" || CursoWebDev = "JS - AJAX" || CursoAll = "JS - AJAX" | CursoOutros = "JS - AJAX" || CursoMkt = "JS - AJAX")
-;       {
-;          website := "https://www.udemy.com/course/JS - AJAX-fundamentals/learn/lecture/"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/JS - AJAX-a44cb3846172447fb20fbe658abec493?pvs=4#03cb8b5860ab4bfb8b51c3167c143077"
-;       }
-;       else if(Curso = "JS - GOOGLE APPS SCRIPT" || CursoWebDev = "JS - GOOGLE APPS SCRIPT" || CursoAll = "JS - GOOGLE APPS SCRIPT" | CursoOutros = "JS - GOOGLE APPS SCRIPT" || CursoMkt = "JS - GOOGLE APPS SCRIPT")
-;       {
-;          website := "https://www.udemy.com/course/course-apps-script/learn/"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/Google-Apps-Script-d7d4ecbc058c40108576de160a0f8942?pvs=4#88e8a5c8c6764fd085698c93c58be04d"
-;       }
-;       else if(Curso = "ANALYTICS LS - DATA STUDIO pt-br" || CursoWebDev = "ANALYTICS LS - DATA STUDIO pt-br" || CursoAll = "ANALYTICS LS - DATA STUDIO pt-br" | CursoOutros = "ANALYTICS LS - DATA STUDIO pt-br" || CursoMkt = "ANALYTICS LS - DATA STUDIO pt-br")
-;       {
-;          website := "https://www.udemy.com/course/domine-google-data-studio/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
-;       }
-;       else if(Curso = "ANALYTICS LS - DATA STUDIO en-us" || CursoWebDev = "ANALYTICS LS - DATA STUDIO en-us" || CursoAll = "ANALYTICS LS - DATA STUDIO en-us" | CursoOutros = "ANALYTICS LS - DATA STUDIO en-us" || CursoMkt = "ANALYTICS LS - DATA STUDIO en-us")
-;       {
-;          website := "https://www.udemy.com/course/data-analysis-and-dashboards-with-google-data-studio/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
-;       }
-;       else if(Curso = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoWebDev = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoAll = "ANALYTICS BQ - APPLIED SQL WITH BQ" | CursoOutros = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoMkt = "ANALYTICS BQ - APPLIED SQL WITH BQ")
-;       {
-;          website := "https://www.udemy.com/course/applied-sql-for-data-analytics-data-science-with-bigquery/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/Big-Query-020d06067e154efa81ab7081f4f0b56c?pvs=4#b256df39ab3e4b40abd422eed10e71fe"
-;       }
-;       else if(Curso = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoWebDev = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoAll = "ANALYTICS BQ - ANALISAR DADOS NO BQ" | CursoOutros = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoMkt = "ANALYTICS BQ - ANALISAR DADOS NO BQ")
-;       {
-;          website := "https://www.udemy.com/course/curso-completo-sql-para-analise-de-dados/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/BigQuery-ac25d6e8937e4cc681ccdab7c2c1f037?pvs=4"
-;       }
-;       else if(Curso = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoWebDev = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoAll = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" | CursoOutros = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoMkt = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ")
-;       {
-;          website := "https://www.udemy.com/course/criacao-de-dashboards-com-google-data-studio/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/BigQuery-ac25d6e8937e4cc681ccdab7c2c1f037?pvs=4"
-;       }
-;       else if(Curso = "POWER BI 1" || CursoWebDev = "POWER BI 1" || CursoAll = "POWER BI 1" | CursoOutros = "POWER BI 1" || CursoMkt = "POWER BI 1")
-;       {
-;          website := "https://www.udemy.com/course/power-bi-completo-do-basico-ao-avancado/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/Power-BI-2f9229501549428f95e8ae5a410c51ca?pvs=4#2e615e5e0bfe4b0ba73bf35f1522cd654"
-;       }
-;       else if(Curso = "REGEX" || CursoWebDev = "REGEX" || CursoAll = "REGEX" | CursoOutros = "REGEX" || CursoMkt = "REGEX")
-;       {
-;          website := "https://www.udemy.com/course/mastering-regular-expressions-in-javascript/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/RegExp-JS-d9b4e89ab9584f2daef737e3156fe4b1?pvs=4"
-;       }
-;       else if(Curso = "NGINX-1" || CursoWebDev = "NGINX-1" || CursoAll = "NGINX-1" | CursoOutros = "NGINX-1" || CursoMkt = "NGINX-1")
-;       {
-;          website := "https://www.udemy.com/course/nginx-fundamentals/learn"
-;          notion := "notion://www.notion.so/lullio/NGINX-8d3e67e6771742eaa474ca72253d93d1?pvs=4#fcd59bbd427843fbb40099b6957e9be8"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;       }
-;       else if(Curso = "NGINX-2" || CursoWebDev = "NGINX-2" || CursoAll = "NGINX-2" | CursoOutros = "NGINX-2" || CursoMkt = "NGINX-2")
-;       {
-;          website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/NGINX-7ba5972d67354b4fa8885adfcb6a7ccf?pvs=4#01dc417ce3364b2395bbe81693d2336a"
-;       }
-;       else if(Curso = "YT AHK API" || CursoWebDev = "YT AHK API" || CursoAll = "YT AHK API" | CursoOutros = "YT AHK API" || CursoMkt = "YT AHK API")
-;       {
-;          website := "https://www.youtube.com/watch?v=86S-bWS_smM&list=PL3JprvrxlW242fgxzzavJM7lRkCB90y4R&index=1"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/AHK-API-3112a6db91cc4ebb8823200980c10ef7?pvs=4"
-;       }
-;       else if(Curso = "GTM1" || CursoWebDev = "GTM1" || CursoAll = "GTM1" | CursoOutros = "GTM1" || CursoMkt = "GTM1")
-;       {
-;          gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
-;          if !FileExist(gtm1Folder)
-;          {
-;             gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
-;          }
-;          website = Run %gtm1Folder%
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/Google-Tag-Manager-5cb91cdde3e943f9b2b05a43e38237c1?pvs=4#37281bf8a5b54405885e2d16aac97806"
-;       }
-;       else if(Curso = "GTM2" || CursoWebDev = "GTM2" || CursoAll = "GTM2" | CursoOutros = "GTM2" || CursoMkt = "GTM2")
-;       {
-;          gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
-;          if !FileExist(gtm2Folder)
-;          {
-;             gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
-;          }
-;          website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/Google-Tag-Manager-5cb91cdde3e943f9b2b05a43e38237c1?pvs=4#fa0f4c0ad533433eb3b2f6e439623d76"
-;       }
-;       else if(Curso = "GA4" || CursoWebDev = "GA4" || CursoAll = "GA4" | CursoOutros = "GA4" || CursoMkt = "GA4")
-;       {
-;          GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
-;          if !FileExist(GA4Folder)
-;          {
-;            GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
-;          }
-;          website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
-;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-;          notion := "notion://www.notion.so/lullio/GA4-AM-2c2c777ac2a04c388a5ef9bbaea2259d?pvs=4#c962d7277c754ce88b987e179122b521"
-;       }
-;       else{
-;          website := "none"
-;       }
-; return
-
 ; CONTROL VIDEOS
 controlVideos:
-; FileRead, javascriptPlay, pause-play-video.js
-; PageInst.Evaluate(javascriptPlay)
+
       alt & l:: ; pausar e play
       Process, Exist, vlc.exe
       if !pid := ErrorLevel
@@ -754,29 +522,6 @@ aspa =
          urlCourseNotion := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=E2:E68&sheet=Cursos"
          urlCourseLength := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=F2:F68&sheet=Cursos"
          urlCourseRating := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=G2:G68&sheet=Cursos"
-      ; ; TRATAR PELA URL DA PLANILHA
-      ; Else{
-      ;     if(RegExMatch(templateDimensoes, "i).*docs.google.com/.+\/d\/.+\/")){
-      ;       RegExMatch(templateDimensoes, "i).*\/d\/.+\/", UrlCode) 
-      ;       ; msgbox % UrlCode
-
-      ;       ; msgbox % UrlCode "gviz/tq?tqx=out:csv"
-      ;       urlData = %UrlCode%gviz/tq?tqx=out:csv&range=A2:C150
-      ;       ; urlData =  %UrlCode%gviz/tq?tqx=out:csv&range=A3:Z3
-      ;       ; msgbox %urlData%
-      ;       ; pegar as 3 linhas cm tds arrays js do google sheet
-      ;       urlAllArr = %UrlCode%gviz/tq?tqx=out:csv&range=E1:E3
-      ;       ; msgbox %urlAllArr%
-      ;       urlArrDimension = %UrlCode%gviz/tq?tqx=out:csv&range=E1
-      ;       urlArrDesc = %UrlCode%gviz/tq?tqx=out:csv&range=E2
-      ;       urlArrScope = %UrlCode%gviz/tq?tqx=out:csv&range=E3
-      ;     }else{
-      ;       MsgBox, 4112 , Erro na URL do Site!, URL Inválida`n- Copie e Cole uma URL do Google Sheets válida!
-      ;     }
-          
-      ; }
-      ; msgbox % urlArrDimension
-      ; msgbox % urlArrDesc
 
    ; todos os dados
    dataAllRows := getDataFromGoogleSheet(urlData)
@@ -796,12 +541,6 @@ aspa =
          Coluna6 := RegExReplace(StrSplit(A_LoopField,",")[6], aspa , "") ; 6 coluna courseRating
          ; LV_Add("" , Coluna1, SubStr(Coluna2, 2,-1), SubStr(Coluna3, 2,-1), SubStr(Coluna4, 2,-1), SubStr(Coluna5, 2,-1)) ; serve para remover as aspas na frente e final         
          LV_Add("" , Coluna1, Coluna2, Coluna3, Coluna4, Coluna5, Coluna6)
-         ;  Loop, parse, data, CSV ; coluna
-         ;  {
-         ;      MsgBox, 4, , %Postition% Field %LineNumber%-%A_Index% is:`n%A_LoopField%`n`nContinue?
-         ;      IfMsgBox, No
-         ;          return
-         ;  }
          /*
             ORGANIZAR AS CATEGORIAS DOS CURSOS  / SALVAR TODOS OS CURSOS EM VARIÁVEIS COM BASE NA CATEOGIRA
             1. SE EXISTIR "SQL" na coluna 2 courseCategories Adicionar o nome do curso na variável ListSQLCourses
@@ -825,7 +564,7 @@ aspa =
          If InStr(Coluna3, "web-server") 
             ListWebServerCourses .= StrSplit(A_LoopField, ",")[1] "|"
       } 
-      ; ALTERANDO TODAS COMBOBOX PARA POPULAREM OS DADOS DA PLANILHA
+      ; MODIFICANDO TODAS COMBOBOX PARA POPULAREM OS DADOS DA PLANILHA
       GuiControl,1:, Curso, %ListTopCourses% ; main courses
       GuiControl,1:, CursoWebDev, %ListWebDevCourses% ; web dev courses
       GuiControl,1:, CursoJavaScript, %ListJavaScriptCourses% ; analytics mkt courses
@@ -845,6 +584,10 @@ aspa =
       GuiControl, , TotalCursos, Total de Cursos: %totalLines%
 Return
 
+
+/*
+      AO CLICAR EM ALGUM CURSO DA LISTVIEW
+*/
 ListaDeCursos:
 Gui Submit, NoHide
 
@@ -858,59 +601,131 @@ LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 1)
 ; texto selecionado na coluna 2 (url do curso)
 LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 2) 
 
+; Variables
+chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+IfNotExist, %chPath%
+   chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+profileName := "C:\Users\felipe\Desktop\ChromeProfile"
+IfNotExist %profileName%
+   profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
+IfNotExist %profileName%
+   profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
+IfNotExist %profileName%
+   profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
+
+website := "udemy.com"
+if(Chrome.GetPageByURL(website, "contains")){
+   website := "udemy.com"
+}else{
+   website := "youtube.com"
+}
+
 ; msgbox % A_GuiEvent
 if(A_GuiEvent == "DoubleClick"){
    ; Clipboard := RegExReplace(Analytics, "FB-|TKT-", "")
-   msgbox %TextoLinhaSelecionadaCurso%
-   msgbox %TextoLinhaSelecionadaURL%
-}
-   ; Variables
-   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
-   IfNotExist, %chPath%
-      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
-
-   ; CHAMAR O LABEL courseSelected
-   ; Gosub, courseSelected
-   ; msgbox %website%
-   if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
-   ; se não encontrar aba chrome com remote debug
-   if !(PageInst := Chrome.GetPageByURL(website, "contains"))
-   {
-      ; Instance chrome
-      ChromeInst := new Chrome(profileName,website,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
-      PageInst.WaitForLoad("complete")
+   ; msgbox %TextoLinhaSelecionadaCurso%
+   ; msgbox %TextoLinhaSelecionadaURL%
+   if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4"){
+      msgbox % website
+      ; se não encontrar aba chrome com remote debug
+      if !(PageInst := Chrome.GetPageByURL(website, "contains"))
+      {
+         ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+         Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+         Sleep, 500
+         contador1 := 0
+         while !(PageInst)
+         {
+            Sleep, 500
+            Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+            if !(PageInst := Chrome.GetPageByURL(website, "contains"))
+            PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
+            contador1++
+            if(contador1 >= 30){
+               PageInst.Disconnect()
+               break
+            }
+         }
+      }
+      Sleep, 500
+      ; aqui está o fix pra esperar a página carregar
+      PageInst := Chrome.GetPageByURL(website, "contains")
+      Sleep, 500
+     ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
       PageInst.Call("Page.bringToFront")
-      Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-   }
-   Sleep, 500
-   ; aqui está o fix pra esperar a página carregar
-   PageInst := Chrome.GetPageByURL(website, "contains")
-   Sleep, 500
-   /*
-   SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
-   */
-   PageInst.Call("Page.bringToFront")
-   }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
-   Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-   Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
-   }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
-   Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-   Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
-   }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
-   Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-   Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
-   }else{
-   Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-   PageInst.Disconnect()
-   }
-   ; GoSub, firstStep
-   ; PageInst.Disconnect()
-
+   
+      /*
+         CASO TENHA SLECIONADO UM CURSO LOCAL 
+      */
+      }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
+      gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+      if !FileExist(gtm1Folder)
+      {
+       gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+      }
+      Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+      }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
+      gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+      if !FileExist(gtm2Folder)
+      {
+         gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+      }
+      Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
+      }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
+      GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
+      if !FileExist(GA4Folder)
+      {
+      GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
+      }
+      Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
+      }else{
+      Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+      PageInst.Disconnect()
+      }
+}
+   GoSub, controlVideos
 Return
+
+
+CadastrarCurso:
+   Gui, Submit, NoHide
+   msgbox %ListAllCourses%
+   msgbox %NomeNovoCurso%
+   ListAllCourses .= "|"NomeNovoCurso
+   msgbox %ListAllCourses%
+   ; atualizar combobox, refill
+   ; vCursoAll gCursos w150 hwndCursosIDAll, %ListAllCourses%
+
+   ; SOLUÇÃO PARA EDITAR A PRIMEIRA GUI, QUE NÃO TEM NOME :1'2'1\
+   GuiControl,1:, CursoAll , %ListAllCourses%
+   ; GuiControl,,hwndCursosIDAll,"|"%ListAllCourses%
+Return
+/*
+TRATAMENTO DO MENU BAR
+*/
+MenuHandler:
+; MsgBox, %A_ThisMenuItem%
+return
+
+MenuFileOpen:
+; MsgBox, Open Menu was clicked
+Gui, NovoCurso:New, +AlwaysOnTop -Resize -MinimizeBox -MaximizeBox, Cadastrar Novo Curso - Felipe Lullio
+
+Gui, NovoCurso:Add, Text,center h20 +0x200 section, Link do Curso:
+Gui, NovoCurso:Add, Edit, x+12 w368 vLinkNovoCurso
+
+Gui, NovoCurso:Add, Text,xs center h20 +0x200 section, Nome do Curso:
+Gui, NovoCurso:Add, Edit, vNomeNovoCurso w100 x+5
+
+Gui, NovoCurso:Add, Text, ys x+5 center h20 +0x200 section, Categoria:
+Gui, NovoCurso:Add, ComboBox, vCategoriaNovoCurso gCursos w100 hwndCursosIDAll ys x+5, Developer|Marketing
+Gui, NovoCurso:Add, Checkbox,Checked1 x+15 center h20 +0x200, Curso Principal?
+
+gui, font, S13 ;Change font size to 12
+gui, NovoCurso:Add, Button, center y+15 x120 w250 h25 gCadastrarCurso Default, &Cadastrar Curso
+Gui, NovoCurso:Show, xCenter yCenter
+ControlFocus, Edit1, Cadastrar Novo Curso - Felipe Lullio
+return
