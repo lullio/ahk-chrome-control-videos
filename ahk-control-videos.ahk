@@ -151,7 +151,7 @@ Gui Font, S10
 Gui Add, ComboBox, xs+10 yp+20 w372 center vTemplateDimensoes hwndDimensoesID ,Versão 1 - Parâmetros de Elemento (pt-br-new)||Versão 2 - Parâmetros de Blog (en-us-old)|Versão 3 - Parâmetros Antigos Flow Step (pt-br-old)|Template Vazio
 Gui Add, Button, x+20  w135 h24, Atualizar Tabela
 Gui Font,
-Gui Add, ListView, vListaDimensions w530 r10 xs+10 y+10 -readonly grid sort , Curso|URL|Categories|Provider|Notion|Length|Rating
+Gui Add, ListView, vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort, Curso|URL|Categories|Provider|Notion|Length|Rating
 ; LV_Modify()
 Gui Font, S6.5
 Gui Add, Link, w120 y+3 xp+200 vTotalCursos center,
@@ -286,7 +286,7 @@ AbrirNotion:
       Notify().AddWindow("Para abrir a pasta de um projeto você precisa criar um projeto antes",{Time:3000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR") ;
    }else{
       ; CHAMAR O LABEL courseSelected
-      Gosub, courseSelected
+      ; Gosub, courseSelected
       if(A_UserName == "Felipe" || A_UserName == "estudos" || A_UserName == "Estudos")
          {
            user := A_UserName
@@ -336,7 +336,7 @@ AbrirCurso:
       profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
 
 ; CHAMAR O LABEL courseSelected
-Gosub, courseSelected
+; Gosub, courseSelected
 ; msgbox %website%
 if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
    ; se não encontrar aba chrome com remote debug
@@ -373,165 +373,165 @@ if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curs
 ; PageInst.Disconnect()
 Return
 
-courseSelected:
-Gui, Submit, NoHide
-   if(Curso == "DOM-1" || CursoWebDev == "DOM-1" || CursoAll == "DOM-1" | CursoOutros == "DOM-1" || CursoMkt == "DOM-1")
-      {
-         website := "https://www.udemy.com/course/build-interactive-websites-1/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
-      }
-      else if(Curso = "DOM-2" || CursoWebDev = "DOM-2" || CursoAll = "DOM-2" | CursoOutros = "DOM-2" || CursoMkt = "DOM-2")
-      {
-         website := "https://www.udemy.com/course/build-dynamic-websites-dom-2/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/JS-DOM-d4415aaf9eeb41769636c6ee16e18c7a?pvs=4#bc76b9d3415e4bb5909c12701a8b11e2"
-      }
-      else if(Curso = "JS - ASYNC" || CursoWebDev = "JS - ASYNC" || CursoAll = "JS - ASYNC" | CursoOutros = "JS - ASYNC" || CursoMkt = "JS - ASYNC")
-      {
-         website := "https://www.udemy.com/course/asynchronous-javascript-deep-dive/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/JS-Async-b1e1ff048ba446b9a750c99a0561b964?pvs=4#04605a3148744379a89e4ecd3cd8a957"
-      }
-      else if(Curso = "JS - FUNC" || CursoWebDev = "JS - FUNC" || CursoAll = "JS - FUNC" | CursoOutros = "JS - FUNC" || CursoMkt = "JS - FUNC")
-      {
-         website := "https://www.udemy.com/course/functional-programming-in-javascript-a-practical-guide/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/JS-Functions-502abc488dc9492fab8585100472ba30?pvs=4#6c347b0b00794ba583bc10ce86a6c517"
-      }
-      else if(Curso = "JS - ARRAY" || CursoWebDev = "JS - ARRAY" || CursoAll = "JS - ARRAY" | CursoOutros = "JS - ARRAY" || CursoMkt = "JS - ARRAY")
-      {
-         website := "https://www.udemy.com/course/mastering-javascript-arrays/learn/"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/JS-Arrays-d00d5b61063c4e009c3f763cd5061cff?pvs=4#c61684276e91400f95dcc194c2aefca1"
-      }
-      else if(Curso = "WEB ANALYTISC" || CursoWebDev = "WEB ANALYTISC" || CursoAll = "WEB ANALYTISC" | CursoOutros = "WEB ANALYTISC" || CursoMkt = "WEB ANALYTISC")
-      {
-         website := "https://www.udemy.com/course/webanalytics-completo-muito-alem-do-google-analytics/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/GA3-Udemy-2b20d3b404c646a8b68376f7f8ea179e?pvs=4#694be6e93d9b4b918017fdf37094b57d"
-      }
-      else if(Curso = "JS - COMPLETE JS COURSE JONAS" || CursoWebDev = "JS - COMPLETE JS COURSE JONAS" || CursoAll = "JS - COMPLETE JS COURSE JONAS" | CursoOutros = "JS - COMPLETE JS COURSE JONAS" || CursoMkt = "JS - COMPLETE JS COURSE JONAS")
-      {
-         website := "https://www.udemy.com/course/the-complete-javascript-course/learn/lecture"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/Complete-JS-C-c245dd6c4f9a43f8832dc64885b1e825?pvs=4#80de55c25c834079953f41663a137ced"
-      }
-      else if(Curso = "JS FULL STACK" || CursoWebDev = "JS FULL STACK" || CursoAll = "JS FULL STACK" | CursoOutros = "JS FULL STACK" || CursoMkt = "JS FULL STACK")
-      {
-         website := "https://www.udemy.com/course/learn-javascript-full-stack-from-scratch/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/Node-JS-ac151bb66604406fb76348d6fac43776?pvs=4#d8995e38ced9466f88778e8328c022ef"
-      }
-      else if(Curso = "JS - AJAX" || CursoWebDev = "JS - AJAX" || CursoAll = "JS - AJAX" | CursoOutros = "JS - AJAX" || CursoMkt = "JS - AJAX")
-      {
-         website := "https://www.udemy.com/course/JS - AJAX-fundamentals/learn/lecture/"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/JS - AJAX-a44cb3846172447fb20fbe658abec493?pvs=4#03cb8b5860ab4bfb8b51c3167c143077"
-      }
-      else if(Curso = "JS - GOOGLE APPS SCRIPT" || CursoWebDev = "JS - GOOGLE APPS SCRIPT" || CursoAll = "JS - GOOGLE APPS SCRIPT" | CursoOutros = "JS - GOOGLE APPS SCRIPT" || CursoMkt = "JS - GOOGLE APPS SCRIPT")
-      {
-         website := "https://www.udemy.com/course/course-apps-script/learn/"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/Google-Apps-Script-d7d4ecbc058c40108576de160a0f8942?pvs=4#88e8a5c8c6764fd085698c93c58be04d"
-      }
-      else if(Curso = "ANALYTICS LS - DATA STUDIO pt-br" || CursoWebDev = "ANALYTICS LS - DATA STUDIO pt-br" || CursoAll = "ANALYTICS LS - DATA STUDIO pt-br" | CursoOutros = "ANALYTICS LS - DATA STUDIO pt-br" || CursoMkt = "ANALYTICS LS - DATA STUDIO pt-br")
-      {
-         website := "https://www.udemy.com/course/domine-google-data-studio/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
-      }
-      else if(Curso = "ANALYTICS LS - DATA STUDIO en-us" || CursoWebDev = "ANALYTICS LS - DATA STUDIO en-us" || CursoAll = "ANALYTICS LS - DATA STUDIO en-us" | CursoOutros = "ANALYTICS LS - DATA STUDIO en-us" || CursoMkt = "ANALYTICS LS - DATA STUDIO en-us")
-      {
-         website := "https://www.udemy.com/course/data-analysis-and-dashboards-with-google-data-studio/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
-      }
-      else if(Curso = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoWebDev = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoAll = "ANALYTICS BQ - APPLIED SQL WITH BQ" | CursoOutros = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoMkt = "ANALYTICS BQ - APPLIED SQL WITH BQ")
-      {
-         website := "https://www.udemy.com/course/applied-sql-for-data-analytics-data-science-with-bigquery/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/Big-Query-020d06067e154efa81ab7081f4f0b56c?pvs=4#b256df39ab3e4b40abd422eed10e71fe"
-      }
-      else if(Curso = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoWebDev = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoAll = "ANALYTICS BQ - ANALISAR DADOS NO BQ" | CursoOutros = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoMkt = "ANALYTICS BQ - ANALISAR DADOS NO BQ")
-      {
-         website := "https://www.udemy.com/course/curso-completo-sql-para-analise-de-dados/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/BigQuery-ac25d6e8937e4cc681ccdab7c2c1f037?pvs=4"
-      }
-      else if(Curso = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoWebDev = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoAll = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" | CursoOutros = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoMkt = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ")
-      {
-         website := "https://www.udemy.com/course/criacao-de-dashboards-com-google-data-studio/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/BigQuery-ac25d6e8937e4cc681ccdab7c2c1f037?pvs=4"
-      }
-      else if(Curso = "POWER BI 1" || CursoWebDev = "POWER BI 1" || CursoAll = "POWER BI 1" | CursoOutros = "POWER BI 1" || CursoMkt = "POWER BI 1")
-      {
-         website := "https://www.udemy.com/course/power-bi-completo-do-basico-ao-avancado/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/Power-BI-2f9229501549428f95e8ae5a410c51ca?pvs=4#2e615e5e0bfe4b0ba73bf35f1522cd654"
-      }
-      else if(Curso = "REGEX" || CursoWebDev = "REGEX" || CursoAll = "REGEX" | CursoOutros = "REGEX" || CursoMkt = "REGEX")
-      {
-         website := "https://www.udemy.com/course/mastering-regular-expressions-in-javascript/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/RegExp-JS-d9b4e89ab9584f2daef737e3156fe4b1?pvs=4"
-      }
-      else if(Curso = "NGINX-1" || CursoWebDev = "NGINX-1" || CursoAll = "NGINX-1" | CursoOutros = "NGINX-1" || CursoMkt = "NGINX-1")
-      {
-         website := "https://www.udemy.com/course/nginx-fundamentals/learn"
-         notion := "notion://www.notion.so/lullio/NGINX-8d3e67e6771742eaa474ca72253d93d1?pvs=4#fcd59bbd427843fbb40099b6957e9be8"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-      }
-      else if(Curso = "NGINX-2" || CursoWebDev = "NGINX-2" || CursoAll = "NGINX-2" | CursoOutros = "NGINX-2" || CursoMkt = "NGINX-2")
-      {
-         website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/NGINX-7ba5972d67354b4fa8885adfcb6a7ccf?pvs=4#01dc417ce3364b2395bbe81693d2336a"
-      }
-      else if(Curso = "YT AHK API" || CursoWebDev = "YT AHK API" || CursoAll = "YT AHK API" | CursoOutros = "YT AHK API" || CursoMkt = "YT AHK API")
-      {
-         website := "https://www.youtube.com/watch?v=86S-bWS_smM&list=PL3JprvrxlW242fgxzzavJM7lRkCB90y4R&index=1"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/AHK-API-3112a6db91cc4ebb8823200980c10ef7?pvs=4"
-      }
-      else if(Curso = "GTM1" || CursoWebDev = "GTM1" || CursoAll = "GTM1" | CursoOutros = "GTM1" || CursoMkt = "GTM1")
-      {
-         gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
-         if !FileExist(gtm1Folder)
-         {
-            gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
-         }
-         website = Run %gtm1Folder%
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/Google-Tag-Manager-5cb91cdde3e943f9b2b05a43e38237c1?pvs=4#37281bf8a5b54405885e2d16aac97806"
-      }
-      else if(Curso = "GTM2" || CursoWebDev = "GTM2" || CursoAll = "GTM2" | CursoOutros = "GTM2" || CursoMkt = "GTM2")
-      {
-         gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
-         if !FileExist(gtm2Folder)
-         {
-            gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
-         }
-         website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/Google-Tag-Manager-5cb91cdde3e943f9b2b05a43e38237c1?pvs=4#fa0f4c0ad533433eb3b2f6e439623d76"
-      }
-      else if(Curso = "GA4" || CursoWebDev = "GA4" || CursoAll = "GA4" | CursoOutros = "GA4" || CursoMkt = "GA4")
-      {
-         GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
-         if !FileExist(GA4Folder)
-         {
-           GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
-         }
-         website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
-         pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
-         notion := "notion://www.notion.so/lullio/GA4-AM-2c2c777ac2a04c388a5ef9bbaea2259d?pvs=4#c962d7277c754ce88b987e179122b521"
-      }
-      else{
-         website := "none"
-      }
-return
+; courseSelected:
+; Gui, Submit, NoHide
+;    if(Curso == "DOM-1" || CursoWebDev == "DOM-1" || CursoAll == "DOM-1" | CursoOutros == "DOM-1" || CursoMkt == "DOM-1")
+;       {
+;          website := "https://www.udemy.com/course/build-interactive-websites-1/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
+;       }
+;       else if(Curso = "DOM-2" || CursoWebDev = "DOM-2" || CursoAll = "DOM-2" | CursoOutros = "DOM-2" || CursoMkt = "DOM-2")
+;       {
+;          website := "https://www.udemy.com/course/build-dynamic-websites-dom-2/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/JS-DOM-d4415aaf9eeb41769636c6ee16e18c7a?pvs=4#bc76b9d3415e4bb5909c12701a8b11e2"
+;       }
+;       else if(Curso = "JS - ASYNC" || CursoWebDev = "JS - ASYNC" || CursoAll = "JS - ASYNC" | CursoOutros = "JS - ASYNC" || CursoMkt = "JS - ASYNC")
+;       {
+;          website := "https://www.udemy.com/course/asynchronous-javascript-deep-dive/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/JS-Async-b1e1ff048ba446b9a750c99a0561b964?pvs=4#04605a3148744379a89e4ecd3cd8a957"
+;       }
+;       else if(Curso = "JS - FUNC" || CursoWebDev = "JS - FUNC" || CursoAll = "JS - FUNC" | CursoOutros = "JS - FUNC" || CursoMkt = "JS - FUNC")
+;       {
+;          website := "https://www.udemy.com/course/functional-programming-in-javascript-a-practical-guide/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/JS-Functions-502abc488dc9492fab8585100472ba30?pvs=4#6c347b0b00794ba583bc10ce86a6c517"
+;       }
+;       else if(Curso = "JS - ARRAY" || CursoWebDev = "JS - ARRAY" || CursoAll = "JS - ARRAY" | CursoOutros = "JS - ARRAY" || CursoMkt = "JS - ARRAY")
+;       {
+;          website := "https://www.udemy.com/course/mastering-javascript-arrays/learn/"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/JS-Arrays-d00d5b61063c4e009c3f763cd5061cff?pvs=4#c61684276e91400f95dcc194c2aefca1"
+;       }
+;       else if(Curso = "WEB ANALYTISC" || CursoWebDev = "WEB ANALYTISC" || CursoAll = "WEB ANALYTISC" | CursoOutros = "WEB ANALYTISC" || CursoMkt = "WEB ANALYTISC")
+;       {
+;          website := "https://www.udemy.com/course/webanalytics-completo-muito-alem-do-google-analytics/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/GA3-Udemy-2b20d3b404c646a8b68376f7f8ea179e?pvs=4#694be6e93d9b4b918017fdf37094b57d"
+;       }
+;       else if(Curso = "JS - COMPLETE JS COURSE JONAS" || CursoWebDev = "JS - COMPLETE JS COURSE JONAS" || CursoAll = "JS - COMPLETE JS COURSE JONAS" | CursoOutros = "JS - COMPLETE JS COURSE JONAS" || CursoMkt = "JS - COMPLETE JS COURSE JONAS")
+;       {
+;          website := "https://www.udemy.com/course/the-complete-javascript-course/learn/lecture"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/Complete-JS-C-c245dd6c4f9a43f8832dc64885b1e825?pvs=4#80de55c25c834079953f41663a137ced"
+;       }
+;       else if(Curso = "JS FULL STACK" || CursoWebDev = "JS FULL STACK" || CursoAll = "JS FULL STACK" | CursoOutros = "JS FULL STACK" || CursoMkt = "JS FULL STACK")
+;       {
+;          website := "https://www.udemy.com/course/learn-javascript-full-stack-from-scratch/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/Node-JS-ac151bb66604406fb76348d6fac43776?pvs=4#d8995e38ced9466f88778e8328c022ef"
+;       }
+;       else if(Curso = "JS - AJAX" || CursoWebDev = "JS - AJAX" || CursoAll = "JS - AJAX" | CursoOutros = "JS - AJAX" || CursoMkt = "JS - AJAX")
+;       {
+;          website := "https://www.udemy.com/course/JS - AJAX-fundamentals/learn/lecture/"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/JS - AJAX-a44cb3846172447fb20fbe658abec493?pvs=4#03cb8b5860ab4bfb8b51c3167c143077"
+;       }
+;       else if(Curso = "JS - GOOGLE APPS SCRIPT" || CursoWebDev = "JS - GOOGLE APPS SCRIPT" || CursoAll = "JS - GOOGLE APPS SCRIPT" | CursoOutros = "JS - GOOGLE APPS SCRIPT" || CursoMkt = "JS - GOOGLE APPS SCRIPT")
+;       {
+;          website := "https://www.udemy.com/course/course-apps-script/learn/"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/Google-Apps-Script-d7d4ecbc058c40108576de160a0f8942?pvs=4#88e8a5c8c6764fd085698c93c58be04d"
+;       }
+;       else if(Curso = "ANALYTICS LS - DATA STUDIO pt-br" || CursoWebDev = "ANALYTICS LS - DATA STUDIO pt-br" || CursoAll = "ANALYTICS LS - DATA STUDIO pt-br" | CursoOutros = "ANALYTICS LS - DATA STUDIO pt-br" || CursoMkt = "ANALYTICS LS - DATA STUDIO pt-br")
+;       {
+;          website := "https://www.udemy.com/course/domine-google-data-studio/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
+;       }
+;       else if(Curso = "ANALYTICS LS - DATA STUDIO en-us" || CursoWebDev = "ANALYTICS LS - DATA STUDIO en-us" || CursoAll = "ANALYTICS LS - DATA STUDIO en-us" | CursoOutros = "ANALYTICS LS - DATA STUDIO en-us" || CursoMkt = "ANALYTICS LS - DATA STUDIO en-us")
+;       {
+;          website := "https://www.udemy.com/course/data-analysis-and-dashboards-with-google-data-studio/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/7ba059f2bff24c89b1af37b7a2da3736?v=c3e4b041d1384185865dc5443c2a2bab&pvs=4"
+;       }
+;       else if(Curso = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoWebDev = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoAll = "ANALYTICS BQ - APPLIED SQL WITH BQ" | CursoOutros = "ANALYTICS BQ - APPLIED SQL WITH BQ" || CursoMkt = "ANALYTICS BQ - APPLIED SQL WITH BQ")
+;       {
+;          website := "https://www.udemy.com/course/applied-sql-for-data-analytics-data-science-with-bigquery/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/Big-Query-020d06067e154efa81ab7081f4f0b56c?pvs=4#b256df39ab3e4b40abd422eed10e71fe"
+;       }
+;       else if(Curso = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoWebDev = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoAll = "ANALYTICS BQ - ANALISAR DADOS NO BQ" | CursoOutros = "ANALYTICS BQ - ANALISAR DADOS NO BQ" || CursoMkt = "ANALYTICS BQ - ANALISAR DADOS NO BQ")
+;       {
+;          website := "https://www.udemy.com/course/curso-completo-sql-para-analise-de-dados/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/BigQuery-ac25d6e8937e4cc681ccdab7c2c1f037?pvs=4"
+;       }
+;       else if(Curso = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoWebDev = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoAll = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" | CursoOutros = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ" || CursoMkt = "ANALYTICS BQ - CONSTRUIR DASHBOARD NO BQ")
+;       {
+;          website := "https://www.udemy.com/course/criacao-de-dashboards-com-google-data-studio/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/BigQuery-ac25d6e8937e4cc681ccdab7c2c1f037?pvs=4"
+;       }
+;       else if(Curso = "POWER BI 1" || CursoWebDev = "POWER BI 1" || CursoAll = "POWER BI 1" | CursoOutros = "POWER BI 1" || CursoMkt = "POWER BI 1")
+;       {
+;          website := "https://www.udemy.com/course/power-bi-completo-do-basico-ao-avancado/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/Power-BI-2f9229501549428f95e8ae5a410c51ca?pvs=4#2e615e5e0bfe4b0ba73bf35f1522cd654"
+;       }
+;       else if(Curso = "REGEX" || CursoWebDev = "REGEX" || CursoAll = "REGEX" | CursoOutros = "REGEX" || CursoMkt = "REGEX")
+;       {
+;          website := "https://www.udemy.com/course/mastering-regular-expressions-in-javascript/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/RegExp-JS-d9b4e89ab9584f2daef737e3156fe4b1?pvs=4"
+;       }
+;       else if(Curso = "NGINX-1" || CursoWebDev = "NGINX-1" || CursoAll = "NGINX-1" | CursoOutros = "NGINX-1" || CursoMkt = "NGINX-1")
+;       {
+;          website := "https://www.udemy.com/course/nginx-fundamentals/learn"
+;          notion := "notion://www.notion.so/lullio/NGINX-8d3e67e6771742eaa474ca72253d93d1?pvs=4#fcd59bbd427843fbb40099b6957e9be8"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;       }
+;       else if(Curso = "NGINX-2" || CursoWebDev = "NGINX-2" || CursoAll = "NGINX-2" | CursoOutros = "NGINX-2" || CursoMkt = "NGINX-2")
+;       {
+;          website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/NGINX-7ba5972d67354b4fa8885adfcb6a7ccf?pvs=4#01dc417ce3364b2395bbe81693d2336a"
+;       }
+;       else if(Curso = "YT AHK API" || CursoWebDev = "YT AHK API" || CursoAll = "YT AHK API" | CursoOutros = "YT AHK API" || CursoMkt = "YT AHK API")
+;       {
+;          website := "https://www.youtube.com/watch?v=86S-bWS_smM&list=PL3JprvrxlW242fgxzzavJM7lRkCB90y4R&index=1"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/AHK-API-3112a6db91cc4ebb8823200980c10ef7?pvs=4"
+;       }
+;       else if(Curso = "GTM1" || CursoWebDev = "GTM1" || CursoAll = "GTM1" | CursoOutros = "GTM1" || CursoMkt = "GTM1")
+;       {
+;          gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+;          if !FileExist(gtm1Folder)
+;          {
+;             gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+;          }
+;          website = Run %gtm1Folder%
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/Google-Tag-Manager-5cb91cdde3e943f9b2b05a43e38237c1?pvs=4#37281bf8a5b54405885e2d16aac97806"
+;       }
+;       else if(Curso = "GTM2" || CursoWebDev = "GTM2" || CursoAll = "GTM2" | CursoOutros = "GTM2" || CursoMkt = "GTM2")
+;       {
+;          gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+;          if !FileExist(gtm2Folder)
+;          {
+;             gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+;          }
+;          website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/Google-Tag-Manager-5cb91cdde3e943f9b2b05a43e38237c1?pvs=4#fa0f4c0ad533433eb3b2f6e439623d76"
+;       }
+;       else if(Curso = "GA4" || CursoWebDev = "GA4" || CursoAll = "GA4" | CursoOutros = "GA4" || CursoMkt = "GA4")
+;       {
+;          GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
+;          if !FileExist(GA4Folder)
+;          {
+;            GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
+;          }
+;          website := "https://www.udemy.com/course/the-perfect-nginx-server-ubuntu-edition/learn"
+;          pasta := "C:\Users\felipe\Documents\Github\AHK\main-scripts"
+;          notion := "notion://www.notion.so/lullio/GA4-AM-2c2c777ac2a04c388a5ef9bbaea2259d?pvs=4#c962d7277c754ce88b987e179122b521"
+;       }
+;       else{
+;          website := "none"
+;       }
+; return
 
 ; CONTROL VIDEOS
 controlVideos:
@@ -843,4 +843,74 @@ aspa =
       ; exibir total de linhas
       totalLines := LV_GetCount()
       GuiControl, , TotalCursos, Total de Cursos: %totalLines%
+Return
+
+ListaDeCursos:
+Gui Submit, NoHide
+
+ComObjError(false)
+/*
+  CAPTURAR LINHA SELECINADA NA LISTVIEW DA GUI DO AHK
+*/
+NumeroLinhaSelecionada := LV_GetNext()
+; texto selecionado na coluna 1 (nome do curso)
+LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 1) 
+; texto selecionado na coluna 2 (url do curso)
+LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 2) 
+
+; msgbox % A_GuiEvent
+if(A_GuiEvent == "DoubleClick"){
+   ; Clipboard := RegExReplace(Analytics, "FB-|TKT-", "")
+   msgbox %TextoLinhaSelecionadaCurso%
+   msgbox %TextoLinhaSelecionadaURL%
+}
+   ; Variables
+   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+   IfNotExist, %chPath%
+      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
+
+   ; CHAMAR O LABEL courseSelected
+   ; Gosub, courseSelected
+   ; msgbox %website%
+   if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
+   ; se não encontrar aba chrome com remote debug
+   if !(PageInst := Chrome.GetPageByURL(website, "contains"))
+   {
+      ; Instance chrome
+      ChromeInst := new Chrome(profileName,website,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+      PageInst.WaitForLoad("complete")
+      PageInst.Call("Page.bringToFront")
+      Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+   }
+   Sleep, 500
+   ; aqui está o fix pra esperar a página carregar
+   PageInst := Chrome.GetPageByURL(website, "contains")
+   Sleep, 500
+   /*
+   SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+   */
+   PageInst.Call("Page.bringToFront")
+   }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
+   Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+   Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+   }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
+   Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+   Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
+   }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
+   Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+   Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
+   }else{
+   Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+   PageInst.Disconnect()
+   }
+   ; GoSub, firstStep
+   ; PageInst.Disconnect()
+
 Return
