@@ -110,50 +110,55 @@ Gui, Menu, MyMenuBar ; Attach MyMenuBar to the GUI
 LINHA 1 - SEPARADO - PRINCIPAIS CURSOS
 */
 ; dropdown 1 - principais cursos
-Gui Add, Text,section y+10 , Main Courses
-Gui, Add, ComboBox, x10 y+10 w510 vCurso gCursos hwndCursosIDMain, %ListMainCourses%
+Gui Add, Text,section y+10 , Main Courses / Top Rated
+Gui, Add, ComboBox, x10 y+10 w510 vCurso gCursos hwndCursosIDMain, 
 
 /*
 COLUNA 1
 */
 ; dropdown 2 - web dev cursos
-Gui Add, Text, section x10,Web Dev Courses
-Gui, Add, ComboBox, vCursoWebDev gCursos hwndCursosIDDev w250, %ListWebCourses%
-; dropdown 3 - todos os cursos
-Gui Add, Text,, All Courses
-Gui, Add, ComboBox, vCursoAll gCursos w250 hwndCursosIDAll, %ListAllCourses%
+Gui Add, Text, section x10, Web Developer
+Gui, Add, ComboBox, vCursoWebDev gCursos hwndCursosIDDev w250, 
+; dropdown 3 - Cursos Analytics
+Gui Add, Text,, Analytics / Marketing
+Gui, Add, ComboBox, vCursoMkt gCursos w250 hwndCursosIDAll, 
 
 /*
 COLUNA 2
 */
-; dropdown 4 - mkt cursos
-Gui Add, Text, ys, Mkt Courses
-Gui, Add, ComboBox, w250 vCursoMkt gCursos hwndCursosIDMkt , %ListMktCourses%
-; dropdown 5 - outros cursos
-Gui Add, Text,, Other Courses
-Gui, Add, ComboBox, vCursoOutros gCursos hwndCursosIDOutros w250, %ListOutrosCourses%
+; dropdown 4 - javascript cursos
+Gui Add, Text, ys, JavaScript All
+Gui, Add, ComboBox, w250 vCursoJavaScript gCursos hwndCursosIDMkt, 
+; dropdown 5 - sql banco de dados cursos
+Gui Add, Text,, SQL
+Gui, Add, ComboBox, vCursoSQL gCursos hwndCursosIDOutros w250, 
+
+/*
+COLUNA 3
+*/
+; dropdown 4 - linux cursos
+Gui Add, Text, , Linux Courses
+Gui, Add, ComboBox, w250 vCursoLinux gCursos hwndCursosIDMkt, 
+; dropdown 5 - backend
+Gui Add, Text, xs ys+112, Backend / Web Server
+Gui, Add, ComboBox, vCursoWebServer gCursos hwndCursosIDOutros w250, 
 
 ; gui, font, S7 ;Change font size to 12
 ; 2º dropdown js courses
-Gui, Add, GroupBox, xs cBlack r21 w560, Executar Ações (Cuidado)
-Gui Add, Text, yp+25 xp+11 center, Selecione um Template ou Cole uma URL Google Sheets:
+Gui, Add, GroupBox, xs cBlack r13 w560, TODOS OS CURSOS
+Gui Add, Text, yp+25 xp+11 center, Cursos em Andamento
 Gui Font, S10
 Gui Add, ComboBox, xs+10 yp+20 w372 center vTemplateDimensoes hwndDimensoesID ,Versão 1 - Parâmetros de Elemento (pt-br-new)||Versão 2 - Parâmetros de Blog (en-us-old)|Versão 3 - Parâmetros Antigos Flow Step (pt-br-old)|Template Vazio
 Gui Add, Button, x+20  w135 h24, Atualizar Tabela
 Gui Font,
-Gui Add, ListView, vListaDimensions w530 r12 xs+10 y+10 -readonly grid sort , Curso|URL|Categories|Nota
+Gui Add, ListView, vListaDimensions w530 r10 xs+10 y+10 -readonly grid sort , Curso|URL|Categories|Provider|Notion|Length|Rating
 ; LV_Modify()
 Gui Font, S6.5
-Gui Add, Link, w120 y+3 xp+200 vTotalDimensoes center,
-
-Gui Font, S11
-gui Add, Button, w300  xs+120 yp+25, &Criar Todas Dimensões
-gui Add, Button, cGreen w150 xp y+5  , &Excluir tudo
-gui Add, Button, w150 x+5 , &Excluir algumas
+Gui Add, Link, w120 y+3 xp+200 vTotalCursos center,
 
 ; Botões
 gui, font, S11
-gui, Add, Button, y+10 xs w250 h35 gAbrirCurso Default, &Abrir Curso
+gui, Add, Button, y+25 xs+15 w250 h35 gAbrirCurso Default, &Abrir Curso
 gui, Add, Button, w150 h35 x+10 gAbrirNotion, &Abrir Notion
 gui, Add, Button, w95 h35 x+10 gCancel Cancel, &Cancelar
 
@@ -726,7 +731,8 @@ getDataFromGoogleSheet(urlData){
    googleSheetData := whr.ResponseText
    SemAspa := RegExReplace(googleSheetData, aspa , "")
    ;  msgbox %googleSheetData%
-   Return SubStr(googleSheetData, 2,-1) ; remove o primeiro e último catactere (as aspas)
+   ; Return SubStr(googleSheetData, 2,-1) ; remove o primeiro e último catactere (as aspas)
+   Return googleSheetData
 }
 
 getData:
@@ -775,46 +781,66 @@ aspa =
    ; todos os dados
    dataAllRows := getDataFromGoogleSheet(urlData)
    ; msgbox % dataAllRows
-   ; remover aspas inicial e final
-   javascriptArrays := RegExReplace(getDataFromGoogleSheet(urlAllArr), "mi)" aspa, "")
-   ; msgbox js: %javascriptArrays%
 
-   Loop, parse, dataAllRows, `n, `r ; linha
+   Loop, parse, dataAllRows, `n,`r ; linha
       {
-          LineNumber := A_Index
-         ;  msgbox, % Coluna1 := StrSplit(A_LoopField,",")[1] ; 1 coluna Nome da dimensão
-         SemAspa := RegExReplace(A_LoopField, aspa , "")
-         Coluna1 := StrSplit(A_LoopField,",")[1] ; 1 coluna courseName
-         Coluna2 := StrSplit(A_LoopField,",")[2] ; 2 coluna courseURL
-         Coluna3 := StrSplit(A_LoopField,",")[3] ; 3 coluna courseCategories
-         Coluna4 := StrSplit(A_LoopField,",")[4] ; 4 coluna courseProvider
-         Coluna5 := StrSplit(A_LoopField,",")[5] ; 5 coluna courseLength
-         Coluna6 := StrSplit(A_LoopField,",")[6] ; 6 coluna courseRating
-         ;  msgbox % coluna1
-         ;  Coluna1SemAspas := StrReplace(Coluna1, aspa, "")
-         ;  Coluna2SemAspas := StrReplace(Coluna2, aspa, "")
-         ;  Coluna3SemAspas := StrReplace(Coluna3, aspa, "")
-          LV_Add("" , SubStr(Coluna1, 2,-1), SubStr(Coluna2, 2,-1), SubStr(Coluna3, 2,-1), SubStr(Coluna4, 2,-1), SubStr(Coluna5, 2,-1))
+         LineNumber := A_Index
+         LineContent := A_LoopField
+         ; msgbox % LineContent := A_LoopField
+         ; msgbox, % RegExReplace(StrSplit(A_LoopField,",")[1], aspa , "")
+         Coluna1 := RegExReplace(StrSplit(A_LoopField,",")[1], aspa , "") ; 1 coluna courseName
+         Coluna2 := RegExReplace(StrSplit(A_LoopField,",")[2], aspa , "") ; 2 coluna courseURL
+         Coluna3 := RegExReplace(StrSplit(A_LoopField,",")[3], aspa , "") ; 3 coluna courseCategories
+         Coluna4 := RegExReplace(StrSplit(A_LoopField,",")[4], aspa , "") ; 4 coluna courseProvider
+         Coluna5 := RegExReplace(StrSplit(A_LoopField,",")[5], aspa , "") ; 5 coluna courseLength
+         Coluna6 := RegExReplace(StrSplit(A_LoopField,",")[6], aspa , "") ; 6 coluna courseRating
+         ; LV_Add("" , Coluna1, SubStr(Coluna2, 2,-1), SubStr(Coluna3, 2,-1), SubStr(Coluna4, 2,-1), SubStr(Coluna5, 2,-1)) ; serve para remover as aspas na frente e final         
+         LV_Add("" , Coluna1, Coluna2, Coluna3, Coluna4, Coluna5, Coluna6)
          ;  Loop, parse, data, CSV ; coluna
          ;  {
          ;      MsgBox, 4, , %Postition% Field %LineNumber%-%A_Index% is:`n%A_LoopField%`n`nContinue?
          ;      IfMsgBox, No
          ;          return
          ;  }
-         If InStr(Coluna2, "sql")
-         ListVar2 .= StrSplit(A_LoopField,",")[1] "|"
-         
+         /*
+            ORGANIZAR AS CATEGORIAS DOS CURSOS  / SALVAR TODOS OS CURSOS EM VARIÁVEIS COM BASE NA CATEOGIRA
+            1. SE EXISTIR "SQL" na coluna 2 courseCategories Adicionar o nome do curso na variável ListSQLCourses
+            2. ....
+            nome do curso esta na coluna 1, ou seja [1] posição 1
+            ; https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit#gid=0
+         */
+         ListAllCourses .= StrSplit(A_LoopField,",")[1] "|" ; salvar todos os cursos
+         If InStr(Coluna3, "sql")
+            ListSQLCourses .= StrSplit(A_LoopField,",")[1] "|"
+         If InStr(Coluna3, "web-dev")
+            ListWebDevCourses .= StrSplit(A_LoopField,",")[1] "|"
+         If InStr(Coluna3, "javascript") || If InStr(Coluna3, "js-frameworks") 
+            ListJavaScriptCourses .= StrSplit(A_LoopField, ",")[1] "|"
+         If InStr(Coluna3, "analytics") || InStr(Coluna3, "ads") || InStr(Coluna3, "wordpress") 
+            ListAnalyticsCourses .= StrSplit(A_LoopField, ",")[1] "|"
+         If InStr(Coluna3, "linux") || InStr(Coluna3, "redes") || InStr(Coluna3, "hacking") 
+            ListLinuxCourses .= StrSplit(A_LoopField, ",")[1] "|"
+         If InStr(Coluna3, "top-rated") 
+            ListTopCourses .= StrSplit(A_LoopField, ",")[1] "|"
+         If InStr(Coluna3, "web-server") 
+            ListWebServerCourses .= StrSplit(A_LoopField, ",")[1] "|"
       } 
-      GuiControl,1:, CursoWebDev, %ListVar2%
+      ; ALTERANDO TODAS COMBOBOX PARA POPULAREM OS DADOS DA PLANILHA
+      GuiControl,1:, Curso, %ListTopCourses% ; main courses
+      GuiControl,1:, CursoWebDev, %ListWebDevCourses% ; web dev courses
+      GuiControl,1:, CursoJavaScript, %ListJavaScriptCourses% ; analytics mkt courses
+      GuiControl,1:, CursoMkt, %ListAnalyticsCourses% ; analytics mkt courses
+      GuiControl,1:, CursoSQL, %ListSQLCourses% ; analytics mkt courses
+      GuiControl,1:, CursoWebServer, %ListWebServerCourses% ; analytics mkt courses
+      GuiControl,1:, CursoLinux, %ListLinuxCourses% ; analytics mkt courses
+      GuiControl,1:, CursoAll, %ListAllCourses% ; analytics mkt courses
       ; ajustar largura
-      LV_ModifyCol(3,0)
-      LV_ModifyCol(1)
-      LV_ModifyCol(2)
+      LV_ModifyCol()
       ; ordenar
       ; LV_ModifyCol(1, sort, "integer")
       ; LV_ModifyCol(1, "text")
 
       ; exibir total de linhas
       totalLines := LV_GetCount()
-      GuiControl, , TotalDimensoes, Total de Dimensões: %totalLines%
+      GuiControl, , TotalCursos, Total de Cursos: %totalLines%
 Return
