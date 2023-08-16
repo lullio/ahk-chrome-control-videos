@@ -151,21 +151,23 @@ Gui, Show,, Abrir Curso e Controlar Video - Felipe Lulio
 ComObjError(false)
 
 ; EXECUTAR LOGO AO ABRIR A GUI, PARA EU PODER USAR OS COMANDOS DE VÍDEO MESMO SEM SELECIONAR UM CURSO.
-website := "udemy.com"
-if(Chrome.GetPageByURL(website, "contains")){
-   website := "udemy.com"
-   msgbox hi
-}else{
-   website := "youtube.com"
-   msgbox no
-}
  ; se não encontrar aba chrome com remote debug
-;  if !(PageInst := Chrome.GetPageByURL(website, "contains"))
-;    {
-;       Return
-;    }else{
-;       Return
-;    }
+ if !(PageInst := Chrome.GetPageByURL(website, "contains"))
+   {
+      ; Sleep, 500
+      ; aqui está o fix pra esperar a página carregar
+      ; PageInst := Chrome.GetPageByURL(website, "contains")
+      ; Sleep, 500
+      /*
+      SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+      */
+      ; PageInst.Call("Page.bringToFront")
+      ; GoSub, controlVideos
+      Return
+   }else{
+      ; Gosub, controlVideos
+      Return
+   }
 Return
 
 
@@ -613,22 +615,19 @@ IfNotExist %profileName%
 IfNotExist %profileName%
    profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
 
-website := "udemy.com"
-if(Chrome.GetPageByURL(website, "contains")){
-   website := "udemy.com"
-}else{
-   website := "youtube.com"
-}
+; website := "udemy.com"
+; if(Chrome.GetPageByURL(website, "contains")){
+;    website := "udemy.com"
+; }else{
+;    website := "youtube.com"
+; }
 
 ; msgbox % A_GuiEvent
 if(A_GuiEvent == "DoubleClick"){
-   ; Clipboard := RegExReplace(Analytics, "FB-|TKT-", "")
    ; msgbox %TextoLinhaSelecionadaCurso%
    ; msgbox %TextoLinhaSelecionadaURL%
-   if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4"){
-      msgbox % website
-      ; se não encontrar aba chrome com remote debug
-      if !(PageInst := Chrome.GetPageByURL(website, "contains"))
+   if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4"){      ; se não encontrar aba chrome com remote debug
+      if !(PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains"))
       {
          ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
          Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
@@ -638,7 +637,6 @@ if(A_GuiEvent == "DoubleClick"){
          {
             Sleep, 500
             Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-            if !(PageInst := Chrome.GetPageByURL(website, "contains"))
             PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
             contador1++
             if(contador1 >= 30){
@@ -649,7 +647,7 @@ if(A_GuiEvent == "DoubleClick"){
       }
       Sleep, 500
       ; aqui está o fix pra esperar a página carregar
-      PageInst := Chrome.GetPageByURL(website, "contains")
+      PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
       Sleep, 500
      ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
       PageInst.Call("Page.bringToFront")
@@ -686,7 +684,7 @@ if(A_GuiEvent == "DoubleClick"){
       PageInst.Disconnect()
       }
 }
-   GoSub, controlVideos
+   ; GoSub, controlVideos
 Return
 
 
@@ -726,6 +724,7 @@ Gui, NovoCurso:Add, Checkbox,Checked1 x+15 center h20 +0x200, Curso Principal?
 
 gui, font, S13 ;Change font size to 12
 gui, NovoCurso:Add, Button, center y+15 x120 w250 h25 gCadastrarCurso Default, &Cadastrar Curso
+
 Gui, NovoCurso:Show, xCenter yCenter
 ControlFocus, Edit1, Cadastrar Novo Curso - Felipe Lullio
 return
