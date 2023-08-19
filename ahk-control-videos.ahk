@@ -1,7 +1,7 @@
 ﻿#Include, <Default_Settings>
 ; #SingleInstance, force
 ; #Include, C:\Users\%A_UserName%\Downloads\Chrome.ahk
-#Include, C:\Program Files\AutoHotkey\Lib\Chrome.ahk
+#Include, C:\Program Files\AutoHotkey\Lib\Chromev3.ahk
 
 ; if not A_IsAdmin
 ;    Run *RunAs "%A_ScriptFullPath%"
@@ -86,37 +86,37 @@ LINHA 1 - SEPARADO - PRINCIPAIS CURSOS
 */
 ; dropdown 1 - principais cursos
 Gui Add, Text,section y+10 , Main Courses / Top Rated
-Gui, Add, ComboBox, x10 y+10 w510 vCurso gCursos hwndCursosIDMain, 
+Gui, Add, ComboBox, Multi x10 y+10 w510 vCurso gCursos hwndCursosIDMain, 
 
 /*
 COLUNA 1
 */
 ; dropdown 2 - web dev cursos
 Gui Add, Text, section x10, Web Developer
-Gui, Add, ComboBox, vCursoWebDev gCursos hwndCursosIDDev w250, 
+Gui, Add, ComboBox, Multi vCursoWebDev gCursos hwndCursosIDDev w250, 
 ; dropdown 3 - Cursos Analytics
 Gui Add, Text,, Analytics / Marketing
-Gui, Add, ComboBox, vCursoMkt gCursos w250 hwndCursosIDAll, 
+Gui, Add, ComboBox, Multi vCursoMkt gCursos w250 hwndCursosIDAll, 
 
 /*
 COLUNA 2
 */
 ; dropdown 4 - javascript cursos
 Gui Add, Text, ys, JavaScript All
-Gui, Add, ComboBox, w250 vCursoJavaScript gCursos hwndCursosIDMkt, 
+Gui, Add, ComboBox, Multi w250 vCursoJavaScript gCursos hwndCursosIDMkt, 
 ; dropdown 5 - sql banco de dados cursos
 Gui Add, Text,, SQL
-Gui, Add, ComboBox, vCursoSQL gCursos hwndCursosIDOutros w250, 
+Gui, Add, ComboBox, Multi vCursoSQL gCursos hwndCursosIDOutros w250, 
 
 /*
 COLUNA 3
 */
 ; dropdown 4 - linux cursos
 Gui Add, Text, , Linux Courses
-Gui, Add, ComboBox, w250 vCursoLinux gCursos hwndCursosIDMkt, 
+Gui, Add, ComboBox , Multi w250 vCursoLinux gCursos hwndCursosIDMkt, 
 ; dropdown 5 - backend
 Gui Add, Text, xs ys+112, Backend / Web Server
-Gui, Add, ComboBox, vCursoWebServer gCursos hwndCursosIDOutros w250, 
+Gui, Add, ComboBox, Multi vCursoWebServer gCursos hwndCursosIDOutros w250, 
 
 ; gui, font, S7 ;Change font size to 12
 ; 2º dropdown js courses
@@ -124,11 +124,11 @@ Gui, Add, GroupBox, xs cBlack r13 w560, TODOS OS CURSOS
 Gui Add, Text, yp+25 xp+11 center, Cursos em Andamento
 Gui Font, S10
 
-Gui Add, ComboBox, xs+10 yp+20 w372 center vTemplateDimensoes hwndDimensoesID ,Versão 1 - Parâmetros de Elemento (pt-br-new)||Versão 2 - Parâmetros de Blog (en-us-old)|Versão 3 - Parâmetros Antigos Flow Step (pt-br-old)|Template Vazio
+Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vTemplateDimensoes hwndDimensoesID ,Versão 1 - Parâmetros de Elemento (pt-br-new)||Versão 2 - Parâmetros de Blog (en-us-old)|Versão 3 - Parâmetros Antigos Flow Step (pt-br-old)|Template Vazio
 Gui Add, Button, x+20  w135 h24, Atualizar Tabela
 Gui Font,
 
-Gui Add, ListView, vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort, Curso|URL|Categories|Provider|Notion|Length|Rating
+Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort, Curso|URL|Categories|Provider|Notion|Length|Rating
 ; LV_Modify()
 Gui Font, S6.5
 Gui Add, Link, w120 y+3 xp+200 vTotalCursos center,
@@ -252,6 +252,10 @@ return
 
 AbrirCurso:
    Gui, Submit, NoHide
+   Loop, Parse, CursoLinux, |
+      {
+          MsgBox Selection number %A_Index% is %A_LoopField%.
+      }
    ComObjError(false)
 
    ; Variables
@@ -266,42 +270,149 @@ AbrirCurso:
    IfNotExist %profileName%
       profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
 
-; CHAMAR O LABEL courseSelected
-; Gosub, courseSelected
-msgbox %website%
-if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
-   ; se não encontrar aba chrome com remote debug
-   if !(PageInst := Chrome.GetPageByURL(website, "contains"))
-   {
-      ; Instance chrome
-      ChromeInst := new Chrome(profileName,website,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
-      PageInst.WaitForLoad("complete")
+   ; CHAMAR O LABEL courseSelected
+   ; Gosub, courseSelected
+   if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
+      ; se não encontrar aba chrome com remote debug
+      ; msgbox %TextoLinhaSelecionadaCurso%
+      ; msgbox %TextoLinhaSelecionadaURL%     ; se não encontrar aba chrome com remote debug
+      if !(PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains"))
+      {
+         ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+         Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+         Sleep, 500
+         contador1 := 0
+         while !(PageInst)
+         {
+            Sleep, 500
+            Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+            PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
+            contador1++
+            if(contador1 >= 30){
+               PageInst.Disconnect()
+               break
+            }
+         }
+      }
+      Sleep, 500
+      ; aqui está o fix pra esperar a página carregar
+      PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
+      Sleep, 500
+     ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
       PageInst.Call("Page.bringToFront")
-      Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+   
+      /*
+         CASO TENHA SLECIONADO UM CURSO LOCAL 
+      */
+   }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
+      Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+   }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
+      Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
+   }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
+      Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
+   }else{
+      Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+      PageInst.Disconnect()
    }
-   Sleep, 500
-   ; aqui está o fix pra esperar a página carregar
-   PageInst := Chrome.GetPageByURL(website, "contains")
-   Sleep, 500
+   ; GoSub, firstStep
+   ; PageInst.Disconnect()
+
+   Gui Submit, NoHide
+
+   ComObjError(false)
    /*
-   SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+   CAPTURAR LINHA SELECINADA NA LISTVIEW DA GUI DO AHK
    */
-   PageInst.Call("Page.bringToFront")
-}else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
-   Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-   Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
-}else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
-   Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-   Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
-}else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
-   Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-   Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
-}else{
-   Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-   PageInst.Disconnect()
-}
-; GoSub, firstStep
-; PageInst.Disconnect()
+   NumeroLinhaSelecionada := LV_GetNext()
+   ; texto selecionado na coluna 1 (nome do curso)
+   LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 1) 
+   ; texto selecionado na coluna 2 (url do curso)
+   LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 2) 
+
+   ; Variables
+   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+   IfNotExist, %chPath%
+      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
+
+   ; website := "udemy.com"
+   ; if(Chrome.GetPageByURL(website, "contains")){
+   ;    website := "udemy.com"
+   ; }else{
+   ;    website := "youtube.com"
+   ; }
+
+   ; msgbox % A_GuiEvent
+   if(A_GuiEvent == "DoubleClick"){
+   ; msgbox %TextoLinhaSelecionadaCurso%
+   ; msgbox %TextoLinhaSelecionadaURL%
+   if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4"){      ; se não encontrar aba chrome com remote debug
+      if !(PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains"))
+      {
+         ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+         Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+         Sleep, 500
+         contador1 := 0
+         while !(PageInst)
+         {
+            Sleep, 500
+            Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+            PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
+            contador1++
+            if(contador1 >= 30){
+               PageInst.Disconnect()
+               break
+            }
+         }
+      }
+      Sleep, 500
+      ; aqui está o fix pra esperar a página carregar
+      PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
+      Sleep, 500
+     ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+      PageInst.Call("Page.bringToFront")
+   
+      /*
+         CASO TENHA SLECIONADO UM CURSO LOCAL 
+      */
+      }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
+      gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+      if !FileExist(gtm1Folder)
+      {
+       gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+      }
+      Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
+      }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
+      gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+      if !FileExist(gtm2Folder)
+      {
+         gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+      }
+      Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
+      }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
+      GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
+      if !FileExist(GA4Folder)
+      {
+      GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
+      }
+      Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+      Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
+      }else{
+      Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+      PageInst.Disconnect()
+      }
+   }
 Return
 
 ; CONTROL VIDEOS
@@ -506,14 +617,14 @@ getDataFromGoogleSheet(urlData){
 }
 
 getData:
-aspa =
-(
-"
-)
-/*
-   IMPORTANTE:
-   A COLUNA E DA PLANILHA PRECISA TER UMA FÓRMULA PARA GERAR O ARRAY DOS DADOS
-*/
+   aspa =
+   (
+   "
+   )
+   /*
+      IMPORTANTE:
+      A COLUNA E DA PLANILHA PRECISA TER UMA FÓRMULA PARA GERAR O ARRAY DOS DADOS
+   */
    Gui Submit, NoHide
 
          urlData := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=A2:G63&sheet=Cursos"
@@ -550,21 +661,22 @@ aspa =
             nome do curso esta na coluna 1, ou seja [1] posição 1
             ; https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit#gid=0
          */
-         ListAllCourses .= StrSplit(A_LoopField,",")[1] "|" ; salvar todos os cursos
+         ListAllCourses .= RegexReplace(StrSplit(A_LoopField,",")[1] "|", aspa, "") ; salvar todos os cursos
          If InStr(Coluna3, "sql")
-            ListSQLCourses .= StrSplit(A_LoopField,",")[1] "|"
+            ListSQLCourses .= RegexReplace(StrSplit(A_LoopField,",")[1] "|", aspa, "")
          If InStr(Coluna3, "web-dev")
-            ListWebDevCourses .= StrSplit(A_LoopField,",")[1] "|"
+            ListWebDevCourses .= RegexReplace(StrSplit(A_LoopField,",")[1] "|", aspa, "")
          If InStr(Coluna3, "javascript") || If InStr(Coluna3, "js-frameworks") 
-            ListJavaScriptCourses .= StrSplit(A_LoopField, ",")[1] "|"
+            ListJavaScriptCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
          If InStr(Coluna3, "analytics") || InStr(Coluna3, "ads") || InStr(Coluna3, "wordpress") 
-            ListAnalyticsCourses .= StrSplit(A_LoopField, ",")[1] "|"
+            ListAnalyticsCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
          If InStr(Coluna3, "linux") || InStr(Coluna3, "redes") || InStr(Coluna3, "hacking") 
-            ListLinuxCourses .= StrSplit(A_LoopField, ",")[1] "|"
+            ListLinuxCourses .= RegExReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
          If InStr(Coluna3, "top-rated") 
-            ListTopCourses .= StrSplit(A_LoopField, ",")[1] "|"
+            ListTopCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
          If InStr(Coluna3, "web-server") 
-            ListWebServerCourses .= StrSplit(A_LoopField, ",")[1] "|"
+            ListWebServerCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+
       } 
       ; MODIFICANDO TODAS COMBOBOX PARA POPULAREM OS DADOS DA PLANILHA
       GuiControl,1:, Curso, %ListTopCourses% ; main courses
@@ -586,44 +698,43 @@ aspa =
       GuiControl, , TotalCursos, Total de Cursos: %totalLines%
 Return
 
-
 /*
       AO CLICAR EM ALGUM CURSO DA LISTVIEW
 */
 ListaDeCursos:
-Gui Submit, NoHide
+   Gui Submit, NoHide
 
-ComObjError(false)
-/*
-  CAPTURAR LINHA SELECINADA NA LISTVIEW DA GUI DO AHK
-*/
-NumeroLinhaSelecionada := LV_GetNext()
-; texto selecionado na coluna 1 (nome do curso)
-LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 1) 
-; texto selecionado na coluna 2 (url do curso)
-LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 2) 
+   ComObjError(false)
+   /*
+   CAPTURAR LINHA SELECINADA NA LISTVIEW DA GUI DO AHK
+   */
+   NumeroLinhaSelecionada := LV_GetNext()
+   ; texto selecionado na coluna 1 (nome do curso)
+   LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 1) 
+   ; texto selecionado na coluna 2 (url do curso)
+   LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 2) 
 
-; Variables
-chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
-IfNotExist, %chPath%
-   chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-profileName := "C:\Users\felipe\Desktop\ChromeProfile"
-IfNotExist %profileName%
-   profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
-IfNotExist %profileName%
-   profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
-IfNotExist %profileName%
-   profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
+   ; Variables
+   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+   IfNotExist, %chPath%
+      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
 
-; website := "udemy.com"
-; if(Chrome.GetPageByURL(website, "contains")){
-;    website := "udemy.com"
-; }else{
-;    website := "youtube.com"
-; }
+   ; website := "udemy.com"
+   ; if(Chrome.GetPageByURL(website, "contains")){
+   ;    website := "udemy.com"
+   ; }else{
+   ;    website := "youtube.com"
+   ; }
 
-; msgbox % A_GuiEvent
-if(A_GuiEvent == "DoubleClick"){
+   ; msgbox % A_GuiEvent
+   if(A_GuiEvent == "DoubleClick"){
    ; msgbox %TextoLinhaSelecionadaCurso%
    ; msgbox %TextoLinhaSelecionadaURL%
    if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4"){      ; se não encontrar aba chrome com remote debug
@@ -683,8 +794,8 @@ if(A_GuiEvent == "DoubleClick"){
       Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
       PageInst.Disconnect()
       }
-}
-   ; GoSub, controlVideos
+   }
+; GoSub, controlVideos
 Return
 
 
