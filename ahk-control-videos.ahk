@@ -252,43 +252,6 @@ return
 
 AbrirCurso:
 Gui, Submit, NoHide
-
-; capturar todas as linhas da LISTVIEW (que foi preenchida capturando dados da planilha, talvez usar o mesmo metodo de pegar da planilha?)
-ControlGet, Items, List,, SysListView321
-; Loop, parse, Items, `n ; linha
-;      {
-;       RowNumber := A_Index
-;       Loop, Parse, A_LoopField, %A_Tab%  ; Fields (columns) in each row are delimited by tabs (A_Tab).
-;           MsgBox Row #%RowNumber% Col #%A_Index% is %A_LoopField%.
-;      } 
-
-/*
-   CAPTURANDO TODOS OS CONTROLS DA GUI
-*/
-; FileAppend, Ctrl #`tClasNN`tData`n, C:\Controls.txt
-; Loop, Parse, ActiveControlList, `n
-; {
-
-; ControlGetText, theText, %A_LoopField%
-; FileAppend, %a_index%`t%A_LoopField%`t%theText%`n, C:\Controls.txt
-; /*
-;    CAPTURANDO SOMENTES OS ComboBoXES
-; */
-;    if(InStr(A_LoopField, "ComboBox"))
-;    {
-;       /*
-;          SE O COMBOBOX TIVER ALGUMA OPÇÃO SELECIONADA OU VAZIO
-;       */
-;       if(theText)
-;          ; msgbox %a_index%`t%A_LoopField%`t%theText%`n
-;          msgbox %theText%
-;       Else 
-;          msgbox "vazio" %a_index%`t%A_LoopField%`t%theText%`n
-;    }
-; }
-
-; MatchText := "ude" ; this is the text you want to find
-; MatchFound := false ; initialise to default value
 /*
 PEGAR TEXTOS DA PRIMEIRA E SEGUNDA COLUNA DA LISTVIEW
 */
@@ -323,25 +286,7 @@ Loop, % LV_GetCount() ; loop through every row
             ;    msgbox "vazio" %a_index%`t%A_LoopField%`t%TextoDoControl%`n
          }
       }
-
-   ; If ( FoundText = MatchText ) ; if this value matches the text you are looking for, get the rest of the row
-   ; {
-   ;    RowNum := A_Index
-   ;    While( LV_GetText(Value, RowNum, A_Index) )
-   ;    {
-   ;       RowText .= Value . A_Space
-   ;    }
-   ;    MatchFound := true
-   ;    Break
-   ; }
-   ; Else
-   ;    Continue
 }
-
-; If ( MatchFound )
-;    MsgBox, Match found in Row %RowNum%:`n`n%RowText%
-; Else
-;    MsgBox, No match found!
 
 ComObjError(false)
 
@@ -402,7 +347,7 @@ ComObjError(false)
       Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
       PageInst.Disconnect()
    }
-   
+
 Return
 
 ; CONTROL VIDEOS
