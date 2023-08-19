@@ -265,7 +265,6 @@ ControlGet, Items, List,, SysListView321
 /*
    CAPTURANDO TODOS OS CONTROLS DA GUI
 */
-WinGet, ActiveControlList, ControlList, A
 ; FileAppend, Ctrl #`tClasNN`tData`n, C:\Controls.txt
 ; Loop, Parse, ActiveControlList, `n
 ; {
@@ -288,12 +287,12 @@ WinGet, ActiveControlList, ControlList, A
 ;    }
 ; }
 
-
-MatchText := "ude" ; this is the text you want to find
-MatchFound := false ; initialise to default value
+; MatchText := "ude" ; this is the text you want to find
+; MatchFound := false ; initialise to default value
 /*
-   PEGAR TEXTOS DA PRIMEIRA E SEGUNDA COLUNA DA LISTVIEW
+PEGAR TEXTOS DA PRIMEIRA E SEGUNDA COLUNA DA LISTVIEW
 */
+WinGet, ActiveControlList, ControlList, A
 Loop, % LV_GetCount() ; loop through every row
 {
    LV_GetText(TextoColuna1, A_Index) ; will get first column by default (Nome do Curso)
@@ -325,36 +324,26 @@ Loop, % LV_GetCount() ; loop through every row
          }
       }
 
-   If ( FoundText = MatchText ) ; if this value matches the text you are looking for, get the rest of the row
-   {
-      RowNum := A_Index
-      While( LV_GetText(Value, RowNum, A_Index) )
-      {
-         RowText .= Value . A_Space
-      }
-      MatchFound := true
-      Break
-   }
-   Else
-      Continue
+   ; If ( FoundText = MatchText ) ; if this value matches the text you are looking for, get the rest of the row
+   ; {
+   ;    RowNum := A_Index
+   ;    While( LV_GetText(Value, RowNum, A_Index) )
+   ;    {
+   ;       RowText .= Value . A_Space
+   ;    }
+   ;    MatchFound := true
+   ;    Break
+   ; }
+   ; Else
+   ;    Continue
 }
 
-If ( MatchFound )
-   MsgBox, Match found in Row %RowNum%:`n`n%RowText%
-Else
-   MsgBox, No match found!
+; If ( MatchFound )
+;    MsgBox, Match found in Row %RowNum%:`n`n%RowText%
+; Else
+;    MsgBox, No match found!
 
-
-Loop, Parse, Items, `n
-    MsgBox % "Item number " A_Index " is  "A_LoopField
-
-
-  
-   ; Loop, Parse, CursoLinux, |
-   ;    {
-   ;        MsgBox Selection number %A_Index% is %A_LoopField%.
-   ;    }
-   ComObjError(false)
+ComObjError(false)
 
    ; Variables
    chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
@@ -368,8 +357,6 @@ Loop, Parse, Items, `n
    IfNotExist %profileName%
       profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
 
-   ; CHAMAR O LABEL courseSelected
-   ; Gosub, courseSelected
    if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
       ; se não encontrar aba chrome com remote debug
       ; msgbox %TextoLinhaSelecionadaCurso%
@@ -415,102 +402,7 @@ Loop, Parse, Items, `n
       Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
       PageInst.Disconnect()
    }
-   ; GoSub, firstStep
-   ; PageInst.Disconnect()
-
-   Gui Submit, NoHide
-
-   ComObjError(false)
-   /*
-   CAPTURAR LINHA SELECINADA NA LISTVIEW DA GUI DO AHK
-   */
-   NumeroLinhaSelecionada := LV_GetNext()
-   ; texto selecionado na coluna 1 (nome do curso)
-   LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 1) 
-   ; texto selecionado na coluna 2 (url do curso)
-   LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 2) 
-
-   ; Variables
-   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
-   IfNotExist, %chPath%
-      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
-
-   ; website := "udemy.com"
-   ; if(Chrome.GetPageByURL(website, "contains")){
-   ;    website := "udemy.com"
-   ; }else{
-   ;    website := "youtube.com"
-   ; }
-
-   ; msgbox % A_GuiEvent
-   if(A_GuiEvent == "DoubleClick"){
-   ; msgbox %TextoLinhaSelecionadaCurso%
-   ; msgbox %TextoLinhaSelecionadaURL%
-   if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4"){      ; se não encontrar aba chrome com remote debug
-      if !(PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains"))
-      {
-         ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
-         Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-         Sleep, 500
-         contador1 := 0
-         while !(PageInst)
-         {
-            Sleep, 500
-            Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-            PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
-            contador1++
-            if(contador1 >= 30){
-               PageInst.Disconnect()
-               break
-            }
-         }
-      }
-      Sleep, 500
-      ; aqui está o fix pra esperar a página carregar
-      PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
-      Sleep, 500
-     ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
-      PageInst.Call("Page.bringToFront")
    
-      /*
-         CASO TENHA SLECIONADO UM CURSO LOCAL 
-      */
-      }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
-      gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
-      if !FileExist(gtm1Folder)
-      {
-       gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
-      }
-      Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-      Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
-      }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
-      gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
-      if !FileExist(gtm2Folder)
-      {
-         gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
-      }
-      Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-      Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
-      }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
-      GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
-      if !FileExist(GA4Folder)
-      {
-      GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
-      }
-      Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-      Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
-      }else{
-      Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-      PageInst.Disconnect()
-      }
-   }
 Return
 
 ; CONTROL VIDEOS
