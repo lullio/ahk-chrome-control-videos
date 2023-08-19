@@ -251,11 +251,109 @@ AbrirNotion:
 return
 
 AbrirCurso:
-   Gui, Submit, NoHide
-   Loop, Parse, CursoLinux, |
+Gui, Submit, NoHide
+
+; capturar todas as linhas da LISTVIEW (que foi preenchida capturando dados da planilha, talvez usar o mesmo metodo de pegar da planilha?)
+ControlGet, Items, List,, SysListView321
+; Loop, parse, Items, `n ; linha
+;      {
+;       RowNumber := A_Index
+;       Loop, Parse, A_LoopField, %A_Tab%  ; Fields (columns) in each row are delimited by tabs (A_Tab).
+;           MsgBox Row #%RowNumber% Col #%A_Index% is %A_LoopField%.
+;      } 
+
+/*
+   CAPTURANDO TODOS OS CONTROLS DA GUI
+*/
+WinGet, ActiveControlList, ControlList, A
+; FileAppend, Ctrl #`tClasNN`tData`n, C:\Controls.txt
+; Loop, Parse, ActiveControlList, `n
+; {
+
+; ControlGetText, theText, %A_LoopField%
+; FileAppend, %a_index%`t%A_LoopField%`t%theText%`n, C:\Controls.txt
+; /*
+;    CAPTURANDO SOMENTES OS ComboBoXES
+; */
+;    if(InStr(A_LoopField, "ComboBox"))
+;    {
+;       /*
+;          SE O COMBOBOX TIVER ALGUMA OPÇÃO SELECIONADA OU VAZIO
+;       */
+;       if(theText)
+;          ; msgbox %a_index%`t%A_LoopField%`t%theText%`n
+;          msgbox %theText%
+;       Else 
+;          msgbox "vazio" %a_index%`t%A_LoopField%`t%theText%`n
+;    }
+; }
+
+
+MatchText := "ude" ; this is the text you want to find
+MatchFound := false ; initialise to default value
+/*
+   PEGAR TEXTOS DA PRIMEIRA E SEGUNDA COLUNA DA LISTVIEW
+*/
+Loop, % LV_GetCount() ; loop through every row
+{
+   LV_GetText(TextoColuna1, A_Index) ; will get first column by default (Nome do Curso)
+   LV_GetText(TextoColuna2, A_Index, 2) ; will get second column (URL do Curso)
+   /*
+   CAPTURANDO TODOS OS CONTROLS DA GUI
+   */
+   Loop, Parse, ActiveControlList, `n
       {
-          MsgBox Selection number %A_Index% is %A_LoopField%.
+      
+      ControlGetText, TextoDoControl, %A_LoopField%
+      FileAppend, %a_index%`t%A_LoopField%`t%TextoDoControl%`n, C:\Controls.txt
+         /*
+            CAPTURANDO SOMENTES OS ComboBoXES
+         */
+         if(InStr(A_LoopField, "ComboBox")) ; se for um combobox
+         {
+            /*
+               SE O COMBOBOX TIVER ALGUMA OPÇÃO SELECIONADA E SE O TEXTO DO COMBOBOX SELECIONADO É IGUAL A ALGUM TEXTO DA COLUNA1 DA LISTVIEW
+            */
+            if(TextoDoControl && TextoDoControl = TextoColuna1) ; selecionou algum curso no combobox e for igual a algum texto da coluna1 da listview
+            {
+               ; msgbox %a_index%`t%A_LoopField%`t%TextoDoControl%`n
+               ; msgbox %TextoDoControl%
+               msgbox %TextoColuna1%%TextoColuna2%
+            }
+            ; Else 
+            ;    msgbox "vazio" %a_index%`t%A_LoopField%`t%TextoDoControl%`n
+         }
       }
+
+   If ( FoundText = MatchText ) ; if this value matches the text you are looking for, get the rest of the row
+   {
+      RowNum := A_Index
+      While( LV_GetText(Value, RowNum, A_Index) )
+      {
+         RowText .= Value . A_Space
+      }
+      MatchFound := true
+      Break
+   }
+   Else
+      Continue
+}
+
+If ( MatchFound )
+   MsgBox, Match found in Row %RowNum%:`n`n%RowText%
+Else
+   MsgBox, No match found!
+
+
+Loop, Parse, Items, `n
+    MsgBox % "Item number " A_Index " is  "A_LoopField
+
+
+  
+   ; Loop, Parse, CursoLinux, |
+   ;    {
+   ;        MsgBox Selection number %A_Index% is %A_LoopField%.
+   ;    }
    ComObjError(false)
 
    ; Variables
