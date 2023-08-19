@@ -65,22 +65,40 @@ gui, font, S11 ;Change font size to 12
 /*
 MENU BAR
 */
-Menu, FileMenu, Add, &Novo Curso`tCtrl+N, MenuFileOpen 
-Menu, FileMenu, Add, &Sair, MenuHandler
+Menu, FileMenu, Add, &Novo Curso`tCtrl+N, MenuAbrirLink
+Menu, FileMenu, Add, &Reiniciar o App, MenuAcoesApp
+Menu, FileMenu, Add, &Sair do App, MenuAcoesApp
 
-Menu, EditMenu, Add, Copy`tCtrl+C, MenuHandler
-Menu, EditMenu, Add, Past`tCtrl+V, MenuHandler
+Menu, EditMenu, Add, Copy`tCtrl+C, MenuAbrirLink
+Menu, EditMenu, Add, Past`tCtrl+V, MenuAbrirLink
 Menu, EditMenu, Add ; with no more options, this is a seperator
-Menu, EditMenu, Add, Delete`tDel, MenuHandler
+Menu, EditMenu, Add, Delete`tDel, MenuAbrirLink
 
-Menu, HelpMenu, Add, &Sobre o programa, MenuHandler
-Menu, HelpMenu, Add, &Desenvolvedor, MenuHandler
+Menu, HelpMenu, Add, &Sobre o programa, MenuAbrirLink
+Menu, HelpMenu, Add, &Desenvolvedor, MenuAbrirLink
+Menu, HelpMenu, Add, &WhatsApp, MenuAbrirLink
 
 ; Attach the sub-menus that were created above.
 Menu, MyMenuBar, Add, &Arquivo, :FileMenu
-Menu, MyMenuBar, Add, &Editar, :EditMenu
+; Menu, MyMenuBar, Add, &Editar, :EditMenu
 Menu, MyMenuBar, Add, &Ajuda, :HelpMenu
 Gui, Menu, MyMenuBar ; Attach MyMenuBar to the GUI
+
+/*
+   STATUS BAR
+*/
+Gui Font, S9
+Gui Add, Statusbar, gStatusBarLinks vMyStatusBar,
+/*
+   EDITAR TEXTO DA STATUS BAR
+*/
+SB_SetParts(170, 170, 175)
+SB_SetText("Reload (SHIFT+R ou @reload)", 1)
+SB_SetText("Front Page (Shift+A ou @front)", 2)
+SB_SetText("Total de Cursos: ", 3)
+SB_SetText("Close Chrome", 4)
+Gui Font, S10
+
 /*
 LINHA 1 - SEPARADO - PRINCIPAIS CURSOS
 */
@@ -629,8 +647,10 @@ getData:
       ; LV_ModifyCol(1, "text")
 
       ; exibir total de linhas
-      totalLines := LV_GetCount()
-      GuiControl, , TotalCursos, Total de Cursos: %totalLines%
+      totalCursos:
+         totalLines := LV_GetCount()
+         GuiControl, , TotalCursos, Total de Cursos: %totalLines%
+      Return
 Return
 
 /*
@@ -734,6 +754,10 @@ ListaDeCursos:
 Return
 
 
+/*
+   LABELS PARA AS OPÇÕES DO MENU SUPERIOR
+   LINKS DO MENU
+*/
 CadastrarCurso:
    Gui, Submit, NoHide
    msgbox %ListAllCourses%
@@ -747,30 +771,153 @@ CadastrarCurso:
    GuiControl,1:, CursoAll , %ListAllCourses%
    ; GuiControl,,hwndCursosIDAll,"|"%ListAllCourses%
 Return
+
+/*
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+*/
 /*
 TRATAMENTO DO MENU BAR
 */
-MenuHandler:
-; MsgBox, %A_ThisMenuItem%
+MenuAcoesApp:
+If(InStr(A_ThisMenuItem, "Sair"))
+   ExitApp
+Else If(InStr(A_ThisMenuItem, "Reiniciar"))
+   Reload
 return
 
-MenuFileOpen:
-; MsgBox, Open Menu was clicked
-Gui, NovoCurso:New, +AlwaysOnTop -Resize -MinimizeBox -MaximizeBox, Cadastrar Novo Curso - Felipe Lullio
-
-Gui, NovoCurso:Add, Text,center h20 +0x200 section, Link do Curso:
-Gui, NovoCurso:Add, Edit, x+12 w368 vLinkNovoCurso
-
-Gui, NovoCurso:Add, Text,xs center h20 +0x200 section, Nome do Curso:
-Gui, NovoCurso:Add, Edit, vNomeNovoCurso w100 x+5
-
-Gui, NovoCurso:Add, Text, ys x+5 center h20 +0x200 section, Categoria:
-Gui, NovoCurso:Add, ComboBox, vCategoriaNovoCurso gCursos w100 hwndCursosIDAll ys x+5, Developer|Marketing
-Gui, NovoCurso:Add, Checkbox,Checked1 x+15 center h20 +0x200, Curso Principal?
-
-gui, font, S13 ;Change font size to 12
-gui, NovoCurso:Add, Button, center y+15 x120 w250 h25 gCadastrarCurso Default, &Cadastrar Curso
-
-Gui, NovoCurso:Show, xCenter yCenter
-ControlFocus, Edit1, Cadastrar Novo Curso - Felipe Lullio
+MenuAbrirLink:
+MsgBox, %A_ThisMenuItem%
+If(InStr(A_ThisMenuItem, "novo curso"))
+   Run, https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit?usp=sharing
+Else If(InStr(A_ThisMenuItem, "Desenvolvedor"))
+   Run, https://lullio.com.br
+Else If(InStr(A_ThisMenuItem, "Sobre o programa"))
+   Run, https://projetos.lullio.com.br/control-video-study
+Else If(InStr(A_ThisMenuItem, "WhatsApp"))
+   Run, https://wa.me/5511991486309
 return
+
+/*
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+--------------------------
+*/
+/*
+TRATAMENTO DA STATUS BAR
+*/
+
+/*
+   AO CLICAR EM UMA POSIÇÃO DA STATUSBAR
+*/
+StatusBarLinks:
+Gui Submit, Nohide
+   ; msgbox %MyStatusBar%
+   ; msgbox %A_EventInfo%
+   ; if(A_GuiEvent == "Normal"){
+   ;    msgbox %A_EventInfo%
+   ; }
+   ; recarregar página
+   If(A_GuiEvent == "Normal" && A_EventInfo == 1){
+   ; trazer página para frente
+      Gosub, +r
+   }Else If(A_GuiEvent == "Normal" && A_EventInfo == 2){
+      GoSub, +a
+   }Else If(A_GuiEvent == "Normal" && A_EventInfo == 3){
+      
+   }Else If(A_GuiEvent == "Normal" && A_EventInfo == 4){
+
+   }
+Return
+
+/*
+   FUNÇÕES/LABELS DA STATUSBAR
+*/
+; recarregar página web
++r:: ; Reload Page Shift+r
+   :?*:@reload:: ; hotstring @reload
+   contador := 0
+   escapeDropdownItem := "www.|"
+   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+   IfNotExist, %chPath%
+   chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+   profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
+
+   ; ChromeInst := new Chrome(profileName,websiteInput,"--remote-allow-origins=*",chPath)
+      ; msgbox %siteHostNameOnly%
+      if !(PageInst := Chrome.GetPage())
+         {
+            ChromeInst := new Chrome(profileName,"","--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+            Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x088F8F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+            contador1 := 0
+            while !(PageInst)
+            {
+               Sleep, 500
+               Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+               PageInst := Chrome.GetPageByURL(siteHostNameOnly, "contains")
+               contador1++
+               if(contador1 >= 30){
+                  break
+               }
+            }
+         }else{
+            PageInst.Call("Page.bringToFront")
+            PageInst.Call("Page.reload", {"ignoreCache": Chrome.Jxon_True()})
+            ; --- Export a PNG of the page ---
+	
+         }
+PageInst.Disconnect()
+   Notify().AddWindow("Script " A_ScriptName " Recarregar página",{Time:2000,Icon:238, Background:"0xFFFB03",Title:"ALERTA:    Shift+R Pressionado",TitleSize:15, Size:15, Color: "0x524D4D", TitleColor: "0x3E3E3E"},,"setPosBR")
+Return
+
+; trazer para frente / alwaysontop Shift+a
++a:: ; trazer para frente / alwaysontop Shift+a
+:?*:@front:: ; hotstring @front
+:?*:@alwaysont:: ; hotstring @front
+:?*:@bringtofront:: ; hotstring @front
+:?*:@chromeactive:: ; hotstring @front
+:?*:@chromefront:: ; hotstring @front
+contador := 0
+escapeDropdownItem := "www.|"
+chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+IfNotExist, %chPath%
+chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
+
+; ChromeInst := new Chrome(profileName,websiteInput,"--remote-allow-origins=*",chPath)
+   ; msgbox %siteHostNameOnly%
+   if !(PageInst := Chrome.GetPage())
+      {
+         ChromeInst := new Chrome(profileName,"","--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+         Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x088F8F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+         contador1 := 0
+         while !(PageInst)
+         {
+            Sleep, 500
+            Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+            PageInst := Chrome.GetPageByURL(siteHostNameOnly, "contains")
+            contador1++
+            if(contador1 >= 30){
+               break
+            }
+         }
+      }else{
+         PageInst.Call("Page.bringToFront")
+         ; PageInst.Call("Page.reload", {"ignoreCache": Chrome.Jxon_True()})
+      }
+PageInst.Disconnect()
+Notify().AddWindow("Script " A_ScriptName " trazer página para frente",{Time:2000,Icon:238, Background:"0xFFFB03",Title:"ALERTA:    Shift+A Pressionado",TitleSize:15, Size:15, Color: "0x524D4D", TitleColor: "0x3E3E3E"},,"setPosBR")
+Return
+
+
