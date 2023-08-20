@@ -154,7 +154,7 @@ Gui Font, S10
 
 Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vCursoAndamento hwndDimensoesID ,
 ; Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vCursoAll hwndDimensoesID ,
-Gui Add, Button, x+20  w135 h24, Atualizar Tabela
+Gui Add, Button, x+20  w135 h24 gUpdateList, Atualizar Tabela
 Gui Font,
 Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort , Curso|URL|Categories|Provider|Notion|Length|Rating
 ; LV_Modify()
@@ -604,14 +604,14 @@ getData:
    */
    Gui Submit, NoHide
 
-         urlData := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=A2:G63&sheet=Cursos"
-         urlCourseName := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=A2:A68&sheet=Cursos"
-         urlCourseURL := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=B2:B68&sheet=Cursos"
-         urlCourseCategories := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=C2:C68&sheet=Cursos"
-         urlCourseProvider := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=D2:D68&sheet=Cursos"
-         urlCourseNotion := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=E2:E68&sheet=Cursos"
-         urlCourseLength := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=F2:F68&sheet=Cursos"
-         urlCourseRating := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=G2:G68&sheet=Cursos"
+         urlData := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=A2:G80&sheet=Cursos"
+         urlCourseName := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=A2:A80&sheet=Cursos"
+         urlCourseURL := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=B2:B80&sheet=Cursos"
+         urlCourseCategories := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=C2:C80&sheet=Cursos"
+         urlCourseProvider := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=D2:D80&sheet=Cursos"
+         urlCourseNotion := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=E2:E80&sheet=Cursos"
+         urlCourseLength := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=F2:F80&sheet=Cursos"
+         urlCourseRating := "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/gviz/tq?tqx=out:csv&range=G2:G80&sheet=Cursos"
 
    ; todos os dados
    dataAllRows := getDataFromGoogleSheet(urlData)
@@ -810,23 +810,12 @@ ListaDeCursos:
 ; GoSub, controlVideos
 Return
 
-
 /*
-   LABELS PARA AS OPÇÕES DO MENU SUPERIOR
-   LINKS DO MENU
+      ATUALIZAR LISTVIEW
 */
-CadastrarCurso:
-   Gui, Submit, NoHide
-   msgbox %ListAllCourses%
-   msgbox %NomeNovoCurso%
-   ListAllCourses .= "|"NomeNovoCurso
-   msgbox %ListAllCourses%
-   ; atualizar combobox, refill
-   ; vCursoAll gCursos w150 hwndCursosIDAll, %ListAllCourses%
-
-   ; SOLUÇÃO PARA EDITAR A PRIMEIRA GUI, QUE NÃO TEM NOME :1'2'1\
-   GuiControl,1:, CursoAll , %ListAllCourses%
-   ; GuiControl,,hwndCursosIDAll,"|"%ListAllCourses%
+UpdateList:
+      LV_Delete()
+      Gosub, getData
 Return
 
 /*
@@ -858,7 +847,10 @@ If(InStr(A_ThisMenuItem, "cursos udemy"))
 Else If(InStr(A_ThisMenuItem, "Desenvolvedor"))
    Run, https://lullio.com.br
 Else If(InStr(A_ThisMenuItem, "Sobre o programa"))
+{
    Run, https://projetos.lullio.com.br/control-video-study
+   Run, https://github.com/lullio/ahk-chrome-control-videos
+}
 Else If(InStr(A_ThisMenuItem, "WhatsApp"))
    Run, https://wa.me/5511991486309
 return
@@ -999,149 +991,3 @@ PageInst.Disconnect()
 Notify().AddWindow("Script " A_ScriptName " trazer página para frente",{Time:2000,Icon:238, Background:"0xFFFB03",Title:"ALERTA:    Shift+A Pressionado",TitleSize:15, Size:15, Color: "0x524D4D", TitleColor: "0x3E3E3E"},,"setPosBR")
 Return
 
-
-;------------------------------
-;
-; Function: LVM_EnableScrollBar
-;
-; Description:
-;
-;   Enables or disables one or both scroll bar arrows.
-;
-; Parameters:
-;
-;   wSBflags - Specifies the scroll bar type.  See the function's static
-;       variables for a list of possible values.
-;
-;   wArrows - Specifies whether the scroll bar arrows are enabled or disabled
-;       and indicates which arrows are enabled or disabled.  See the function's
-;       static variables for a list of possible values.
-;LVM_EnableScrollBar(hLV,SB_HORZ,ESB_DISABLE_RTDN)
-; Returns:
-;
-;   TRUE if successful, otherwise FALSE.
-;
-; Remarks:
-;
-; * The function will return FALSE (not successful) if the scroll bar(s) are
-;   already in the requested state (enabled/disabled).
-;
-;-------------------------------------------------------------------------------
-LVM_EnableScrollBar(hLV,wSBflags,wArrows)
-    {
-    Static Dummy5401
-
-          ;-- Scrollbar Type
-          ,SB_HORZ:=0
-                ;-- Enables or disables the arrows on the horizontal scroll bar
-                ;   associated with the specified window.
-
-          ,SB_VERT:=1
-                ;-- Enables or disables the arrows on the vertical scroll bar
-                ;   associated with the specified window.
-
-          ,SB_CTL:=2
-                ;-- Indicates that the scroll bar is a scroll bar control.  The
-                ;   hWnd  must be the handle to the scroll bar control.
-
-          ,SB_BOTH:=3
-                ;-- Enables or disables the arrows on the horizontal and
-                ;   vertical scroll bars associated with the specified window.
-
-          ;-- Scrollbar Arrows
-          ,ESB_ENABLE_BOTH:=0x0
-                ;-- Enables both arrows on a scroll bar.
-
-          ,ESB_DISABLE_LEFT:=0x1
-                ;-- Disables the left arrow on a horizontal scroll bar.
-
-          ,ESB_DISABLE_BOTH:=0x3
-                ;-- Disables both arrows on a scroll bar.
-
-          ,ESB_DISABLE_DOWN:=0x2
-                ;-- Disables the down arrow on a vertical scroll bar.
-
-          ,ESB_DISABLE_UP:=0x1
-                ;-- Disables the up arrow on a vertical scroll bar.
-
-          ,ESB_DISABLE_LTUP:=0x1  ;-- Same as ESB_DISABLE_LEFT
-                ;-- Disables the left arrow on a horizontal scroll bar or the up
-                ;   arrow of a vertical scroll bar.
-
-          ,ESB_DISABLE_RIGHT:=0x2
-                ;-- Disables the right arrow on a horizontal scroll bar.
-
-          ,ESB_DISABLE_RTDN:=0x2  ;-- Same as ESB_DISABLE_RIGHT
-                ;-- Disables the right arrow on a horizontal scroll bar or the
-                ;   down arrow of a vertical scroll bar.
-
-
-    RC:=DllCall("EnableScrollBar"
-        ,(A_PtrSize=8) ? "Ptr":"UInt",hLV               ;-- hWnd
-        ,"UInt",wSBflags                                ;-- wSBflags
-        ,"UInt",wArrows)                                ;-- wArrows
-
-    Return RC ? True:False
-    }
-
-;------------------------------
-;
-; Function: LVM_ShowScrollBar
-;
-; Description:
-;
-;   Shows or hides the specified scroll bar.
-;
-; Parameters:
-;
-;   wBar - Specifies the scroll bar(s) to be shown or hidden.  See the
-;       function's static variables for a list of possible values.
-;
-;   p_Show - Determines whether the scroll bar is shown or hidden. If set to
-;       TRUE (the default), the scroll bar is shown; otherwise, it is hidden.
-;
-; Returns:
-;
-;   TRUE if successful, otherwise FALSE.
-;
-; Remarks:
-;
-; * You should not call this function to hide a scroll bar while processing a
-;   scroll bar message.
-;
-; * Under most circumstances, showing/hiding a scroll bar is only a temporary
-;   effect.  Many changes to the ListView control (selecting, scrolling,
-;   resizing, etc.) will re-show or re-hide a scroll bar.
-;
-; Observations:
-;
-; * Unlike <LVM_EnableScrollBar>, this function returns TRUE (successful) even
-;   if the scroll bar(s) are already in the requested state (showing/hidden).
-;
-;-------------------------------------------------------------------------------
-LVM_ShowScrollBar(hLV,wBar,p_Show=True)
-    {
-    Static Dummy6622
-
-          ;-- Scroll bar flags
-          ,SB_HORZ:=0
-            ;-- Shows or hides a window's standard horizontal scroll bars.
-
-          ,SB_VERT:=1
-            ;-- Shows or hides a window's standard vertical scroll bar.
-
-          ,SB_CTL:=2
-            ;-- Shows or hides a scroll bar control. The hLV parameter must be
-            ;   the handle to the scroll bar control.
-
-          ,SB_BOTH:=3
-            ;-- Shows or hides a window's standard horizontal and vertical
-            ;   scroll bars.
-
-    RC:=DllCall("ShowScrollBar"
-        ,(A_PtrSize=8) ? "Ptr":"UInt",hLV               ;-- hWnd
-        ,"UInt",wBar                                    ;-- wbar
-        ,"UInt",p_Show)                                 ;-- bShow
-
-    Return RC ? True:False
-    }
