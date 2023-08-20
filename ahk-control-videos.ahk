@@ -1,36 +1,45 @@
 ﻿#Include, <Default_Settings>
 ; #SingleInstance, force
 ; #Include, C:\Users\%A_UserName%\Downloads\Chrome.ahk
-#Include, C:\Program Files\AutoHotkey\Lib\Chromev3.ahk
+#Include, C:\Program Files\AutoHotkey\Lib\Chrome.ahk
 
-; if not A_IsAdmin
-;    Run *RunAs "%A_ScriptFullPath%"
 
 full_command_line := DllCall("GetCommandLine", "str")
 
 if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
-{
-    try
-    {
+   {
+      try
+      {
         if A_IsCompiled
             Run *RunAs "%A_ScriptFullPath%" /restart
         else
-            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
-    }
-    ExitApp
-}
+         Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+      }
+      ExitApp
+   }
+   if not A_IsAdmin
+      Run *RunAs "%A_ScriptFullPath%"
 
+
+   ; Variables
    ; Variables
    chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
    IfNotExist, %chPath%
       chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
+
+   profileName := "C:\Users\" . A_UserName "\AppData\Local\Google\Chrome\User Data"
+   IfNotExist %profileName%
+      profileName := "C:\Users\Felipe\AppData\Local\Google\Chrome\User Data\Default"
    IfNotExist %profileName%
       profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
    IfNotExist %profileName%
       profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
    IfNotExist %profileName%
       profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
+aspas =
+      (
+      "
+      )
 
 /* ESTILO E ICONE DO SCRIPT
 */
@@ -65,7 +74,8 @@ gui, font, S11 ;Change font size to 12
 /*
 MENU BAR
 */
-Menu, FileMenu, Add, &Novo Curso`tCtrl+N, MenuAbrirLink
+Menu, FileMenu, Add, &Abrir Planilha`tCtrl+N, MenuAbrirLink
+Menu, FileMenu, Add, &Abrir Cursos Udemy, MenuAbrirLink
 Menu, FileMenu, Add, &Reiniciar o App, MenuAcoesApp
 Menu, FileMenu, Add, &Sair do App, MenuAcoesApp
 
@@ -92,11 +102,11 @@ Gui Add, Statusbar, gStatusBarLinks vMyStatusBar,
 /*
    EDITAR TEXTO DA STATUS BAR
 */
-SB_SetParts(170, 170, 175)
+SB_SetParts(200, 200, 100)
 SB_SetText("Reload (SHIFT+R ou @reload)", 1)
 SB_SetText("Front Page (Shift+A ou @front)", 2)
-SB_SetText("Total de Cursos: ", 3)
-SB_SetText("Close Chrome", 4)
+SB_SetText("Close Chrome", 3)
+SB_SetText("Cursos", 4)
 Gui Font, S10
 
 /*
@@ -115,7 +125,9 @@ Gui, Add, ComboBox, Multi vCursoWebDev gCursos hwndCursosIDDev w250,
 ; dropdown 3 - Cursos Analytics
 Gui Add, Text,, Analytics / Marketing
 Gui, Add, ComboBox, Multi vCursoMkt gCursos w250 hwndCursosIDAll, 
-
+; dropdown 7 - backend
+Gui Add, Text,, Backend / Web Server
+Gui, Add, ComboBox, Multi vCursoWebServer gCursos hwndCursosIDOutros w250, 
 /*
 COLUNA 2
 */
@@ -125,28 +137,26 @@ Gui, Add, ComboBox, Multi w250 vCursoJavaScript gCursos hwndCursosIDMkt,
 ; dropdown 5 - sql banco de dados cursos
 Gui Add, Text,, SQL
 Gui, Add, ComboBox, Multi vCursoSQL gCursos hwndCursosIDOutros w250, 
+; dropdown 6 - linux cursos
+Gui Add, Text, , Linux Courses
+Gui, Add, ComboBox , Multi w250 vCursoLinux gCursos hwndCursosIDMkt, 
 
 /*
 COLUNA 3
 */
-; dropdown 4 - linux cursos
-Gui Add, Text, , Linux Courses
-Gui, Add, ComboBox , Multi w250 vCursoLinux gCursos hwndCursosIDMkt, 
-; dropdown 5 - backend
-Gui Add, Text, xs ys+112, Backend / Web Server
-Gui, Add, ComboBox, Multi vCursoWebServer gCursos hwndCursosIDOutros w250, 
+
 
 ; gui, font, S7 ;Change font size to 12
 ; 2º dropdown js courses
-Gui, Add, GroupBox, xs cBlack r13 w560, TODOS OS CURSOS
+Gui, Add, GroupBox, y+15 xs cBlack r13 w560, Lista dos Cursos
 Gui Add, Text, yp+25 xp+11 center, Cursos em Andamento
 Gui Font, S10
 
-Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vTemplateDimensoes hwndDimensoesID ,Versão 1 - Parâmetros de Elemento (pt-br-new)||Versão 2 - Parâmetros de Blog (en-us-old)|Versão 3 - Parâmetros Antigos Flow Step (pt-br-old)|Template Vazio
+Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vCursoAndamento hwndDimensoesID ,
+; Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vCursoAll hwndDimensoesID ,
 Gui Add, Button, x+20  w135 h24, Atualizar Tabela
 Gui Font,
-
-Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort, Curso|URL|Categories|Provider|Notion|Length|Rating
+Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort , Curso|URL|Categories|Provider|Notion|Length|Rating
 ; LV_Modify()
 Gui Font, S6.5
 Gui Add, Link, w120 y+3 xp+200 vTotalCursos center,
@@ -163,7 +173,6 @@ gui, Add, Button, w95 h35 x+10 gCancel Cancel, &Cancelar
 ; EXIBIR E ATIVAR GUI
 GuiControl,Focus,Curso
 Gui, Show,, Abrir Curso e Controlar Video - Felipe Lulio
-
 ; GoSub, controlVideos
 ; Ignorar o erro que o ahk dá e continuar executando o script
 ComObjError(false)
@@ -240,36 +249,57 @@ return
 /* ABRIR AS ANOTAÇÕES DO NOTION E A PASTA DO PROJETO SE EXISTIR
 */
 AbrirNotion:
-   Gui, Submit, NoHide
-   needle := "None"
-   regexp := RegExMatch(Curso, needle)
-
-   if(RegExMatch(curso, needle))
-   {
-      Notify().AddWindow("Para abrir a pasta de um projeto você precisa criar um projeto antes",{Time:3000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR") ;
-   }else{
-      ; CHAMAR O LABEL courseSelected
-      ; Gosub, courseSelected
-      if(A_UserName == "Felipe" || A_UserName == "estudos" || A_UserName == "Estudos")
+Gui, Submit, NoHide
+/*
+PEGAR TEXTOS DA PRIMEIRA E SEGUNDA COLUNA DA LISTVIEW
+*/
+WinGet, ActiveControlList, ControlList, A
+Loop, % LV_GetCount() ; loop through every row
+{
+   LV_GetText(TextoColuna1, A_Index) ; will get first column by default (Nome do Curso)
+   LV_GetText(TextoColuna5, A_Index, 5) ; will get second column (URL do Curso)
+   /*
+   CAPTURANDO TODOS OS CONTROLS DA GUI
+   */
+   Loop, Parse, ActiveControlList, `n
+      {
+      ControlGetText, TextoDoControl, %A_LoopField%
+      FileAppend, %a_index%`t%A_LoopField%`t%TextoDoControl%`n, C:\Controls.txt
+         /*
+            CAPTURANDO SOMENTES OS ComboBoXES
+         */
+         if(InStr(A_LoopField, "ComboBox")) ; se for um combobox
          {
-           user := A_UserName
-           pass := "xrlo1010"
-         }
-       Else
-         {
-           user := "felipe.lullio@hotmail.com"
-           pass := "XrLO1000@1010"
-         }
-       RunAs, %user%, %pass%
-      ; Run, C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe 
-      Run %ComSpec% /c C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe "%notion%", , Hide
-      RunAs
-      WinActivate, Notion
+            if(TextoDoControl && TextoDoControl = TextoColuna1) ; selecionou algum curso no combobox e for igual a algum texto da coluna1 da listview
+            {
+               ; abrir notion
+                /*
+                  ABRIR NOTION
+               */
+               if(A_UserName == "Felipe" || A_UserName == "estudos" || A_UserName == "Estudos")
+                  {
+                  user := A_UserName
+                  pass := "xrlo1010"
+                  }
+               Else
+                  {
+                  user := "felipe.lullio@hotmail.com"
+                  pass := "XrLO1000@1010"
+                  }
+               RunAs, %user%, %pass%
+               ; Run, C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe 
+               Run %ComSpec% /c C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe "%TextoColuna5%" , , Hide
+               RunAs
+               WinActivate, Notion
+            }
+      }
    }
+}
 return
 
 AbrirCurso:
 Gui, Submit, NoHide
+ComObjError(false)
 /*
 PEGAR TEXTOS DA PRIMEIRA E SEGUNDA COLUNA DA LISTVIEW
 */
@@ -291,81 +321,75 @@ Loop, % LV_GetCount() ; loop through every row
          */
          if(InStr(A_LoopField, "ComboBox")) ; se for um combobox
          {
+
+            if(TextoDoControl == "GTM1"){
+               gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+               if !FileExist(gtm1Folder)
+               {
+                gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+               }
+               Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+               Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf               
+            }else if(TextoDoControl == "GTM2"){
+               gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+               if !FileExist(gtm2Folder)
+               {
+                  gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+               }
+               Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+               Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
+            }else if(TextoDoControl == "GA4"){
+               GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
+               if !FileExist(GA4Folder)
+               {
+               GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
+               }
+               Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+               Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf          
+            
             /*
                SE O COMBOBOX TIVER ALGUMA OPÇÃO SELECIONADA E SE O TEXTO DO COMBOBOX SELECIONADO É IGUAL A ALGUM TEXTO DA COLUNA1 DA LISTVIEW
-            */
-            if(TextoDoControl && TextoDoControl = TextoColuna1) ; selecionou algum curso no combobox e for igual a algum texto da coluna1 da listview
+            */     
+            }else if(TextoDoControl && TextoDoControl = TextoColuna1) ; selecionou algum curso no combobox e for igual a algum texto da coluna1 da listview
             {
                ; msgbox %a_index%`t%A_LoopField%`t%TextoDoControl%`n
                ; msgbox %TextoDoControl%
-               msgbox %TextoColuna1%%TextoColuna2%
+
+               ; msgbox %TextoColuna1%%TextoColuna2%
+
+                ; se não encontrar aba chrome com remote debug
+               ; msgbox %TextoLinhaSelecionadaCurso%
+               ; msgbox %TextoLinhaSelecionadaURL%     ; se não encontrar aba chrome com remote debug
+               if !(PageInst := Chrome.GetPageByURL(TextoColuna2, "contains"))
+                  {
+                     ChromeInst := new Chrome(profileName,TextoColuna2,"--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
+                     Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+                     Sleep, 500
+                     contador1 := 0
+                     while !(PageInst)
+                     {
+                        Sleep, 500
+                        Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+                        PageInst := Chrome.GetPageByURL(TextoColuna2, "contains")
+                        contador1++
+                        if(contador1 >= 30){
+                           PageInst.Disconnect()
+                           break
+                        }
+                     }
+                  }
+                  Sleep, 500
+                  ; aqui está o fix pra esperar a página carregar
+                  PageInst := Chrome.GetPageByURL(TextoColuna2, "contains")
+                  Sleep, 500
+               ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+                  PageInst.Call("Page.bringToFront")
             }
             ; Else 
             ;    msgbox "vazio" %a_index%`t%A_LoopField%`t%TextoDoControl%`n
          }
       }
 }
-
-ComObjError(false)
-
-   ; Variables
-   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
-   IfNotExist, %chPath%
-      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
-
-   if !(website == "none") AND !(Curso == "GTM1") AND !(Curso == "GTM2") AND !(Curso == "GA4") AND !(CursoMkt == "GTM1") AND !(CursoMkt == "GTM2") AND !(CursoMkt == "GA4") AND !(CursoAll == "GTM1") AND !(CursoAll == "GTM2") AND !(CursoAll == "GA4") AND !(CursoOutros == "GTM1") AND !(CursoOutros == "GTM2") AND !(CursoOutros == "GA4"){
-      ; se não encontrar aba chrome com remote debug
-      ; msgbox %TextoLinhaSelecionadaCurso%
-      ; msgbox %TextoLinhaSelecionadaURL%     ; se não encontrar aba chrome com remote debug
-      if !(PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains"))
-      {
-         ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
-         Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-         Sleep, 500
-         contador1 := 0
-         while !(PageInst)
-         {
-            Sleep, 500
-            Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-            PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
-            contador1++
-            if(contador1 >= 30){
-               PageInst.Disconnect()
-               break
-            }
-         }
-      }
-      Sleep, 500
-      ; aqui está o fix pra esperar a página carregar
-      PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
-      Sleep, 500
-     ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
-      PageInst.Call("Page.bringToFront")
-   
-      /*
-         CASO TENHA SLECIONADO UM CURSO LOCAL 
-      */
-   }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
-      Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-      Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
-   }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
-      Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-      Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
-   }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
-      Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-      Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
-   }else{
-      Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-      PageInst.Disconnect()
-   }
-
 Return
 
 ; CONTROL VIDEOS
@@ -629,6 +653,8 @@ getData:
             ListTopCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
          If InStr(Coluna3, "web-server") 
             ListWebServerCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+         If InStr(Coluna3, "em-andamento") 
+            ListAndamentoCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
 
       } 
       ; MODIFICANDO TODAS COMBOBOX PARA POPULAREM OS DADOS DA PLANILHA
@@ -640,11 +666,17 @@ getData:
       GuiControl,1:, CursoWebServer, %ListWebServerCourses% ; analytics mkt courses
       GuiControl,1:, CursoLinux, %ListLinuxCourses% ; analytics mkt courses
       GuiControl,1:, CursoAll, %ListAllCourses% ; analytics mkt courses
+      GuiControl,1:, CursoAndamento, %ListAndamentoCourses% ; analytics mkt courses
       ; ajustar largura
-      LV_ModifyCol()
+      LV_ModifyCol(1, 509)
       ; ordenar
-      ; LV_ModifyCol(1, sort, "integer")
-      ; LV_ModifyCol(1, "text")
+      LV_ModifyCol(2, 0)
+      LV_ModifyCol(3, 0)
+      LV_ModifyCol(4, 0)
+      LV_ModifyCol(5, 0)
+      LV_ModifyCol(6, 0)
+      LV_ModifyCol(7, 0)
+
 
       ; exibir total de linhas
       totalCursos:
@@ -664,29 +696,12 @@ ListaDeCursos:
    CAPTURAR LINHA SELECINADA NA LISTVIEW DA GUI DO AHK
    */
    NumeroLinhaSelecionada := LV_GetNext()
-   ; texto selecionado na coluna 1 (nome do curso)
+   ; NOME DO CURSO -> texto selecionado na coluna 1 (nome do curso)
    LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 1) 
-   ; texto selecionado na coluna 2 (url do curso)
+   ; URL DO CURSO -> texto selecionado na coluna 2 (url do curso)
    LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 2) 
-
-   ; Variables
-   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
-   IfNotExist, %chPath%
-      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-   profileName := "C:\Users\felipe\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Felipe\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Estudos\Desktop\ChromeProfile"
-   IfNotExist %profileName%
-      profileName := "C:\Users\Estudos\AppData\Local\Google\Chrome\User Data"
-
-   ; website := "udemy.com"
-   ; if(Chrome.GetPageByURL(website, "contains")){
-   ;    website := "udemy.com"
-   ; }else{
-   ;    website := "youtube.com"
-   ; }
+   ; URL DO NOTION - ANOTAÇÕES -> texto selecionado na coluna 5 (notion do curso)
+   LV_GetText(TextoLinhaSelecionadaNotion, NumeroLinhaSelecionada, 5) 
 
    ; msgbox % A_GuiEvent
    if(A_GuiEvent == "DoubleClick"){
@@ -695,7 +710,8 @@ ListaDeCursos:
    if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4"){      ; se não encontrar aba chrome com remote debug
       if !(PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains"))
       {
-         ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+         ; ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Profile 2""",chPath)
+         ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
          Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
          Sleep, 500
          contador1 := 0
@@ -717,11 +733,29 @@ ListaDeCursos:
       Sleep, 500
      ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
       PageInst.Call("Page.bringToFront")
+      /*
+         ABRIR NOTION
+      */
+            if(A_UserName == "Felipe" || A_UserName == "estudos" || A_UserName == "Estudos")
+               {
+                 user := A_UserName
+                 pass := "xrlo1010"
+               }
+             Else
+               {
+                 user := "felipe.lullio@hotmail.com"
+                 pass := "XrLO1000@1010"
+               }
+            RunAs, %user%, %pass%
+            ; Run, C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe 
+            Run %ComSpec% /c C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe "%TextoLinhaSelecionadaNotion%", , Hide
+            RunAs
+            WinActivate, Notion
    
       /*
          CASO TENHA SLECIONADO UM CURSO LOCAL 
       */
-      }else if(Curso == "GTM1" || CursoWebDev == "GTM1" || CursoAll == "GTM1" || CursoOutros == "GTM1" || CursoMkt == "GTM1"){
+      }else if(TextoLinhaSelecionadaCurso == "GTM1"){
       gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
       if !FileExist(gtm1Folder)
       {
@@ -729,7 +763,7 @@ ListaDeCursos:
       }
       Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
       Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf
-      }else if(Curso == "GTM2" || CursoWebDev == "GTM2" || CursoAll == "GTM2" || CursoOutros == "GTM2" || CursoMkt == "GTM2"){
+      }else if(TextoLinhaSelecionadaCurso == "GTM2"){
       gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
       if !FileExist(gtm2Folder)
       {
@@ -737,7 +771,7 @@ ListaDeCursos:
       }
       Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
       Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
-      }else if(Curso == "GA4" || CursoWebDev == "GA4" || CursoAll == "GA4" || CursoOutros == "GA4" || CursoMkt == "GA4"){
+      }else if(TextoLinhaSelecionadaCurso == "GA4"){
       GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
       if !FileExist(GA4Folder)
       {
@@ -749,6 +783,29 @@ ListaDeCursos:
       Notify().AddWindow("Nenhum curso válido foi selecionado!",{Time:6000,Icon:28,Background:"0x990000",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
       PageInst.Disconnect()
       }
+   /*
+      CLIQUE COM BOTÃO DIREITO DO MOUSE
+   */
+   }else if(A_GuiEvent == "RightClick"){
+      /*
+         ABRIR NOTION
+      */
+      if(A_UserName == "Felipe" || A_UserName == "estudos" || A_UserName == "Estudos")
+         {
+           user := A_UserName
+           pass := "xrlo1010"
+         }
+       Else
+         {
+           user := "felipe.lullio@hotmail.com"
+           pass := "XrLO1000@1010"
+         }
+      RunAs, %user%, %pass%
+      ; Run, C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe 
+      Run %ComSpec% /c C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe "%TextoLinhaSelecionadaNotion%", , Hide
+      RunAs
+      WinActivate, Notion
+
    }
 ; GoSub, controlVideos
 Return
@@ -793,9 +850,11 @@ Else If(InStr(A_ThisMenuItem, "Reiniciar"))
 return
 
 MenuAbrirLink:
-MsgBox, %A_ThisMenuItem%
-If(InStr(A_ThisMenuItem, "novo curso"))
-   Run, https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit?usp=sharing
+; MsgBox, %A_ThisMenuItem%
+If(InStr(A_ThisMenuItem, "planilha"))
+   Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit?usp=sharing"
+If(InStr(A_ThisMenuItem, "cursos udemy"))
+   Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://www.udemy.com/home/my-courses/lists/"
 Else If(InStr(A_ThisMenuItem, "Desenvolvedor"))
    Run, https://lullio.com.br
 Else If(InStr(A_ThisMenuItem, "Sobre o programa"))
@@ -835,12 +894,32 @@ Gui Submit, Nohide
    }Else If(A_GuiEvent == "Normal" && A_EventInfo == 2){
       GoSub, +a
    }Else If(A_GuiEvent == "Normal" && A_EventInfo == 3){
-      
+      Gosub, closechromeahk
    }Else If(A_GuiEvent == "Normal" && A_EventInfo == 4){
-
+      Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit#gid=0"
    }
 Return
 
+closechromeahk:
+   DetectHiddenWindows, On
+   SetTitleMatchMode, 2
+   GroupAdd, AhkPrograms,  .ahk ahk_class AutoHotkey,,,MEU_SCRIPT_FELIPE.ahk
+   GroupAdd, AhkPrograms2, .ahk ahk_group AhkPrograms,,,script-notion-felipe
+   GroupAdd, AhkPrograms3, .ahk ahk_group AhkPrograms2,,,Paste-Image-To-Screen-TOP
+   GroupAdd, AhkPrograms4, .ahk ahk_group AhkPrograms3,,,WindowSnipping
+   GroupAdd, AhkPrograms5, .ahk ahk_group AhkPrograms4,,,AHK-GUI-HOTSTRINGS-FELIPE
+
+   GroupAdd, cchrome , ahk_class Chrome_WidgetWin_1 ahk_exe chrome.exe
+   WinClose, ahk_group cchrome
+
+   Loop {
+      WinClose, ahk_group AhkPrograms5
+      IfWinNotExist, ahk_group AhkPrograms5
+      Break ;No [more] matching windows/processes found
+   }
+   Notify().AddWindow("Fechei todas instâncias do chrome e todos scripts secundários!",{Time:3000,Icon:177,Background:"0x039018",Title:"Sucesso",TitleColor:"0xF0F8F1", TitleSize:13, Size:13, Color: "0xF0F8F1"},"","setPosBR")
+   Return
+Return
 /*
    FUNÇÕES/LABELS DA STATUSBAR
 */
@@ -849,16 +928,16 @@ Return
    :?*:@reload:: ; hotstring @reload
    contador := 0
    escapeDropdownItem := "www.|"
-   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
-   IfNotExist, %chPath%
-   chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-   profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
+   ; chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+   ; IfNotExist, %chPath%
+   ; chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+   ; ; profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
 
    ; ChromeInst := new Chrome(profileName,websiteInput,"--remote-allow-origins=*",chPath)
       ; msgbox %siteHostNameOnly%
       if !(PageInst := Chrome.GetPage())
          {
-            ChromeInst := new Chrome(profileName,"","--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+            ChromeInst := new Chrome(profileName,"","--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
             Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x088F8F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
             contador1 := 0
             while !(PageInst)
@@ -890,16 +969,16 @@ Return
 :?*:@chromefront:: ; hotstring @front
 contador := 0
 escapeDropdownItem := "www.|"
-chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
-IfNotExist, %chPath%
-chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
+; chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+; IfNotExist, %chPath%
+; chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+; profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
 
 ; ChromeInst := new Chrome(profileName,websiteInput,"--remote-allow-origins=*",chPath)
    ; msgbox %siteHostNameOnly%
    if !(PageInst := Chrome.GetPage())
       {
-         ChromeInst := new Chrome(profileName,"","--remote-debugging-port=9222 --remote-allow-origins=*",chPath)
+         ChromeInst := new Chrome(profileName,"","--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
          Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x088F8F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
          contador1 := 0
          while !(PageInst)
@@ -921,3 +1000,148 @@ Notify().AddWindow("Script " A_ScriptName " trazer página para frente",{Time:20
 Return
 
 
+;------------------------------
+;
+; Function: LVM_EnableScrollBar
+;
+; Description:
+;
+;   Enables or disables one or both scroll bar arrows.
+;
+; Parameters:
+;
+;   wSBflags - Specifies the scroll bar type.  See the function's static
+;       variables for a list of possible values.
+;
+;   wArrows - Specifies whether the scroll bar arrows are enabled or disabled
+;       and indicates which arrows are enabled or disabled.  See the function's
+;       static variables for a list of possible values.
+;LVM_EnableScrollBar(hLV,SB_HORZ,ESB_DISABLE_RTDN)
+; Returns:
+;
+;   TRUE if successful, otherwise FALSE.
+;
+; Remarks:
+;
+; * The function will return FALSE (not successful) if the scroll bar(s) are
+;   already in the requested state (enabled/disabled).
+;
+;-------------------------------------------------------------------------------
+LVM_EnableScrollBar(hLV,wSBflags,wArrows)
+    {
+    Static Dummy5401
+
+          ;-- Scrollbar Type
+          ,SB_HORZ:=0
+                ;-- Enables or disables the arrows on the horizontal scroll bar
+                ;   associated with the specified window.
+
+          ,SB_VERT:=1
+                ;-- Enables or disables the arrows on the vertical scroll bar
+                ;   associated with the specified window.
+
+          ,SB_CTL:=2
+                ;-- Indicates that the scroll bar is a scroll bar control.  The
+                ;   hWnd  must be the handle to the scroll bar control.
+
+          ,SB_BOTH:=3
+                ;-- Enables or disables the arrows on the horizontal and
+                ;   vertical scroll bars associated with the specified window.
+
+          ;-- Scrollbar Arrows
+          ,ESB_ENABLE_BOTH:=0x0
+                ;-- Enables both arrows on a scroll bar.
+
+          ,ESB_DISABLE_LEFT:=0x1
+                ;-- Disables the left arrow on a horizontal scroll bar.
+
+          ,ESB_DISABLE_BOTH:=0x3
+                ;-- Disables both arrows on a scroll bar.
+
+          ,ESB_DISABLE_DOWN:=0x2
+                ;-- Disables the down arrow on a vertical scroll bar.
+
+          ,ESB_DISABLE_UP:=0x1
+                ;-- Disables the up arrow on a vertical scroll bar.
+
+          ,ESB_DISABLE_LTUP:=0x1  ;-- Same as ESB_DISABLE_LEFT
+                ;-- Disables the left arrow on a horizontal scroll bar or the up
+                ;   arrow of a vertical scroll bar.
+
+          ,ESB_DISABLE_RIGHT:=0x2
+                ;-- Disables the right arrow on a horizontal scroll bar.
+
+          ,ESB_DISABLE_RTDN:=0x2  ;-- Same as ESB_DISABLE_RIGHT
+                ;-- Disables the right arrow on a horizontal scroll bar or the
+                ;   down arrow of a vertical scroll bar.
+
+
+    RC:=DllCall("EnableScrollBar"
+        ,(A_PtrSize=8) ? "Ptr":"UInt",hLV               ;-- hWnd
+        ,"UInt",wSBflags                                ;-- wSBflags
+        ,"UInt",wArrows)                                ;-- wArrows
+
+    Return RC ? True:False
+    }
+
+;------------------------------
+;
+; Function: LVM_ShowScrollBar
+;
+; Description:
+;
+;   Shows or hides the specified scroll bar.
+;
+; Parameters:
+;
+;   wBar - Specifies the scroll bar(s) to be shown or hidden.  See the
+;       function's static variables for a list of possible values.
+;
+;   p_Show - Determines whether the scroll bar is shown or hidden. If set to
+;       TRUE (the default), the scroll bar is shown; otherwise, it is hidden.
+;
+; Returns:
+;
+;   TRUE if successful, otherwise FALSE.
+;
+; Remarks:
+;
+; * You should not call this function to hide a scroll bar while processing a
+;   scroll bar message.
+;
+; * Under most circumstances, showing/hiding a scroll bar is only a temporary
+;   effect.  Many changes to the ListView control (selecting, scrolling,
+;   resizing, etc.) will re-show or re-hide a scroll bar.
+;
+; Observations:
+;
+; * Unlike <LVM_EnableScrollBar>, this function returns TRUE (successful) even
+;   if the scroll bar(s) are already in the requested state (showing/hidden).
+;
+;-------------------------------------------------------------------------------
+LVM_ShowScrollBar(hLV,wBar,p_Show=True)
+    {
+    Static Dummy6622
+
+          ;-- Scroll bar flags
+          ,SB_HORZ:=0
+            ;-- Shows or hides a window's standard horizontal scroll bars.
+
+          ,SB_VERT:=1
+            ;-- Shows or hides a window's standard vertical scroll bar.
+
+          ,SB_CTL:=2
+            ;-- Shows or hides a scroll bar control. The hLV parameter must be
+            ;   the handle to the scroll bar control.
+
+          ,SB_BOTH:=3
+            ;-- Shows or hides a window's standard horizontal and vertical
+            ;   scroll bars.
+
+    RC:=DllCall("ShowScrollBar"
+        ,(A_PtrSize=8) ? "Ptr":"UInt",hLV               ;-- hWnd
+        ,"UInt",wBar                                    ;-- wbar
+        ,"UInt",p_Show)                                 ;-- bShow
+
+    Return RC ? True:False
+    }
