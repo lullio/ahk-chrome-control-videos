@@ -150,16 +150,18 @@ COLUNA 3
 ; 2º dropdown js courses
 Gui, Add, GroupBox, y+15 xs cBlack r13 w560, Lista dos Cursos
 Gui Add, Text, yp+25 xp+11 center, Cursos em Andamento
+Gui Add, Text, x+155 center, Cursos do Youtube
 Gui Font, S10
 
-Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vCursoAndamento hwndDimensoesID ,
+Gui Add, ComboBox, Multi xs+10 yp+20 w280 center vCursoAndamento hwndDimensoesID ,
 ; Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vCursoAll hwndDimensoesID ,
-Gui Add, Button, x+20  w135 h24 gUpdateList, Atualizar Tabela
+Gui Add, ComboBox, Multi x+10 w237 center vCursoYoutube hwndDimensoesID ,
 Gui Font,
 Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort , Curso|URL|Categories|Provider|Notion|Length|Rating
 ; LV_Modify()
 Gui Font, S6.5
 Gui Add, Link, w120 y+3 xp+200 vTotalCursos center,
+Gui Add, Button, x+50 w135 h26 gUpdateList, Atualizar Lista
 
 ; CARREGAR OS DADOS DOS CURSOS DA PLANILHA ANTES DE EXIBIR A GUI, NÃO VAI TER DELAY
 GoSub, getData
@@ -167,7 +169,7 @@ GoSub, getData
 ; Botões
 gui, font, S11
 gui, Add, Button, y+25 xs+15 w250 h35 gAbrirCurso Default, &Abrir Curso
-gui, Add, Button, w150 h35 x+10 gAbrirNotion, &Abrir Notion
+gui, Add, Button, w150 h35 x+10 gAbrirNotion, &Abrir Anotações
 gui, Add, Button, w95 h35 x+10 gCancel Cancel, &Cancelar
 
 ; EXIBIR E ATIVAR GUI
@@ -626,9 +628,9 @@ getData:
          Coluna1 := RegExReplace(StrSplit(A_LoopField,",")[1], aspa , "") ; 1 coluna courseName
          Coluna2 := RegExReplace(StrSplit(A_LoopField,",")[2], aspa , "") ; 2 coluna courseURL
          Coluna3 := RegExReplace(StrSplit(A_LoopField,",")[3], aspa , "") ; 3 coluna courseCategories
-         Coluna4 := RegExReplace(StrSplit(A_LoopField,",")[4], aspa , "") ; 4 coluna courseProvider
-         Coluna5 := RegExReplace(StrSplit(A_LoopField,",")[5], aspa , "") ; 5 coluna courseLength
-         Coluna6 := RegExReplace(StrSplit(A_LoopField,",")[6], aspa , "") ; 6 coluna courseRating
+         ; Coluna4 := RegExReplace(StrSplit(A_LoopField,",")[4], aspa , "") ; 4 coluna courseProvider
+         ; Coluna5 := RegExReplace(StrSplit(A_LoopField,",")[5], aspa , "") ; 5 coluna courseLength
+         ; Coluna6 := RegExReplace(StrSplit(A_LoopField,",")[6], aspa , "") ; 6 coluna courseRating
          ; LV_Add("" , Coluna1, SubStr(Coluna2, 2,-1), SubStr(Coluna3, 2,-1), SubStr(Coluna4, 2,-1), SubStr(Coluna5, 2,-1)) ; serve para remover as aspas na frente e final         
          LV_Add("" , Coluna1, Coluna2, Coluna3, Coluna4, Coluna5, Coluna6)
          /*
@@ -655,6 +657,8 @@ getData:
             ListWebServerCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
          If InStr(Coluna3, "em-andamento") 
             ListAndamentoCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+         If InStr(Coluna2, "youtube.com") 
+            ListYoutubeCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
 
       } 
       ; MODIFICANDO TODAS COMBOBOX PARA POPULAREM OS DADOS DA PLANILHA
@@ -666,7 +670,9 @@ getData:
       GuiControl,1:, CursoWebServer, %ListWebServerCourses% ; analytics mkt courses
       GuiControl,1:, CursoLinux, %ListLinuxCourses% ; analytics mkt courses
       GuiControl,1:, CursoAll, %ListAllCourses% ; analytics mkt courses
-      GuiControl,1:, CursoAndamento, %ListAndamentoCourses% ; analytics mkt courses
+      GuiControl,1:, CursoAndamento, %ListAndamentoCourses% ; cursos em andamento
+      GuiControl,1:, CursoYoutube, %ListYoutubeCourses% ; cursos do youtube
+
       ; ajustar largura
       LV_ModifyCol(1, 509)
       ; ordenar
