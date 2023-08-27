@@ -114,32 +114,32 @@ LINHA 1 - SEPARADO - PRINCIPAIS CURSOS
 */
 ; dropdown 1 - principais cursos
 Gui Add, Text,section y+10 , Main Courses / Top Rated
-Gui, Add, ComboBox, Multi x10 y+10 w510 vCurso gCursos hwndCursosIDMain, 
+Gui, Add, ComboBox, Multi x10 y+10 w510 vCurso gCursos hwndCursosIDMain sort, 
 
 /*
 COLUNA 1
 */
 ; dropdown 2 - web dev cursos
 Gui Add, Text, section x10, Web Developer
-Gui, Add, ComboBox, Multi vCursoWebDev gCursos hwndCursosIDDev w250, 
+Gui, Add, ComboBox, Multi vCursoWebDev gCursos hwndCursosIDDev w250 sort, 
 ; dropdown 3 - Cursos Analytics
 Gui Add, Text,, Analytics / Marketing
-Gui, Add, ComboBox, Multi vCursoMkt gCursos w250 hwndCursosIDAll, 
+Gui, Add, ComboBox, Multi vCursoMkt gCursos w250 hwndCursosIDAll sort, 
 ; dropdown 7 - backend
 Gui Add, Text,, Backend / Web Server
-Gui, Add, ComboBox, Multi vCursoWebServer gCursos hwndCursosIDOutros w250, 
+Gui, Add, ComboBox, Multi vCursoWebServer gCursos hwndCursosIDOutros w250 sort, 
 /*
 COLUNA 2
 */
 ; dropdown 4 - javascript cursos
 Gui Add, Text, ys, JavaScript All
-Gui, Add, ComboBox, Multi w250 vCursoJavaScript gCursos hwndCursosIDMkt, 
+Gui, Add, ComboBox, Multi w250 vCursoJavaScript gCursos hwndCursosIDMkt sort, 
 ; dropdown 5 - sql banco de dados cursos
 Gui Add, Text,, SQL
-Gui, Add, ComboBox, Multi vCursoSQL gCursos hwndCursosIDOutros w250, 
+Gui, Add, ComboBox, Multi vCursoSQL gCursos hwndCursosIDOutros w250 sort, 
 ; dropdown 6 - linux cursos
 Gui Add, Text, , Linux Courses
-Gui, Add, ComboBox , Multi w250 vCursoLinux gCursos hwndCursosIDMkt, 
+Gui, Add, ComboBox , Multi w250 vCursoLinux gCursos hwndCursosIDMkt sort, 
 
 /*
 COLUNA 3
@@ -153,11 +153,11 @@ Gui Add, Text, yp+25 xp+11 center, Cursos em Andamento
 Gui Add, Text, x+155 center, Cursos do Youtube
 Gui Font, S10
 
-Gui Add, ComboBox, Multi xs+10 yp+20 w280 center vCursoAndamento hwndDimensoesID ,
+Gui Add, ComboBox, Multi xs+10 yp+20 w280 center vCursoAndamento hwndDimensoesID sort,
 ; Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vCursoAll hwndDimensoesID ,
-Gui Add, ComboBox, Multi x+10 w237 center vCursoYoutube hwndDimensoesID ,
+Gui Add, ComboBox, Multi x+10 w237 center vCursoYoutube hwndDimensoesID sort,
 Gui Font,
-Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid sort , Curso|URL|Categories|Provider|Notion|Length|Rating
+Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid , Nome do Curso|URL|Categories|Provider|Notion|Length|Rating
 ; LV_Modify()
 Gui Font, S6.5
 Gui Add, Link, w120 y+3 xp+200 vTotalCursos center,
@@ -628,9 +628,9 @@ getData:
          Coluna1 := RegExReplace(StrSplit(A_LoopField,",")[1], aspa , "") ; 1 coluna courseName
          Coluna2 := RegExReplace(StrSplit(A_LoopField,",")[2], aspa , "") ; 2 coluna courseURL
          Coluna3 := RegExReplace(StrSplit(A_LoopField,",")[3], aspa , "") ; 3 coluna courseCategories
-         ; Coluna4 := RegExReplace(StrSplit(A_LoopField,",")[4], aspa , "") ; 4 coluna courseProvider
-         ; Coluna5 := RegExReplace(StrSplit(A_LoopField,",")[5], aspa , "") ; 5 coluna courseLength
-         ; Coluna6 := RegExReplace(StrSplit(A_LoopField,",")[6], aspa , "") ; 6 coluna courseRating
+         Coluna4 := RegExReplace(StrSplit(A_LoopField,",")[4], aspa , "") ; 4 coluna courseProvider
+         Coluna5 := RegExReplace(StrSplit(A_LoopField,",")[5], aspa , "") ; 5 coluna courseLength
+         Coluna6 := RegExReplace(StrSplit(A_LoopField,",")[6], aspa , "") ; 6 coluna courseRating
          ; LV_Add("" , Coluna1, SubStr(Coluna2, 2,-1), SubStr(Coluna3, 2,-1), SubStr(Coluna4, 2,-1), SubStr(Coluna5, 2,-1)) ; serve para remover as aspas na frente e final         
          LV_Add("" , Coluna1, Coluna2, Coluna3, Coluna4, Coluna5, Coluna6)
          /*
