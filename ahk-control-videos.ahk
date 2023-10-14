@@ -76,20 +76,30 @@ MENU BAR
 */
 Menu, FileMenu, Add, &Abrir Planilha`tCtrl+N, MenuAbrirLink
 Menu, FileMenu, Add, &Abrir Cursos Udemy, MenuAbrirLink
-Menu, FileMenu, Add, &Reiniciar o App, MenuAcoesApp
-Menu, FileMenu, Add, &Sair do App, MenuAcoesApp
+Menu, FileMenu, Add ; with no more options, this is a seperator
+Menu, FileMenu, Add, &Reiniciar o App, MenuAbrirLink
+Menu, FileMenu, Add, &Sair do App, MenuAbrirLink
 
 Menu, EditMenu, Add, Copy`tCtrl+C, MenuAbrirLink
 Menu, EditMenu, Add, Past`tCtrl+V, MenuAbrirLink
 Menu, EditMenu, Add ; with no more options, this is a seperator
 Menu, EditMenu, Add, Delete`tDel, MenuAbrirLink
 
-Menu, HelpMenu, Add, &Sobre o programa, MenuAbrirLink
+
+Menu, HelpMenu, Add, &Como usar o Programa?, MenuAjudaNotify
+Menu, HelpMenu, Add ; with no more options, this is a seperator
+Menu, HelpMenu, Add, &Qual é a função do botão 'Criar Quadro(s)', MenuAjudaNotify
+Menu, HelpMenu, Add, &Qual é a função do botão 'Pesquisar'?, MenuAjudaNotify
+Menu, HelpMenu, Add, &Qual é a função do botão 'Atualizar'?, MenuAjudaNotify
+Menu, HelpMenu, Add, &Qual é a função do menu 'Editar'?, MenuAjudaNotify
+Menu, HelpMenu, Add, &Qual é a função do campo "Filtrar Lista" e "Filtrar Dados"?, MenuAjudaNotify
+Menu, HelpMenu, Add ; with no more options, this is a seperator
+Menu, HelpMenu, Add, &Sobre o programa (Github), MenuAbrirLink
 Menu, HelpMenu, Add, &Desenvolvedor, MenuAbrirLink
 Menu, HelpMenu, Add, &WhatsApp, MenuAbrirLink
 
 ; Attach the sub-menus that were created above.
-Menu, MyMenuBar, Add, &Arquivo, :FileMenu
+Menu, MyMenuBar, Add, &Abrir, :FileMenu
 ; Menu, MyMenuBar, Add, &Editar, :EditMenu
 Menu, MyMenuBar, Add, &Ajuda, :HelpMenu
 Gui, Menu, MyMenuBar ; Attach MyMenuBar to the GUI
@@ -148,7 +158,7 @@ COLUNA 3
 
 ; gui, font, S7 ;Change font size to 12
 ; 2º dropdown js courses
-Gui, Add, GroupBox, y+15 xs cBlack r13 w560, Lista dos Cursos
+Gui, Add, GroupBox, y+15 xs cBlack r15 w560, Lista dos Cursos
 Gui Add, Text, yp+25 xp+11 center, Cursos em Andamento
 Gui Add, Text, x+155 center, Cursos do Youtube
 Gui Font, S10
@@ -157,11 +167,16 @@ Gui Add, ComboBox, Multi xs+10 yp+20 w280 center vCursoAndamento hwndDimensoesID
 ; Gui Add, ComboBox, Multi xs+10 yp+20 w372 center vCursoAll hwndDimensoesID ,
 Gui Add, ComboBox, Multi x+10 w237 center vCursoYoutube hwndDimensoesID sort,
 Gui Font,
-Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid , Nome do Curso|URL|Categories|Provider|Notion|Length|Rating
+Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid , ID|Nome do Curso|URL|Categories|Provider|Notion|Length|Rating
+Gui Add, Link, w120 y+3 vTotalCursos center,
 ; LV_Modify()
+Gui Font, S12
+Gui, Add, Edit, h29 vVarPesquisarDados w230 y+5 section cblue, .*ecommerce.*
+Gui Font, S10,
+Gui, Add, Button, vBtnPesquisar x+10 w100 h30 gPesquisarDados Default, Pesquisar
+Gui, Add, Button, vBtnAtualizar x+10 w100 h30 gUpdateList, Atualizar
 Gui Font, S6.5
-Gui Add, Link, w120 y+3 xp+200 vTotalCursos center,
-Gui Add, Button, x+50 w135 h26 gUpdateList, Atualizar Lista
+; Gui Add, Button, x+50 w135 h26 gUpdateList, Atualizar Lista
 
 ; CARREGAR OS DADOS DOS CURSOS DA PLANILHA ANTES DE EXIBIR A GUI, NÃO VAI TER DELAY
 GoSub, getData
@@ -625,14 +640,15 @@ getData:
          LineContent := A_LoopField
          ; msgbox % LineContent := A_LoopField
          ; msgbox, % RegExReplace(StrSplit(A_LoopField,",")[1], aspa , "")
-         Coluna1 := RegExReplace(StrSplit(A_LoopField,",")[1], aspa , "") ; 1 coluna courseName
-         Coluna2 := RegExReplace(StrSplit(A_LoopField,",")[2], aspa , "") ; 2 coluna courseURL
-         Coluna3 := RegExReplace(StrSplit(A_LoopField,",")[3], aspa , "") ; 3 coluna courseCategories
-         Coluna4 := RegExReplace(StrSplit(A_LoopField,",")[4], aspa , "") ; 4 coluna courseProvider
-         Coluna5 := RegExReplace(StrSplit(A_LoopField,",")[5], aspa , "") ; 5 coluna courseLength
-         Coluna6 := RegExReplace(StrSplit(A_LoopField,",")[6], aspa , "") ; 6 coluna courseRating
+         Coluna0 := RegExReplace(StrSplit(A_LoopField,",")[1], aspa , "") ; 1 coluna courseName
+         Coluna1 := RegExReplace(StrSplit(A_LoopField,",")[2], aspa , "") ; 1 coluna courseName
+         Coluna2 := RegExReplace(StrSplit(A_LoopField,",")[3], aspa , "") ; 2 coluna courseURL
+         Coluna3 := RegExReplace(StrSplit(A_LoopField,",")[4], aspa , "") ; 3 coluna courseCategories
+         Coluna4 := RegExReplace(StrSplit(A_LoopField,",")[5], aspa , "") ; 4 coluna courseProvider
+         Coluna5 := RegExReplace(StrSplit(A_LoopField,",")[6], aspa , "") ; 5 coluna courseLength
+         Coluna6 := RegExReplace(StrSplit(A_LoopField,",")[7], aspa , "") ; 6 coluna courseRating
          ; LV_Add("" , Coluna1, SubStr(Coluna2, 2,-1), SubStr(Coluna3, 2,-1), SubStr(Coluna4, 2,-1), SubStr(Coluna5, 2,-1)) ; serve para remover as aspas na frente e final         
-         LV_Add("" , Coluna1, Coluna2, Coluna3, Coluna4, Coluna5, Coluna6)
+         LV_Add("" , Coluna0, Coluna1, Coluna2, Coluna3, Coluna4, Coluna5, Coluna6)
          /*
             ORGANIZAR AS CATEGORIAS DOS CURSOS  / SALVAR TODOS OS CURSOS EM VARIÁVEIS COM BASE NA CATEOGIRA
             1. SE EXISTIR "SQL" na coluna 2 courseCategories Adicionar o nome do curso na variável ListSQLCourses
@@ -640,25 +656,25 @@ getData:
             nome do curso esta na coluna 1, ou seja [1] posição 1
             ; https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit#gid=0
          */
-         ListAllCourses .= RegexReplace(StrSplit(A_LoopField,",")[1] "|", aspa, "") ; salvar todos os cursos
+         ListAllCourses .= RegexReplace(StrSplit(A_LoopField,",")[2] "|", aspa, "") ; salvar todos os cursos
          If InStr(Coluna3, "sql")
-            ListSQLCourses .= RegexReplace(StrSplit(A_LoopField,",")[1] "|", aspa, "")
+            ListSQLCourses .= RegexReplace(StrSplit(A_LoopField,",")[2] "|", aspa, "")
          If InStr(Coluna3, "web-dev")
-            ListWebDevCourses .= RegexReplace(StrSplit(A_LoopField,",")[1] "|", aspa, "")
+            ListWebDevCourses .= RegexReplace(StrSplit(A_LoopField,",")[2] "|", aspa, "")
          If InStr(Coluna3, "javascript") || If InStr(Coluna3, "js-frameworks") 
-            ListJavaScriptCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+            ListJavaScriptCourses .= RegexReplace(StrSplit(A_LoopField, ",")[2] "|", aspa, "")
          If InStr(Coluna3, "analytics") || InStr(Coluna3, "ads") || InStr(Coluna3, "wordpress") 
-            ListAnalyticsCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+            ListAnalyticsCourses .= RegexReplace(StrSplit(A_LoopField, ",")[2] "|", aspa, "")
          If InStr(Coluna3, "linux") || InStr(Coluna3, "redes") || InStr(Coluna3, "hacking") 
-            ListLinuxCourses .= RegExReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+            ListLinuxCourses .= RegExReplace(StrSplit(A_LoopField, ",")[2] "|", aspa, "")
          If InStr(Coluna3, "top-rated") 
-            ListTopCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+            ListTopCourses .= RegexReplace(StrSplit(A_LoopField, ",")[2] "|", aspa, "")
          If InStr(Coluna3, "web-server") 
-            ListWebServerCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+            ListWebServerCourses .= RegexReplace(StrSplit(A_LoopField, ",")[2] "|", aspa, "")
          If InStr(Coluna3, "em-andamento") 
-            ListAndamentoCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+            ListAndamentoCourses .= RegexReplace(StrSplit(A_LoopField, ",")[2] "|", aspa, "")
          If InStr(Coluna2, "youtube.com") 
-            ListYoutubeCourses .= RegexReplace(StrSplit(A_LoopField, ",")[1] "|", aspa, "")
+            ListYoutubeCourses .= RegexReplace(StrSplit(A_LoopField, ",")[2] "|", aspa, "")
 
       } 
       ; MODIFICANDO TODAS COMBOBOX PARA POPULAREM OS DADOS DA PLANILHA
@@ -672,16 +688,19 @@ getData:
       GuiControl,1:, CursoAll, %ListAllCourses% ; analytics mkt courses
       GuiControl,1:, CursoAndamento, %ListAndamentoCourses% ; cursos em andamento
       GuiControl,1:, CursoYoutube, %ListYoutubeCourses% ; cursos do youtube
-
+      LV_ModifyCol(1, 28)
+      LV_ModifyCol(2, 472)
       ; ajustar largura
-      LV_ModifyCol(1, 509)
-      ; ordenar
-      LV_ModifyCol(2, 0)
+      ; LV_ModifyCol(1, 50)
+      ; LV_ModifyCol(2, 509)
+      ; ; ordenar
+      ; LV_ModifyCol(2, 0)
       LV_ModifyCol(3, 0)
       LV_ModifyCol(4, 0)
       LV_ModifyCol(5, 0)
       LV_ModifyCol(6, 0)
       LV_ModifyCol(7, 0)
+      LV_ModifyCol(8, 0)
 
 
       ; exibir total de linhas
@@ -850,16 +869,36 @@ If(InStr(A_ThisMenuItem, "planilha"))
    Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit?usp=sharing"
 If(InStr(A_ThisMenuItem, "cursos udemy"))
    Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://www.udemy.com/home/my-courses/lists/"
-Else If(InStr(A_ThisMenuItem, "Desenvolvedor"))
-   Run, https://lullio.com.br
-Else If(InStr(A_ThisMenuItem, "Sobre o programa"))
+Else If(InStr(A_ThisMenuItem, "Sobre o programa (Github)"))
 {
-   Run, https://projetos.lullio.com.br/control-video-study
-   Run, https://github.com/lullio/ahk-chrome-control-videos
+      Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://github.com/lullio/ahk-chrome-control-videos"
+      Run, https://projetos.lullio.com.br/control-video-study
 }
-Else If(InStr(A_ThisMenuItem, "WhatsApp"))
-   Run, https://wa.me/5511991486309
+   Else If(InStr(A_ThisMenuItem, "WhatsApp"))
+      Run, https://wa.me/5511991486309
+   Else If(InStr(A_ThisMenuItem, "Desenvolvedor"))
+      Run, https://www.lullio.com.br
 return
+MenuAjudaNotify:
+If(InStr(A_ThisMenuItem, "Como usar o programa?"))
+   ; msgbox SUCESSO com SOM e ICONE alwaysontop
+   MsgBox, 4160 , INFORMAÇÃO!, Dê um duplo clique em qualquer item da lista para abrir o quadro correspondente. `n`nSe desejar realizar alguma ação no quadro`, como excluí-lo ou editar o seu nome`, basta dar um duplo clique com o botão direito do mouse., 900
+Else If(InStr(A_ThisMenuItem, "como usar o programa"))
+   ; msgbox SUCESSO com SOM e ICONE alwaysontop
+   MsgBox, 4160 , INFORMAÇÃO!, 1. Para abrir uma tarefa no Notion`, clique com o botão esquerdo do mouse em qualquer item da Lista.`n`n2. Para arquivar ou desarquivar uma tarefa`, clique com o botão direito do mouse em qualquer item da Lista., 900
+Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Criar Quadro(s)'"))
+   ; msgbox SUCESSO com SOM e ICONE alwaysontop
+   MsgBox, 4160 , INFORMAÇÃO!, O botão 'Criar Quadro(s)' tem a finalidade de criar um ou mais quadros no seu Trello. Para criar mais de um quadro`, basta separar os nomes por vírgulas e as descrições por quebra de linha, 900
+Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Pesquisar'"))
+   ; msgbox SUCESSO com SOM e ICONE alwaysontop
+   MsgBox, 4160 , INFORMAÇÃO!, O botão "Pesquisar" tem a finalidade de buscar uma tarefa na lista de tarefas exibida acima.`n`n O campo de pesquisa permite o uso de expressões regulares (regex) e`, por padrão`, a pesquisa não diferencia maiúsculas de minúsculas (não é "casesensitive").`n`nObservação:Você pode realizar uma pesquisa clicando no botão 'Pesquisar' ou pressionando a tecla 'Enter' no teclado., 900
+Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Atualizar'"))
+   ; msgbox SUCESSO com SOM e ICONE alwaysontop
+   MsgBox, 4160 , INFORMAÇÃO!, O botão 'Atualizar' tem a função de enviar uma nova requisição HTTP à API do Notion e`, assim`, recarregar os dados na lista., 900
+Else If(InStr(A_ThisMenuItem, "Qual é a função do menu 'Editar'"))
+   ; msgbox SUCESSO com SOM e ICONE alwaysontop
+   MsgBox, 4160 , INFORMAÇÃO!, Dentro do menu 'Editar'`, você encontra a opção para definir e editar as configurações das requisições HTTP GET e POST.`n`nObservação: faça alterações apenas se estiver familiarizado com o processo`, pois trata-se de uma configuração ""avançada"""., 900
+Return
 
 /*
 --------------------------
@@ -995,5 +1034,57 @@ escapeDropdownItem := "www.|"
       }
 PageInst.Disconnect()
 Notify().AddWindow("Script " A_ScriptName " trazer página para frente",{Time:2000,Icon:238, Background:"0xFFFB03",Title:"ALERTA:    Shift+A Pressionado",TitleSize:15, Size:15, Color: "0x524D4D", TitleColor: "0x3E3E3E"},,"setPosBR")
+Return
+
+; * PESQUISAR DADOS NA LISTVIEW
+PesquisarDados:
+   Gui Submit, NoHide
+   /*
+      * VARIÁVEIS
+   */
+   MatchText := VarPesquisarDados ; *Texto inserido no inputbox
+   MatchFound := false ; *iniciar variável como false até achar o texto
+   cntMatches := 0
+   ; List := StrReplace(ListaTudoLV, A_Tab, virgula) ; todos os dados da LISTVIEW no formato CSV
+   ; MsgBox, % List ; todos os dados da LISTVIEW
+   If(erro = 1)
+      MatchText := ".*"
+   Else If(!MatchText){ ; ! se o input estiver vazio, dar match em ListaTudo
+      MatchText := ".*"
+      cntInputVazio := 1
+      MsgBox, 4112 , Erro!, Input vazio! Exibindo todos os dados.., 2
+   }Else{
+      cntInputVazio := 0
+   }
+   ; !apagar todas as linhas da listview
+   LV_Delete()
+   for index, line in StrSplit(ListaTudoLV, "`n", "`r") ; loop though every row
+   {
+      ; clipboard := line
+      ; msgbox % line
+      ; If(InStr(line, MatchText)){
+      If(RegexMatch(line, "im)" MatchText)){
+         ; msgbox % line "`n" match
+         ; row.push(line)
+         ; * Array com o conteúdo da linha(colunas)
+         cellValue := StrSplit(line, A_Tab) ; ! mantive o padrão da captura dos dados da listview, que é separação por tab, assim é melhor pois é comum ter vírgula no título do documento
+         ; * TÉCNICA PARA INSERIR O ARRAY COMPLETO EM UMA LINHA, CADA ITEM DO ARRAY SERÁ INSERIDO EM UMA COLUNA DIFERENTE
+         LV_add("", cellValue*)
+         cntMatches++
+      }
+   }
+   if(erro != 1 && cntInputVazio != 1)
+      SB_SetText("Match(es) da última Pesquisa """ MatchText """ : " cntMatches, 2)
+   If(cntMatches = 0) ; ! se não encontrou nada
+   {
+      MsgBox, 4112 , Erro!, Nenhum resultado foi encontrado!, 3
+      erro := 1
+      GoSub, PesquisarDados
+   }Else{
+      GuiControl,, VarPesquisarDados, ; !limpar o inputbox após pesquisar
+      erro := 0
+      lastSearchError := MatchText
+   }
+   GuiControl,Focus, VarPesquisarDados ; !limpar o inputbox após pesquisar
 Return
 
