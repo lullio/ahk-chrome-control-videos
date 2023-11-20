@@ -315,98 +315,101 @@ Loop, % LV_GetCount() ; loop through every row
 return
 
 AbrirCurso:
-Gui, Submit, NoHide
-ComObjError(false)
-/*
-PEGAR TEXTOS DA PRIMEIRA E SEGUNDA COLUNA DA LISTVIEW
-*/
-WinGet, ActiveControlList, ControlList, A
-Loop, % LV_GetCount() ; loop through every row
-{
-   LV_GetText(TextoColuna1, A_Index) ; will get first column by default (Nome do Curso)
-   LV_GetText(TextoColuna2, A_Index, 2) ; will get second column (URL do Curso)
+   Gui, Submit, NoHide
+   ComObjError(false)
    /*
-   CAPTURANDO TODOS OS CONTROLS DA GUI
+   PEGAR TEXTOS DA PRIMEIRA E SEGUNDA COLUNA DA LISTVIEW
    */
-   Loop, Parse, ActiveControlList, `n
-      {
-      
-      ControlGetText, TextoDoControl, %A_LoopField%
-      FileAppend, %a_index%`t%A_LoopField%`t%TextoDoControl%`n, C:\Controls.txt
-         /*
-            CAPTURANDO SOMENTES OS ComboBoXES
-         */
-         if(InStr(A_LoopField, "ComboBox")) ; se for um combobox
+   WinGet, ActiveControlList, ControlList, A
+   Loop, % LV_GetCount() ; loop through every row
+   {
+      LV_GetText(TextoColuna2, A_Index, 2) ; will get first column by default (Nome do Curso)
+      LV_GetText(TextoColuna3, A_Index, 3) ; will get second column (URL do Curso)
+      /*
+      CAPTURANDO TODOS OS CONTROLS DA GUI
+      */
+      ; msgbox % TextoColuna2
+      Loop, Parse, ActiveControlList, `n
          {
-
-            if(TextoDoControl == "GTM1"){
-               gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
-               if !FileExist(gtm1Folder)
-               {
-                gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
-               }
-               Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-               Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf               
-            }else if(TextoDoControl == "GTM2"){
-               gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
-               if !FileExist(gtm2Folder)
-               {
-                  gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
-               }
-               Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-               Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
-            }else if(TextoDoControl == "GA4"){
-               GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
-               if !FileExist(GA4Folder)
-               {
-               GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
-               }
-               Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
-               Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf          
-            
+         
+         ControlGetText, TextoDoControl, %A_LoopField%
+         ; msgbox % TextoDoControl
+         ; FileAppend, %a_index%`t%A_LoopField%`t%TextoDoControl%`n, C:\Controls.txt
             /*
-               SE O COMBOBOX TIVER ALGUMA OPÇÃO SELECIONADA E SE O TEXTO DO COMBOBOX SELECIONADO É IGUAL A ALGUM TEXTO DA COLUNA1 DA LISTVIEW
-            */     
-            }else if(TextoDoControl && TextoDoControl = TextoColuna1) ; selecionou algum curso no combobox e for igual a algum texto da coluna1 da listview
+               CAPTURANDO SOMENTES OS ComboBoXES
+            */
+            if(InStr(A_LoopField, "ComboBox")) ; se for um combobox
             {
-               ; msgbox %a_index%`t%A_LoopField%`t%TextoDoControl%`n
                ; msgbox %TextoDoControl%
 
-               ; msgbox %TextoColuna1%%TextoColuna2%
-
-                ; se não encontrar aba chrome com remote debug
-               ; msgbox %TextoLinhaSelecionadaCurso%
-               ; msgbox %TextoLinhaSelecionadaURL%     ; se não encontrar aba chrome com remote debug
-               if !(PageInst := Chrome.GetPageByURL(TextoColuna2, "contains"))
+               if(TextoDoControl == "GTM1"){
+                  gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+                  if !FileExist(gtm1Folder)
                   {
-                     ChromeInst := new Chrome(profileName,TextoColuna2,"--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
-                     Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-                     Sleep, 500
-                     contador1 := 0
-                     while !(PageInst)
+                  gtm1Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
+                  }
+                  Run vlc.exe "%gtm1Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+                  Run %gtm1Folder%\PLAYLIST-COMPLETA-BEGGINER.xspf               
+               }else if(TextoDoControl == "GTM2"){
+                  gtm2Folder := "Y:\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+                  if !FileExist(gtm2Folder)
+                  {
+                     gtm2Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Intermediate Google Tag Manager Advanced Topics 2.0"
+                  }
+                  Run vlc.exe "%gtm2Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+                  Run %gtm2Folder%\PLAYLIST-COMPLETA-ADVANCED.xspf
+               }else if(TextoDoControl == "GA4"){
+                  GA4Folder := "Y:\Season\Analyticsmania\Google Analytics 4 Course"
+                  if !FileExist(GA4Folder)
+                  {
+                  GA4Folder := "C:\Users\" A_UserName "\Documents\Season\Analyticsmania\Google Analytics 4 Course"
+                  }
+                  Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+                  Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf          
+               
+               /*
+                  SE O COMBOBOX TIVER ALGUMA OPÇÃO SELECIONADA E SE O TEXTO DO COMBOBOX SELECIONADO É IGUAL A ALGUM TEXTO DA COLUNA1 DA LISTVIEW
+               */     
+               }else if(TextoDoControl && TextoDoControl = TextoColuna2) ; selecionou algum curso no combobox e for igual a algum texto da coluna1 da listview
+               {
+                  ; msgbox %a_index%`t%A_LoopField%`t%TextoDoControl%`n
+                  msgbox %TextoDoControl%
+
+                  ; msgbox %TextoColuna1%%TextoColuna3%
+
+                  ; se não encontrar aba chrome com remote debug
+                  ; msgbox %TextoLinhaSelecionadaCurso%
+                  ; msgbox %TextoLinhaSelecionadaURL%     ; se não encontrar aba chrome com remote debug
+                  if !(PageInst := Chrome.GetPageByURL(TextoColuna3, "contains"))
                      {
+                        ChromeInst := new Chrome(profileName,TextoColuna3,"--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
+                        Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
                         Sleep, 500
-                        Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
-                        PageInst := Chrome.GetPageByURL(TextoColuna2, "contains")
-                        contador1++
-                        if(contador1 >= 30){
-                           PageInst.Disconnect()
-                           break
+                        contador1 := 0
+                        while !(PageInst)
+                        {
+                           Sleep, 500
+                           Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+                           PageInst := Chrome.GetPageByURL(TextoColuna3, "contains")
+                           contador1++
+                           if(contador1 >= 30){
+                              PageInst.Disconnect()
+                              break
+                           }
                         }
                      }
-                  }
-                  Sleep, 500
-                  ; aqui está o fix pra esperar a página carregar
-                  PageInst := Chrome.GetPageByURL(TextoColuna2, "contains")
-                  Sleep, 500
-               ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
-                  PageInst.Call("Page.bringToFront")
+                     Sleep, 500
+                     ; aqui está o fix pra esperar a página carregar
+                     PageInst := Chrome.GetPageByURL(TextoColuna3, "contains")
+                     Sleep, 500
+                  ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+                     PageInst.Call("Page.bringToFront")
+               }
+               ; Else 
+               ;    msgbox "vazio" %a_index%`t%A_LoopField%`t%TextoDoControl%`n
             }
-            ; Else 
-            ;    msgbox "vazio" %a_index%`t%A_LoopField%`t%TextoDoControl%`n
          }
-      }
-}
+   }
 Return
 
 ; CONTROL VIDEOS
@@ -615,6 +618,7 @@ getData:
    (
    "
    )
+   dataAllRows := ""
    /*
       IMPORTANTE:
       A COLUNA E DA PLANILHA PRECISA TER UMA FÓRMULA PARA GERAR O ARRAY DOS DADOS
@@ -634,6 +638,16 @@ getData:
    dataAllRows := getDataFromGoogleSheet(urlData)
    ; msgbox % dataAllRows
 
+   ListAllCourses := ""
+   ListSQLCourses := ""
+   ListWebDevCourses := ""
+   ListJavaScriptCourses := ""
+   ListAnalyticsCourses := ""
+   ListLinuxCourses := ""
+   ListTopCourses := ""
+   ListWebServerCourses := ""
+   ListAndamentoCourses := ""
+   ListYoutubeCourses := ""
    Loop, parse, dataAllRows, `n,`r ; linha
       {
          LineNumber := A_Index
@@ -723,11 +737,11 @@ ListaDeCursos:
    */
    NumeroLinhaSelecionada := LV_GetNext()
    ; NOME DO CURSO -> texto selecionado na coluna 1 (nome do curso)
-   LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 1) 
+   LV_GetText(TextoLinhaSelecionadaCurso, NumeroLinhaSelecionada, 2) 
    ; URL DO CURSO -> texto selecionado na coluna 2 (url do curso)
-   LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 2) 
+   LV_GetText(TextoLinhaSelecionadaURL, NumeroLinhaSelecionada, 3) 
    ; URL DO NOTION - ANOTAÇÕES -> texto selecionado na coluna 5 (notion do curso)
-   LV_GetText(TextoLinhaSelecionadaNotion, NumeroLinhaSelecionada, 5) 
+   LV_GetText(TextoLinhaSelecionadaNotion, NumeroLinhaSelecionada, 6) 
 
    ; msgbox % A_GuiEvent
    if(A_GuiEvent == "DoubleClick"){
@@ -926,14 +940,14 @@ Gui Submit, Nohide
    ;    msgbox %A_EventInfo%
    ; }
    ; recarregar página
-   If(A_GuiEvent == "Normal" && A_EventInfo == 1){
+   If(A_GuiEvent == "Normal" && A_EventInfo == 2){
    ; trazer página para frente
       Gosub, +r
-   }Else If(A_GuiEvent == "Normal" && A_EventInfo == 2){
-      GoSub, +a
    }Else If(A_GuiEvent == "Normal" && A_EventInfo == 3){
-      Gosub, closechromeahk
+      GoSub, +a
    }Else If(A_GuiEvent == "Normal" && A_EventInfo == 4){
+      Gosub, closechromeahk
+   }Else If(A_GuiEvent == "Normal" && A_EventInfo == 5){
       Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit#gid=0"
    }
 Return
