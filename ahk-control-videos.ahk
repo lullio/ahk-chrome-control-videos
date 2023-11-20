@@ -112,11 +112,11 @@ Gui Add, Statusbar, gStatusBarLinks vMyStatusBar,
 /*
    EDITAR TEXTO DA STATUS BAR
 */
-SB_SetParts(200, 200, 100)
-SB_SetText("Reload (SHIFT+R ou @reload)", 1)
-SB_SetText("Front Page (Shift+A ou @front)", 2)
-SB_SetText("Close Chrome", 3)
-SB_SetText("Cursos", 4)
+SB_SetParts(115, 160, 160, 80, 80)
+SB_SetText("Reload (SHIFT+R ou @reload)", 2)
+SB_SetText("Front Page (Shift+A ou @front)", 3)
+SB_SetText("Close Chrome", 4)
+SB_SetText("Cursos", 5)
 Gui Font, S10
 
 /*
@@ -168,10 +168,10 @@ Gui Add, ComboBox, Multi xs+10 yp+20 w280 center vCursoAndamento hwndDimensoesID
 Gui Add, ComboBox, Multi x+10 w237 center vCursoYoutube hwndDimensoesID sort,
 Gui Font,
 Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -readonly grid , ID|Nome do Curso|URL|Categories|Provider|Notion|Length|Rating
-Gui Add, Link, w120 y+3 vTotalCursos center,
+; Gui Add, Link, w120 y+5 vTotalCursos center,
 ; LV_Modify()
 Gui Font, S12
-Gui, Add, Edit, h29 vVarPesquisarDados w230 y+5 section cblue, .*ecommerce.*
+Gui, Add, Edit, h29 vVarPesquisarDados w230 y+15 section cblue, .*ecommerce.*
 Gui Font, S10,
 Gui, Add, Button, vBtnPesquisar x+10 w100 h30 gPesquisarDados Default, Pesquisar
 Gui, Add, Button, vBtnAtualizar x+10 w100 h30 gUpdateList, Atualizar
@@ -707,6 +707,7 @@ getData:
       totalCursos:
          totalLines := LV_GetCount()
          GuiControl, , TotalCursos, Total de Cursos: %totalLines%
+         SB_SetText("Total de Cursos: " totalLines, 1)
       Return
 Return
 
