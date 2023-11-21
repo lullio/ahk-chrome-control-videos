@@ -88,11 +88,9 @@ Menu, EditMenu, Add, Delete`tDel, MenuAbrirLink
 
 Menu, HelpMenu, Add, &Como usar o Programa?, MenuAjudaNotify
 Menu, HelpMenu, Add ; with no more options, this is a seperator
-Menu, HelpMenu, Add, &Qual é a função do botão 'Criar Quadro(s)', MenuAjudaNotify
+Menu, HelpMenu, Add, &Qual é a função do botão 'Abrir Curso'?, MenuAjudaNotify
 Menu, HelpMenu, Add, &Qual é a função do botão 'Pesquisar'?, MenuAjudaNotify
 Menu, HelpMenu, Add, &Qual é a função do botão 'Atualizar'?, MenuAjudaNotify
-Menu, HelpMenu, Add, &Qual é a função do menu 'Editar'?, MenuAjudaNotify
-Menu, HelpMenu, Add, &Qual é a função do campo "Filtrar Lista" e "Filtrar Dados"?, MenuAjudaNotify
 Menu, HelpMenu, Add ; with no more options, this is a seperator
 Menu, HelpMenu, Add, &Sobre o programa (Github), MenuAbrirLink
 Menu, HelpMenu, Add, &Desenvolvedor, MenuAbrirLink
@@ -887,7 +885,7 @@ If(InStr(A_ThisMenuItem, "cursos udemy"))
 Else If(InStr(A_ThisMenuItem, "Sobre o programa (Github)"))
 {
       Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://github.com/lullio/ahk-chrome-control-videos"
-      Run, https://projetos.lullio.com.br/control-video-study
+      Run, https://projetos.lullio.com.br/gerenciador-de-cursos-e-controle-de-video
 }
    Else If(InStr(A_ThisMenuItem, "WhatsApp"))
       Run, https://wa.me/5511991486309
@@ -901,18 +899,15 @@ If(InStr(A_ThisMenuItem, "Como usar o programa?"))
 Else If(InStr(A_ThisMenuItem, "como usar o programa"))
    ; msgbox SUCESSO com SOM e ICONE alwaysontop
    MsgBox, 4160 , INFORMAÇÃO!, 1. Para abrir uma tarefa no Notion`, clique com o botão esquerdo do mouse em qualquer item da Lista.`n`n2. Para arquivar ou desarquivar uma tarefa`, clique com o botão direito do mouse em qualquer item da Lista., 900
-Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Criar Quadro(s)'"))
+Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Abrir Curso'"))
    ; msgbox SUCESSO com SOM e ICONE alwaysontop
-   MsgBox, 4160 , INFORMAÇÃO!, O botão 'Criar Quadro(s)' tem a finalidade de criar um ou mais quadros no seu Trello. Para criar mais de um quadro`, basta separar os nomes por vírgulas e as descrições por quebra de linha, 900
+   MsgBox, 4160 , INFORMAÇÃO!, O botão 'Abrir Curso' tem a finalidade de criar um ou mais quadros no seu Trello. Para criar mais de um quadro`, basta separar os nomes por vírgulas e as descrições por quebra de linha, 900
 Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Pesquisar'"))
    ; msgbox SUCESSO com SOM e ICONE alwaysontop
    MsgBox, 4160 , INFORMAÇÃO!, O botão "Pesquisar" tem a finalidade de buscar uma tarefa na lista de tarefas exibida acima.`n`n O campo de pesquisa permite o uso de expressões regulares (regex) e`, por padrão`, a pesquisa não diferencia maiúsculas de minúsculas (não é "casesensitive").`n`nObservação:Você pode realizar uma pesquisa clicando no botão 'Pesquisar' ou pressionando a tecla 'Enter' no teclado., 900
 Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Atualizar'"))
    ; msgbox SUCESSO com SOM e ICONE alwaysontop
    MsgBox, 4160 , INFORMAÇÃO!, O botão 'Atualizar' tem a função de enviar uma nova requisição HTTP à API do Notion e`, assim`, recarregar os dados na lista., 900
-Else If(InStr(A_ThisMenuItem, "Qual é a função do menu 'Editar'"))
-   ; msgbox SUCESSO com SOM e ICONE alwaysontop
-   MsgBox, 4160 , INFORMAÇÃO!, Dentro do menu 'Editar'`, você encontra a opção para definir e editar as configurações das requisições HTTP GET e POST.`n`nObservação: faça alterações apenas se estiver familiarizado com o processo`, pois trata-se de uma configuração ""avançada"""., 900
 Return
 
 /*
@@ -1060,45 +1055,41 @@ PesquisarDados:
    MatchText := VarPesquisarDados ; *Texto inserido no inputbox
    MatchFound := false ; *iniciar variável como false até achar o texto
    cntMatches := 0
-   ; List := StrReplace(ListaTudoLV, A_Tab, virgula) ; todos os dados da LISTVIEW no formato CSV
-   ; MsgBox, % List ; todos os dados da LISTVIEW
-   If(erro = 1)
-      MatchText := ".*"
-   Else If(!MatchText){ ; ! se o input estiver vazio, dar match em ListaTudo
-      MatchText := ".*"
-      cntInputVazio := 1
-      MsgBox, 4112 , Erro!, Input vazio! Exibindo todos os dados.., 2
-   }Else{
-      cntInputVazio := 0
-   }
+   
    ; !apagar todas as linhas da listview
+   GuiControl, -Redraw, LVAll
    LV_Delete()
-   for index, line in StrSplit(ListaTudoLV, "`n", "`r") ; loop though every row
+   ; msgbox % MatchText
+   for index, line in StrSplit(dataAllRows, "`n", "`r") ; loop though every row
    {
       ; clipboard := line
       ; msgbox % line
       ; If(InStr(line, MatchText)){
       If(RegexMatch(line, "im)" MatchText)){
-         ; msgbox % line "`n" match
-         ; row.push(line)
+         ; msgbox % line 
+         row := [], ++cnt
          ; * Array com o conteúdo da linha(colunas)
-         cellValue := StrSplit(line, A_Tab) ; ! mantive o padrão da captura dos dados da listview, que é separação por tab, assim é melhor pois é comum ter vírgula no título do documento
+         ; cellValue := RegExReplace(StrSplit(line, A_Tab), aspa, "") ; ! mantive o padrão da captura dos dados da listview, que é separação por tab, assim é melhor pois é comum ter vírgula no título do documento
+         loop, parse, line, CSV ; dividir a linha em células
+            row.push(a_loopfield)													;or if a_index in 1,4,5
          ; * TÉCNICA PARA INSERIR O ARRAY COMPLETO EM UMA LINHA, CADA ITEM DO ARRAY SERÁ INSERIDO EM UMA COLUNA DIFERENTE
-         LV_add("", cellValue*)
+         LV_add("",row*)
          cntMatches++
       }
    }
-   if(erro != 1 && cntInputVazio != 1)
-      SB_SetText("Match(es) da última Pesquisa """ MatchText """ : " cntMatches, 2)
-   If(cntMatches = 0) ; ! se não encontrou nada
-   {
-      MsgBox, 4112 , Erro!, Nenhum resultado foi encontrado!, 3
-      erro := 1
-      GoSub, PesquisarDados
-   }Else{
-      GuiControl,, VarPesquisarDados, ; !limpar o inputbox após pesquisar
-      erro := 0
-      lastSearchError := MatchText
+   SB_SetText("Match(es) da última Pesquisa: " cnt,  4)
+   GuiControl, +Redraw, LVAll
+   GuiControl, Focus, LVAll ; dar foco na listview após pesquisar
+   LV_Modify(1)
+   LV_Modify(2)
+   LV_Modify(1, "+Select") ; selecionar primeiro item da listview
+   i++
+   If(LV_GetCount() = 0){
+      MsgBox, 4112 , Erro!, A Pesquisa não retornou nada`nAtualizando...!, 2
+      GoSub, UpdateList
+      ; Sleep, 500
+      ; Notify().AddWindow("Erro",{Time:3000,Icon:28,Background:"0x990000",Title:"ERRO",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},"w330 h30","setPosBR")
+      GuiControl, Focus, BtnPesquisar ; dar foco no botao
    }
    GuiControl,Focus, VarPesquisarDados ; !limpar o inputbox após pesquisar
 Return
