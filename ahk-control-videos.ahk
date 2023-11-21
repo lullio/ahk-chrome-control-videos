@@ -110,11 +110,10 @@ Gui Add, Statusbar, gStatusBarLinks vMyStatusBar,
 /*
    EDITAR TEXTO DA STATUS BAR
 */
-SB_SetParts(115, 160, 160, 80, 80)
+SB_SetParts(105, 160, 160, 80, 80)
 SB_SetText("Reload (SHIFT+R ou @reload)", 2)
 SB_SetText("Front Page (Shift+A ou @front)", 3)
 SB_SetText("Close Chrome", 4)
-SB_SetText("Cursos", 5)
 Gui Font, S10
 
 /*
@@ -149,6 +148,14 @@ Gui, Add, ComboBox, Multi vCursoSQL gCursos hwndCursosIDOutros w250 sort,
 Gui Add, Text, , Linux Courses
 Gui, Add, ComboBox , Multi w250 vCursoLinux gCursos hwndCursosIDMkt sort, 
 
+
+
+; Botões
+gui, font, S11
+gui, Add, Button, y+15 xs w250 h30 gAbrirCurso Default, &Abrir Curso
+gui, Add, Button, w150 h30 x+10 gAbrirNotion, &Abrir Anotações
+gui, Add, Button, w95 h30 x+10 gCancel Cancel, &Cancelar
+
 /*
 COLUNA 3
 */
@@ -156,7 +163,7 @@ COLUNA 3
 
 ; gui, font, S7 ;Change font size to 12
 ; 2º dropdown js courses
-Gui, Add, GroupBox, y+15 xs cBlack r15 w560, Lista dos Cursos
+Gui, Add, GroupBox, y+15 xs cBlack r14 w560, Lista dos Cursos
 Gui Add, Text, yp+25 xp+11 center, Cursos em Andamento
 Gui Add, Text, x+155 center, Cursos do Youtube
 Gui Font, S10
@@ -169,7 +176,7 @@ Gui Add, ListView, altsubmit vCursoDaLista gListaDeCursos w530 r10 xs+10 y+10 -r
 ; Gui Add, Link, w120 y+5 vTotalCursos center,
 ; LV_Modify()
 Gui Font, S12
-Gui, Add, Edit, h29 vVarPesquisarDados w230 y+15 section cblue, .*ecommerce.*
+Gui, Add, Edit, h29 vVarPesquisarDados w230 y+15 section cblue, .*power.*
 Gui Font, S10,
 Gui, Add, Button, vBtnPesquisar x+10 w100 h30 gPesquisarDados Default, Pesquisar
 Gui, Add, Button, vBtnAtualizar x+10 w100 h30 gUpdateList, Atualizar
@@ -180,10 +187,10 @@ Gui Font, S6.5
 GoSub, getData
 
 ; Botões
-gui, font, S11
-gui, Add, Button, y+25 xs+15 w250 h35 gAbrirCurso Default, &Abrir Curso
-gui, Add, Button, w150 h35 x+10 gAbrirNotion, &Abrir Anotações
-gui, Add, Button, w95 h35 x+10 gCancel Cancel, &Cancelar
+; gui, font, S11
+; gui, Add, Button, y+15 xs w250 h30 gAbrirCurso Default, &Abrir Curso
+; gui, Add, Button, w150 h30 x+10 gAbrirNotion, &Abrir Anotações
+; gui, Add, Button, w95 h30 x+10 gCancel Cancel, &Cancelar
 
 ; EXIBIR E ATIVAR GUI
 GuiControl,Focus,Curso
@@ -936,14 +943,14 @@ Gui Submit, Nohide
    ; }
    ; recarregar página
    If(A_GuiEvent == "Normal" && A_EventInfo == 2){
-   ; trazer página para frente
       Gosub, +r
    }Else If(A_GuiEvent == "Normal" && A_EventInfo == 3){
       GoSub, +a
    }Else If(A_GuiEvent == "Normal" && A_EventInfo == 4){
       Gosub, closechromeahk
    }Else If(A_GuiEvent == "Normal" && A_EventInfo == 5){
-      Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit#gid=0"
+
+      ; Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" --profile-directory="Default" "https://docs.google.com/spreadsheets/d/1_flbbi427JI7NiIk4ZGZvAM9eRBM4dd_gTDFgw3Npo8/edit#gid=0"
    }
 Return
 
@@ -1077,7 +1084,7 @@ PesquisarDados:
          cntMatches++
       }
    }
-   SB_SetText("Match(es) da última Pesquisa: " cnt,  4)
+   SB_SetText("Match(es): " cntMatches,  5)
    GuiControl, +Redraw, LVAll
    GuiControl, Focus, LVAll ; dar foco na listview após pesquisar
    LV_Modify(1)
