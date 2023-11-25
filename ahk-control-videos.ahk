@@ -378,7 +378,7 @@ AbrirCurso:
                }else if(TextoDoControl && TextoDoControl = TextoColuna2) ; selecionou algum curso no combobox e for igual a algum texto da coluna1 da listview
                {
                   ; msgbox %a_index%`t%A_LoopField%`t%TextoDoControl%`n
-                  msgbox %TextoDoControl%
+                  ; msgbox %TextoDoControl%
 
                   ; msgbox %TextoColuna1%%TextoColuna3%
 
@@ -397,7 +397,7 @@ AbrirCurso:
                            Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
                            PageInst := Chrome.GetPageByURL(TextoColuna3, "contains")
                            contador1++
-                           if(contador1 >= 30){
+                           if(contador1 >= 5){
                               PageInst.Disconnect()
                               break
                            }
@@ -766,7 +766,7 @@ ListaDeCursos:
             Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
             PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
             contador1++
-            if(contador1 >= 30){
+            if(contador1 >= 5){
                PageInst.Disconnect()
                break
             }
@@ -1000,7 +1000,7 @@ Return
                Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
                PageInst := Chrome.GetPageByURL(siteHostNameOnly, "contains")
                contador1++
-               if(contador1 >= 30){
+               if(contador1 >= 5){
                   break
                }
             }
@@ -1041,7 +1041,7 @@ escapeDropdownItem := "www.|"
             Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
             PageInst := Chrome.GetPageByURL(siteHostNameOnly, "contains")
             contador1++
-            if(contador1 >= 30){
+            if(contador1 >= 7){
                break
             }
          }
