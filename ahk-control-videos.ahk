@@ -88,6 +88,7 @@ Menu, EditMenu, Add, Delete`tDel, MenuAbrirLink
 
 Menu, HelpMenu, Add, &Como usar o Programa?, MenuAjudaNotify
 Menu, HelpMenu, Add ; with no more options, this is a seperator
+Menu, HelpMenu, Add, &Como controlar o vídeo (atalhos)?, MenuAjudaNotify
 Menu, HelpMenu, Add, &Qual é a função do botão 'Abrir Curso'?, MenuAjudaNotify
 Menu, HelpMenu, Add, &Qual é a função do botão 'Pesquisar'?, MenuAjudaNotify
 Menu, HelpMenu, Add, &Qual é a função do botão 'Atualizar'?, MenuAjudaNotify
@@ -915,6 +916,9 @@ Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Pesquisar'"))
 Else If(InStr(A_ThisMenuItem, "Qual é a função do botão 'Atualizar'"))
    ; msgbox SUCESSO com SOM e ICONE alwaysontop
    MsgBox, 4160 , INFORMAÇÃO!, O botão 'Atualizar' tem a função de enviar uma nova requisição HTTP à API do Notion e`, assim`, recarregar os dados na lista., 900
+Else If(InStr(A_ThisMenuItem, "Como controlar o vídeo"))
+   ; msgbox SUCESSO com SOM e ICONE alwaysontop
+   MsgBox, 4160 , INFORMAÇÃO!, Atalhos:`n`n1. CTRL + L = pause/play`n`n2. ALT + = = speed up`n`n3.ALT + - = speed down`n`n4. ALT + < = Voltar 3s`n`n5. ALT + > = Avançar 3s`n`n6. ALT + END = Next Video`n`n7. ALT + HOME = Previous Video`n`n8. ALT + K = subtitles, 900
 Return
 
 /*
