@@ -435,7 +435,8 @@ Return
 ; CONTROL VIDEOS
 controlVideos:
 
-alt & l:: ; pausar e play
+shift & l:: ; pausar e play
+MButton:: ; pausar e play
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
@@ -455,10 +456,12 @@ alt & l:: ; pausar e play
       ; SetTitleMatchMode, 2
       ; #IfWinActive, VLC media player
       ;    Send, {Space} Return
-      Sleep, 200
+      ; Sleep, 20=---l0
+      ControlSend,,{enter},ahk_exe vlc.exe
       ControlSend,,{space},ahk_exe vlc.exe
-      Sleep, 400
+      ; Sleep, 400
       Notify().AddWindow("O método de pausar foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
       ; MÉTODO DE PAUSAR NO VLC
       ; WinActivate, AHK_PID %pid%
       ; SetTitleMatchMode, 2
@@ -466,7 +469,7 @@ alt & l:: ; pausar e play
    }
 Return
 
-Alt & =:: ; aumentar velocidade
+shift & =:: ; aumentar velocidade
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
@@ -483,14 +486,15 @@ Alt & =:: ; aumentar velocidade
       ; MÉTODO AUMENTAR VELOCIDADE NO VLC
       ; WinActivate, AHK_PID %pid%
       ControlSend,,{=},ahk_exe vlc.exe ;Send =
-      SetTitleMatchMode, 2
-      IfWinActive, Reprodutor de Mídias VLC
-         Send, {=}
+      ; SetTitleMatchMode, 2
+      ; IfWinActive, Reprodutor de Mídias VLC
+      ;    Send, {=}
       Notify().AddWindow("O método de aumentar velocidade foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
    }
 Return
 
-Alt & -:: ; diminuir velocidade
+shift & -:: ; diminuir velocidade
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
@@ -499,6 +503,7 @@ Alt & -:: ; diminuir velocidade
       FileRead, javascriptSpeedMinus, control-video\speed-decrease.js
       videoSpeed := PageInst.Evaluate(javascriptSpeedMinus)
       Notify().AddWindow("O método de diminuir velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto ",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
       ; PageInst.Call("Page.bringToFront")
    }
    else if !WinActive("AHK_PID " pid)
@@ -506,14 +511,14 @@ Alt & -:: ; diminuir velocidade
       ; MÉTODO DIMNIUIR VELOCIDADE NO VLC
       ; WinActivate, AHK_PID %pid%
       ControlSend,,{-},ahk_exe vlc.exe ;Send -
-      SetTitleMatchMode, 2
-      IfWinActive, Reprodutor de Mídias VLC
-         Send, {-}
+      ; SetTitleMatchMode, 2
+      ; IfWinActive, Reprodutor de Mídias VLC
+      ;    Send, {-}
       Notify().AddWindow("O método de diminuir velocidade foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
    }
 Return
 
-Alt & Left:: ; voltar 3 segundos
+shift & Left:: ; voltar 3 segundos
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
@@ -522,18 +527,21 @@ Alt & Left:: ; voltar 3 segundos
       FileRead, javascriptMoveDown, control-video\video-rewind.js
       PageInst.Evaluate(javascriptMoveDown)
       Notify().AddWindow("O método de retroceder video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
       ; PageInst.Call("Page.bringToFront")
    }
    else if !WinActive("AHK_PID " pid)
    {
       ; RETROCEDER O VIDEO NO VLC
       ; SetKeyDelay, 0, 50
-      ControlSend,,+{left},ahk_exe vlc.exe
+      ; ControlSend,,+{left},ahk_exe vlc.exe
+      ControlSend,,{left},ahk_exe vlc.exe
       Notify().AddWindow("O método de retroceder video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
    }
 Return
 
-Alt & Right:: ; avancar 3 segundos
+shift & Right:: ; avancar 3 segundos
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
@@ -550,10 +558,11 @@ Alt & Right:: ; avancar 3 segundos
       ; SetKeyDelay, 0, 50
       ControlSend,,+{Right},ahk_exe vlc.exe
       Notify().AddWindow("O método de avançar video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
    }
 Return
 
-Alt & End:: ; proximo video
+shift & End:: ; proximo video
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
@@ -570,10 +579,11 @@ Alt & End:: ; proximo video
       ; SetKeyDelay, 0, 50
       ControlSend,,{n},ahk_exe vlc.exe
       Notify().AddWindow("O método de pular video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
    }
 Return
 
-Alt & Home:: ; video anterior
+shift & Home:: ; video anterior
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
@@ -590,10 +600,11 @@ Alt & Home:: ; video anterior
       ; SetKeyDelay, 0, 50
       ControlSend,,{p},ahk_exe vlc.exe
       Notify().AddWindow("O método de previous video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
    }
 Return
 
-Alt & k:: ; habilitar desabilitar legenda
+shift & k:: ; habilitar desabilitar legenda
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
@@ -610,6 +621,7 @@ Alt & k:: ; habilitar desabilitar legenda
       ; SetKeyDelay, 0, 50
       ControlSend,,{v},ahk_exe vlc.exe
       Notify().AddWindow("O método de legenda video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
    }
 Return
 Return
@@ -943,7 +955,7 @@ MenuAjudaNotify:
       MsgBox, 4160 , INFORMAÇÃO!, O botão 'Atualizar' tem a função de enviar uma nova requisição HTTP à API do Notion e`, assim`, recarregar os dados na lista., 900
    Else If(InStr(A_ThisMenuItem, "Como controlar o vídeo"))
       ; msgbox SUCESSO com SOM e ICONE alwaysontop
-      MsgBox, 4160 , INFORMAÇÃO!, Atalhos:`n`n1. CTRL + L = pause/play`n`n2. ALT + = = speed up`n`n3.ALT + - = speed down`n`n4. ALT + < = Voltar 3s`n`n5. ALT + > = Avançar 3s`n`n6. ALT + END = Next Video`n`n7. ALT + HOME = Previous Video`n`n8. ALT + K = subtitles, 900
+      MsgBox, 4160 , INFORMAÇÃO!, Atalhos:`n`n1. shift + L = pause/play`n`n2. shift + = = speed up`n`n3.shift + - = speed down`n`n4. shift + < = Voltar 3s`n`n5. shift + > = Avançar 3s`n`n6. shift + END = Next Video`n`n7. shift + HOME = Previous Video`n`n8. shift + K = subtitles, 900
 Return
 
 /*
@@ -1130,3 +1142,4 @@ PesquisarDados:
    GuiControl,Focus, VarPesquisarDados ; !limpar o inputbox após pesquisar
 Return
 
+Pause::Suspend ; suspender as hotkeys, pausar
