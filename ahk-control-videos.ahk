@@ -16,8 +16,8 @@ if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
    }
    ExitApp
 }
-if not A_IsAdmin
-   Run *RunAs "%A_ScriptFullPath%"
+; if not A_IsAdmin
+;    Run *RunAs "%A_ScriptFullPath%"
 
 ; Variables
 ; Variables
@@ -25,7 +25,8 @@ chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
 IfNotExist, %chPath%
    chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 
-profileName := "C:\Users\" . A_UserName "\AppData\Local\Google\Chrome\User Data"
+   ; profileName := "C:\Users\" . A_UserName "\AppData\Local\Google\Chrome\User Data"
+profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
 IfNotExist %profileName%
    profileName := "C:\Users\Felipe\AppData\Local\Google\Chrome\User Data\Default"
 IfNotExist %profileName%
@@ -74,8 +75,8 @@ MENU BAR
 Menu, FileMenu, Add, &Abrir Planilha`tCtrl+N, MenuAbrirLink
 Menu, FileMenu, Add, &Abrir Cursos Udemy, MenuAbrirLink
 Menu, FileMenu, Add ; with no more options, this is a seperator
-Menu, FileMenu, Add, &Reiniciar o App, MenuAbrirLink
-Menu, FileMenu, Add, &Sair do App, MenuAbrirLink
+Menu, FileMenu, Add, &Reiniciar o App, MenuAcoes
+Menu, FileMenu, Add, &Sair do App, MenuAcoes
 
 Menu, EditMenu, Add, Copy`tCtrl+C, MenuAbrirLink
 Menu, EditMenu, Add, Past`tCtrl+V, MenuAbrirLink
@@ -197,22 +198,23 @@ ComObjError(false)
 
 ; EXECUTAR LOGO AO ABRIR A GUI, PARA EU PODER USAR OS COMANDOS DE VÍDEO MESMO SEM SELECIONAR UM CURSO.
 ; se não encontrar aba chrome com remote debug
-if !(PageInst := Chrome.GetPageByURL(website, "contains"))
-{
-   ; Sleep, 500
-   ; aqui está o fix pra esperar a página carregar
-   ; PageInst := Chrome.GetPageByURL(website, "contains")
-   ; Sleep, 500
-   /*
-   SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
-   */
-   ; PageInst.Call("Page.bringToFront")
-   ; GoSub, controlVideos
-   Return
-}else{
-   ; Gosub, controlVideos
-   Return
-}
+; website := "udemy.com|youtube.com|udacity.com"
+; if !(PageInst := Chrome.GetPageByURL(website, "contains"))
+; {
+;    ; Sleep, 500
+;    ; aqui está o fix pra esperar a página carregar
+;    PageInst := Chrome.GetPageByURL(website, "contains")
+;    ; Sleep, 500
+;    /*
+;    SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+;    */
+;    PageInst.Call("Page.bringToFront")
+;    ; GoSub, controlVideos
+;    Return
+; }else{
+;    ; Gosub, controlVideos
+;    Return
+; }
 Return
 
 /* TRATAMENTO DOS DROPDOWN, PARA QUANDO VC ESCREVER O NOME DO CURSO JÁ PREENCHER O CURSO AUTOMATICAMENTE NO DROPDOWN
@@ -397,7 +399,7 @@ AbrirCurso:
                ; se não encontrar aba chrome com remote debug
                ; msgbox %TextoLinhaSelecionadaCurso%
                ; msgbox %TextoLinhaSelecionadaURL%     ; se não encontrar aba chrome com remote debug
-               if(TextoDoControl && TextoDoControl = TextoColuna2 && !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4") AND !(TextoLinhaSelecionadaCurso == "Scrum + GTD - Gustavo Farias")){
+               if(TextoDoControl && TextoDoControl = TextoColuna2 && !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4") AND !(TextoLinhaSelecionadaCurso == "Scrum + GTD - Gustavo Farias") AND !(TextoLinhaSelecionadaCurso == "Gatsby & React - Blog")){
                   if !(PageInst := Chrome.GetPageByURL(TextoColuna3, "contains"))
                   {
                      ChromeInst := new Chrome(profileName,TextoColuna3,"--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
@@ -433,19 +435,43 @@ AbrirCurso:
 Return
 
 ; CONTROL VIDEOS
-controlVideos:
-
-shift & l:: ; pausar e play
-MButton:: ; pausar e play
+; controlVideos:
+javascriptPlay := ""
+LWin & l:: ; pausar e play
+; MButton:: ; pausar e play
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
-      ; MÉTODO DE PAUSAR NO CHROME
-      ; PAUSAR E PLAY VIDEO
+      ; ; MÉTODO DE PAUSAR NO CHROME
+      ; ; PAUSAR E PLAY VIDEO
+      ; if !(PageInst := Chrome.GetPage())
+      ;    {
+      ;       ChromeInst := new Chrome(profileName,"","--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
+      ;       Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x088F8F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+      ;       contador1 := 0
+      ;       while !(PageInst)
+      ;       {
+      ;          Sleep, 500
+      ;          ; Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
+      ;          PageInst := Chrome.GetPageByURL(siteHostNameOnly, "contains")
+      ;          contador1++
+      ;          if(contador1 >= 7){
+      ;             break
+      ;          }
+      ;       }
+      ;    }else{
+      ;       PageInst.Call("Page.bringToFront")
+      ;       ; PageInst.Call("Page.reload", {"ignoreCache": Chrome.Jxon_True()})
+      ;    }
+      javascriptPlay := ""
       FileRead, javascriptPlay, control-video\pause-play-video.js
       ; PageInst.Call("Page.bringToFront")
+      ; Sleep, 200
       PageInst.Evaluate(javascriptPlay)
+      javascriptPlay := ""
+      ; Sleep, 900
       Notify().AddWindow("O método de pausar foi usado no CHROME.",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
+      Return
       ; PageInst.Call("Page.bringToFront")
       ; WinActivate, Chrome
    }
@@ -457,7 +483,8 @@ MButton:: ; pausar e play
       ; #IfWinActive, VLC media player
       ;    Send, {Space} Return
       ; Sleep, 20=---l0
-      ControlSend,,{enter},ahk_exe vlc.exe
+      SetKeyDelay, 1, 10
+      ; ControlSend,,{enter},ahk_exe vlc.exe
       ControlSend,,{space},ahk_exe vlc.exe
       ; Sleep, 400
       Notify().AddWindow("O método de pausar foi usado no VLC",{Time:2000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -469,12 +496,13 @@ MButton:: ; pausar e play
    }
 Return
 
-shift & =:: ; aumentar velocidade
+LWin & =:: ; aumentar velocidade
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
       ; MÉTODO AUMENTAR VELOCIDADE
       ; AUMENTAR VELOCIDADE
+      javascriptSpeedPlus := ""
       FileRead, javascriptSpeedPlus, control-video\speed-increase.js
       PageInst.Evaluate(javascriptSpeedPlus)
       Notify().AddWindow("O método de aumentar velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -485,6 +513,7 @@ shift & =:: ; aumentar velocidade
    {
       ; MÉTODO AUMENTAR VELOCIDADE NO VLC
       ; WinActivate, AHK_PID %pid%
+      SetKeyDelay, 1, 10
       ControlSend,,{=},ahk_exe vlc.exe ;Send =
       ; SetTitleMatchMode, 2
       ; IfWinActive, Reprodutor de Mídias VLC
@@ -494,12 +523,13 @@ shift & =:: ; aumentar velocidade
    }
 Return
 
-shift & -:: ; diminuir velocidade
+LWin & -:: ; diminuir velocidade
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
       ; MÉTODO DIMNIUIR VELOCIDADE
       ; DIMINUIR VELOCIDADE
+      javascriptSpeedMinus := ""
       FileRead, javascriptSpeedMinus, control-video\speed-decrease.js
       videoSpeed := PageInst.Evaluate(javascriptSpeedMinus)
       Notify().AddWindow("O método de diminuir velocidade foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto ",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -510,6 +540,7 @@ shift & -:: ; diminuir velocidade
    {
       ; MÉTODO DIMNIUIR VELOCIDADE NO VLC
       ; WinActivate, AHK_PID %pid%
+      SetKeyDelay, 1, 10
       ControlSend,,{-},ahk_exe vlc.exe ;Send -
       ; SetTitleMatchMode, 2
       ; IfWinActive, Reprodutor de Mídias VLC
@@ -518,12 +549,13 @@ shift & -:: ; diminuir velocidade
    }
 Return
 
-shift & Left:: ; voltar 3 segundos
+LWin & Left:: ; voltar 3 segundos
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
       ; RETROCEDER O VIDEO
       ; REWIND VIDEO
+      javascriptMoveDown := ""
       FileRead, javascriptMoveDown, control-video\video-rewind.js
       PageInst.Evaluate(javascriptMoveDown)
       Notify().AddWindow("O método de retroceder video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -533,20 +565,21 @@ shift & Left:: ; voltar 3 segundos
    else if !WinActive("AHK_PID " pid)
    {
       ; RETROCEDER O VIDEO NO VLC
-      ; SetKeyDelay, 0, 50
       ; ControlSend,,+{left},ahk_exe vlc.exe
+      SetKeyDelay, 1, 10
       ControlSend,,{left},ahk_exe vlc.exe
       Notify().AddWindow("O método de retroceder video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
       Return
    }
 Return
 
-shift & Right:: ; avancar 3 segundos
+LWin & Right:: ; avancar 3 segundos
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
       ; AVANÇAR O VIDEO
       ; FAST-FORWARD VIDEO
+      javascriptMoveUp := ""
       FileRead, javascriptMoveUp, control-video\video-fast-forward.js
       PageInst.Evaluate(javascriptMoveUp)
       Notify().AddWindow("O método de avançar video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -555,19 +588,20 @@ shift & Right:: ; avancar 3 segundos
    else if !WinActive("AHK_PID " pid)
    {
       ; AVANÇAR O VIDEO NO VLC
-      ; SetKeyDelay, 0, 50
+      SetKeyDelay, 1, 10
       ControlSend,,+{Right},ahk_exe vlc.exe
       Notify().AddWindow("O método de avançar video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
       Return
    }
 Return
 
-shift & End:: ; proximo video
+LWin & End:: ; proximo video
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
       ; PULAR O VIDEO
       ; PRÓXIMO VÍDEO
+      javascriptNextVideo := ""
       FileRead, javascriptNextVideo, control-video\go-next-video.js
       PageInst.Evaluate(javascriptNextVideo)
       Notify().AddWindow("O método de pular video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -576,19 +610,20 @@ shift & End:: ; proximo video
    else if !WinActive("AHK_PID " pid)
    {
       ; PULAR O VIDEO NO VLC
-      ; SetKeyDelay, 0, 50
+      SetKeyDelay, 1, 10
       ControlSend,,{n},ahk_exe vlc.exe
       Notify().AddWindow("O método de pular video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
       Return
    }
 Return
 
-shift & Home:: ; video anterior
+LWin & Home:: ; video anterior
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
       ; PREVIOUS VIDEO
       ; VIDEO ANTERIOR
+      javascriptPreviousVideo := ""
       FileRead, javascriptPreviousVideo, control-video\go-previous-video.js
       PageInst.Evaluate(javascriptPreviousVideo)
       Notify().AddWindow("O método de previous video foi usado no CHROME.",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -597,19 +632,20 @@ shift & Home:: ; video anterior
    else if !WinActive("AHK_PID " pid)
    {
       ; PREVIOUS VIDEO NO VLC
-      ; SetKeyDelay, 0, 50
+      SetKeyDelay, 1, 10
       ControlSend,,{p},ahk_exe vlc.exe
       Notify().AddWindow("O método de previous video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
       Return
    }
 Return
 
-shift & k:: ; habilitar desabilitar legenda
+LWin & k:: ; habilitar desabilitar legenda
    Process, Exist, vlc.exe
    if !pid := ErrorLevel
    {
       ; PREVIOUS VIDEO
       ; VIDEO ANTERIOR
+      javascriptLegendaVideo := ""
       FileRead, javascriptLegendaVideo, control-video\legenda-video.js
       PageInst.Evaluate(javascriptLegendaVideo)
       Notify().AddWindow("O método de legenda video foi usado no CHROME",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Não está aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
@@ -618,20 +654,20 @@ shift & k:: ; habilitar desabilitar legenda
    else if !WinActive("AHK_PID " pid)
    {
       ; PREVIOUS VIDEO NO VLC
-      ; SetKeyDelay, 0, 50
+      SetKeyDelay, 1, 10
       ControlSend,,{v},ahk_exe vlc.exe
       Notify().AddWindow("O método de legenda video foi usado no VLC",{Time:1000,Icon:131, Background:"0x1100AA",Title:"VLC Está Aberto",TitleSize:8, Size:8, Color: "0xE7DBD4", TitleColor: "0xE3CFC4"},,"setPosBR")
       Return
    }
 Return
-Return
+; Return
 
 getDataFromGoogleSheet(urlData){
    aspa =
    (
    "
    )
-   ; https://stackoverflow.com/questions/33713084/download-link-for-google-spreadsheets-csv-export-with-multiple-sheets
+   ; https://stackoverflow.co-m/questions/33713084/download-link-for-google-spreadsheets-csv-export-with-multiple-sheets
    ; https://www.autohotkey.com/docs/v1/lib/URLDownloadToFile.htm
    whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
    whr.Open("GET",urlData, true)
@@ -782,9 +818,12 @@ ListaDeCursos:
    if(A_GuiEvent == "DoubleClick"){
       ; msgbox %TextoLinhaSelecionadaCurso%
       ; msgbox %TextoLinhaSelecionadaURL%
-      if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4") AND !(TextoLinhaSelecionadaCurso == "Scrum + GTD - Gustavo Farias"){ ; se não encontrar aba chrome com remote debug
+      if !(TextoLinhaSelecionadaCurso == "GTM1") AND !(TextoLinhaSelecionadaCurso == "GTM2") AND !(TextoLinhaSelecionadaCurso == "GA4") AND !(TextoLinhaSelecionadaCurso == "Scrum + GTD - Gustavo Farias") AND !(TextoLinhaSelecionadaCurso == "Gatsby & React - Blog"){ ; se não encontrar aba chrome com remote debug
+         
          if !(PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains"))
+         ; if !(PageInst := Chrome.GetPage())
          {
+            ; msgbox % chPath profileName
             ; ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Profile 2""",chPath)
             ChromeInst := new Chrome(profileName,TextoLinhaSelecionadaURL,"--remote-debugging-port=9222 --remote-allow-origins=* --profile-directory=""Default""",chPath)
             Notify().AddWindow("Não encontrei o site aberto no Chrome, Vou abrir pra você agora!",{Time:6000,Icon:28,Background:"0x900C3F",Title:"OPS!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
@@ -796,40 +835,39 @@ ListaDeCursos:
                Notify().AddWindow("procurando instância do chrome...!",{Time:6000,Icon:28,Background:"0x1100AA",Title:"ERRO!",TitleSize:15, Size:15, Color: "0xCDA089", TitleColor: "0xE1B9A4"},,"setPosBR")
                PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
                contador1++
-               if(contador1 >= 5){
-                  PageInst.Disconnect()
+               if(contador1 >= 20){
+                  ; PageInst.Disconnect()
                   break
                }
             }
+         }else{
+            PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
+            Sleep, 500
+            ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
+            PageInst.Call("Page.bringToFront")
+            /*
+               ABRIR NOTION
+            */
+            if(A_UserName == "Felipe" || A_UserName == "estudos" || A_UserName == "Estudos")
+            {
+               user := A_UserName
+               pass := "xrlo1010"
+            }
+            Else
+            {
+               user := "felipe.lullio@hotmail.com"
+               pass := "XrLO1000@1010"
+            }
+            RunAs, %user%, %pass%
+            ; Run, C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe
+            Run %ComSpec% /c C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe "%TextoLinhaSelecionadaNotion%", , Hide
+            RunAs
+            ; WinActivate, Notion
+   
+            /*
+               CASO TENHA SLECIONADO UM CURSO LOCAL
+            */
          }
-         Sleep, 500
-         ; aqui está o fix pra esperar a página carregar
-         PageInst := Chrome.GetPageByURL(TextoLinhaSelecionadaURL, "contains")
-         Sleep, 500
-         ; SUPER IMPORTANTE, ATIVAR A TAB/PÁGINA, ACTIVATE, FOCUS
-         PageInst.Call("Page.bringToFront")
-         /*
-            ABRIR NOTION
-         */
-         if(A_UserName == "Felipe" || A_UserName == "estudos" || A_UserName == "Estudos")
-         {
-            user := A_UserName
-            pass := "xrlo1010"
-         }
-         Else
-         {
-            user := "felipe.lullio@hotmail.com"
-            pass := "XrLO1000@1010"
-         }
-         RunAs, %user%, %pass%
-         ; Run, C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe
-         Run %ComSpec% /c C:\Users\felipe\AppData\Local\Programs\Notion\Notion.exe "%TextoLinhaSelecionadaNotion%", , Hide
-         RunAs
-         WinActivate, Notion
-
-         /*
-            CASO TENHA SLECIONADO UM CURSO LOCAL
-         */
       }else if(TextoLinhaSelecionadaCurso == "GTM1"){
          gtm1Folder := "Y:\Season\Analyticsmania\Google Tag Manager Masterclass For Beginners 3.0"
          if !FileExist(gtm1Folder)
@@ -854,6 +892,14 @@ ListaDeCursos:
          }
          Run vlc.exe "%GA4Folder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
          Run %GA4Folder%\PLAYLIST-COMPLETA-GA4.xspf
+      }else if(TextoLinhaSelecionadaCurso == "Gatsby & React - Blog"){
+         GatsbyFolder := "Y:\Season\Gatsby Crie um site PWA com React, GraphQL e Netlify CMS"
+         if !FileExist(GatsbyFolder)
+         {
+            GatsbyFolder := "C:\Users\" A_UserName "\Documents\Season\Gatsby Crie um site PWA com React, GraphQL e Netlify CMS"
+         }
+         ; Run vlc.exe "%GatsbyFolder%\PLAYLIST-ADITIONAL-CONTENT.xspf"
+         Run %GatsbyFolder%\playlist.xspf
       }else if(TextoLinhaSelecionadaCurso == "Scrum + GTD - Gustavo Farias"){
          ScrumFolder := "Y:\Season\#Scrum Gestão Ágil com Scrum COMPLETO + 3 Cursos BÔNUS"
          if !FileExist(ScrumFolder)
@@ -914,7 +960,7 @@ Return
 /*
 TRATAMENTO DO MENU BAR
 */
-MenuAcoesApp:
+MenuAcoes:
    If(InStr(A_ThisMenuItem, "Sair"))
       ExitApp
    Else If(InStr(A_ThisMenuItem, "Reiniciar"))
@@ -955,7 +1001,7 @@ MenuAjudaNotify:
       MsgBox, 4160 , INFORMAÇÃO!, O botão 'Atualizar' tem a função de enviar uma nova requisição HTTP à API do Notion e`, assim`, recarregar os dados na lista., 900
    Else If(InStr(A_ThisMenuItem, "Como controlar o vídeo"))
       ; msgbox SUCESSO com SOM e ICONE alwaysontop
-      MsgBox, 4160 , INFORMAÇÃO!, Atalhos:`n`n1. shift + L = pause/play`n`n2. shift + = = speed up`n`n3.shift + - = speed down`n`n4. shift + < = Voltar 3s`n`n5. shift + > = Avançar 3s`n`n6. shift + END = Next Video`n`n7. shift + HOME = Previous Video`n`n8. shift + K = subtitles, 900
+      MsgBox, 4160 , INFORMAÇÃO!, Atalhos:`n`n1. Alt + L = pause/play`n`n2. shift + = = speed up`n`n3.shift + - = speed down`n`n4. shift + < = Voltar 3s`n`n5. shift + > = Avançar 3s`n`n6. shift + END = Next Video`n`n7. shift + HOME = Previous Video`n`n8. shift + K = subtitles, 900
 Return
 
 /*
@@ -1023,10 +1069,10 @@ Return
 :?*:@reload:: ; hotstring @reload
    contador := 0
    escapeDropdownItem := "www.|"
-   ; chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
-   ; IfNotExist, %chPath%
-   ; chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-   ; ; profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
+   chPath := "C:\Program Files\Google\Chrome\Application\chrome.exe"
+   IfNotExist, %chPath%
+      chPath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+   profileName = C:\Users\%A_UserName%\AppData\Local\Google\Chrome\User Data
 
    ; ChromeInst := new Chrome(profileName,websiteInput,"--remote-allow-origins=*",chPath)
    ; msgbox %siteHostNameOnly%
